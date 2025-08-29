@@ -1,0 +1,6 @@
+onlyBuiltDependencies:
+  - bcrypt
+
+packages:
+  - "apps/*"
+  - "packages/*"

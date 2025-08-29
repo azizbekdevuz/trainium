@@ -1,0 +1,15 @@
+{
+    "name": "@apps/socket",
+    "private": true,
+    "type": "module",
+    "scripts": {
+      "dev": "node src/index.js",
+      "start": "node src/index.js",
+      "lint": "eslint . --ext .js,.mjs"
+    },
+    "dependencies": {
+      "cors": "^2.8.5",
+      "express": "^4.19.2",
+      "socket.io": "^4.7.5"
+    }
+  }  

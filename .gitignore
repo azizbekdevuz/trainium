@@ -1,0 +1,70 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules/
+/node_modules
+/apps/web/node_modules
+/apps/socket/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js & build outputs
+/.next/
+**/.next/**
+/apps/web/.next/**
+**/dist/
+**/build/
+
+# turbo
+.turbo/
+/.turbo/
+**/.turbo/**
+!apps/web/.turbo/**
+
+# IDE
+.cursor/
+.vscode/
+/.cursor/
+/.vscode/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+**/.env*
+!.env.example
+!**/.env.example
+
+# runtime uploads (tracked dir, untracked files)
+apps/web/storage/uploads/*
+!apps/web/storage/uploads/.gitkeep
+
+# if any legacy uploads remain in public, ignore just that subfolder
+apps/web/public/uploads/*
+!apps/web/public/uploads/.gitkeep
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
