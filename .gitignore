@@ -54,14 +54,6 @@ yarn-error.log*
 !.env.example
 !**/.env.example
 
-# runtime uploads (tracked dir, untracked files)
-apps/web/storage/uploads/*
-!apps/web/storage/uploads/.gitkeep
-
-# if any legacy uploads remain in public, ignore just that subfolder
-apps/web/public/uploads/*
-!apps/web/public/uploads/.gitkeep
-
 # vercel
 .vercel
 
