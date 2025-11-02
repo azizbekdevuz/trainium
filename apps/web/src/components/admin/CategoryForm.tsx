@@ -56,6 +56,7 @@ export function CategoryForm({
   saving
 }: CategoryFormProps) {
   const { t } = useI18n();
+  const formId = 'category-form';
 
   const updateFormData = (updates: Partial<CategoryFormData>) => {
     onFormDataChange({ ...formData, ...updates });
@@ -79,6 +80,7 @@ export function CategoryForm({
       </Button>
       <Button 
         type="submit" 
+        form={formId}
         disabled={saving}
         className="flex-1 sm:flex-none bg-cyan-500 hover:bg-cyan-600 text-white transition-all duration-200 disabled:opacity-50"
       >
@@ -107,7 +109,7 @@ export function CategoryForm({
       footer={footer}
       className="max-w-2xl"
     >
-      <form onSubmit={onSubmit} className="space-y-4 sm:space-y-6">
+      <form id={formId} onSubmit={onSubmit} className="space-y-4 sm:space-y-6">
         {/* Basic Information */}
         <div className="space-y-3 sm:space-y-4">
           <h3 className="text-base sm:text-lg font-medium text-slate-900 dark:text-slate-100">

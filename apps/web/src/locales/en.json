@@ -695,10 +695,22 @@
     },
     "techPillars": {
       "items": [
-        { "title": "AI sizing", "desc": "Fit, load, stride — personalized" },
-        { "title": "SilentDrive", "desc": "Low-noise motor tuning" },
-        { "title": "Pro assembly", "desc": "White-glove options" },
-        { "title": "Carbon neutral", "desc": "Offset every delivery" }
+        {
+          "title": "AI sizing",
+          "desc": "Fit, load, stride — personalized"
+        },
+        {
+          "title": "SilentDrive",
+          "desc": "Low-noise motor tuning"
+        },
+        {
+          "title": "Pro assembly",
+          "desc": "White-glove options"
+        },
+        {
+          "title": "Carbon neutral",
+          "desc": "Offset every delivery"
+        }
       ]
     },
     "parallax": {
@@ -1043,7 +1055,8 @@
     "yoga-blocks": "Yoga Blocks",
     "yoga-mats": "Yoga Mats",
     "yoga-straps": "Yoga Straps",
-    "yoga-wheels": "Yoga Wheels"
+    "yoga-wheels": "Yoga Wheels",
+    "testcatnew": "TestCatNew"
   },
   "recommendations": {
     "basedOn": "Based on your activity",
