@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import { loadStripe, type StripeElementLocale, type Appearance } from "@stripe/stripe-js";
+import { loadStripe, type StripeElementLocale, type Appearance, type Stripe } from "@stripe/stripe-js";
 import { formatCurrency } from "../../lib/format";
 import { z } from "zod";
 import { useI18n } from "../../components/providers/I18nProvider";
@@ -23,12 +23,12 @@ type CartDTO = {
   items: { id: string; name: string; qty: number; priceCents: number; currency: string }[];
 };
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+// We'll initialize Stripe dynamically with the publishable key returned by the server
 
 // Map our app locales to Stripe supported locales
 function getStripeLocale(appLang: string): StripeElementLocale {
   const supported: StripeElementLocale[] = [
-    'auto','bg','cs','da','de','el','en','en-GB','es','es-419','et','fi','fil','fr','fr-CA','hr','hu','id','it','ja','ko','lt','lv','ms','mt','nb','nl','pl','pt','pt-BR','ro','ru','sk','sl','sv','th','tr','vi','zh','zh-HK','zh-TW'
+    'auto','en','en-GB', 'ko'
   ];
   const asExact = supported.find(l => l === (appLang as StripeElementLocale));
   if (asExact) return asExact;
@@ -46,6 +46,9 @@ export default function CheckoutClient({ cart }: { cart: CartDTO }) {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('stripe');
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [publishableKey, setPublishableKey] = useState<string | null>(null);
+  const stripePromise = useMemo(() => {
+    return publishableKey ? loadStripe(publishableKey) : null;
+  }, [publishableKey]);
   const [tossPaymentData, setTossPaymentData] = useState<{
     tossConfig?: { clientKey: string };
     amount?: number;
@@ -173,7 +176,7 @@ export default function CheckoutClient({ cart }: { cart: CartDTO }) {
   // For Stripe, we need both clientSecret and publishableKey
   // For Toss, we just need tossPaymentData with valid structure
   const isReady = paymentMethod === 'stripe' 
-    ? (clientSecret && publishableKey && clientSecret !== 'toss') 
+    ? (clientSecret && publishableKey && stripePromise && clientSecret !== 'toss') 
     : (tossPaymentData && tossPaymentData.tossConfig && tossPaymentData.amount && tossPaymentData.orderId);
 
   if (!isReady) {
@@ -284,8 +287,8 @@ export default function CheckoutClient({ cart }: { cart: CartDTO }) {
       {/* Payment Component */}
       {paymentMethod === 'stripe' ? (
         <Elements
-          key={`stripe-${theme}`}
-          stripe={stripePromise}
+          key={`stripe-${theme}-${publishableKey}`}
+          stripe={stripePromise as unknown as Stripe}
           options={{
             clientSecret: clientSecret!,
             locale: getStripeLocale(lang),
@@ -395,7 +398,9 @@ function StripePaymentBox({
           <div>• {t('checkout.cardHelpCountry', "Mamlakat")}</div>
         </div>
       )}
-      <PaymentElement />
+      <div className="min-h-[220px]">
+        <PaymentElement options={{ layout: 'tabs' }} />
+      </div>
       {message && <p className="text-sm text-red-600">{message}</p>}
       <button onClick={onPay} disabled={!stripe || submitting || !canPay} className="w-full rounded-2xl px-5 py-3 bg-black text-white hover:opacity-90 transition">
         {submitting ? t('checkout.processing', 'Processing...') : t('checkout.payNow', 'Pay now')}

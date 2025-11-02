@@ -204,8 +204,9 @@ export async function POST(req: NextRequest) {
     }
 
     // In test mode, directly redirect to success page
-    // In production, this would redirect to actual Toss Payments with the payment method
-    const successUrl = new URL('/checkout/success', req.url);
+    // the public origin seen by the user
+    const origin = req.headers.get('origin') ?? req.nextUrl.origin;
+    const successUrl = new URL('/checkout/success', origin);
     successUrl.searchParams.set('test', 'true');
     successUrl.searchParams.set('method', 'toss');
     successUrl.searchParams.set('paymentMethod', method);
@@ -353,7 +354,10 @@ export async function GET(req: NextRequest) {
 
     // In test mode, directly redirect to success page
     // In production, this would be handled by Toss Payments callback
-    return NextResponse.redirect(new URL('/checkout/success?test=true&method=toss', req.url));
+    {
+      const origin = req.headers.get('origin') ?? req.nextUrl.origin;
+      return NextResponse.redirect(new URL('/checkout/success?test=true&method=toss', origin));
+    }
 
   } catch (error) {
     console.error('Toss payment error:', error);

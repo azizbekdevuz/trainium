@@ -31,7 +31,7 @@ export interface ProductAlertData {
 function getSocketBaseUrl() {
   if (process.env.NEXT_PUBLIC_SOCKET_URL) return process.env.NEXT_PUBLIC_SOCKET_URL;
   if (process.env.NODE_ENV === 'production') return process.env.NEXT_PUBLIC_SOCKET_URL || '';
-  return 'http://localhost:4000';
+  return 'http://72.61.149.55:4000';
 }
 
 async function post(path: string, body: unknown) {

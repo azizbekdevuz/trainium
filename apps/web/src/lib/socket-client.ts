@@ -56,7 +56,7 @@ class SocketClient {
 
       const socketUrl = process.env.NODE_ENV === 'production' 
         ? process.env.NEXT_PUBLIC_SOCKET_URL || window.location.origin
-        : (process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:4000');
+        : (process.env.NEXT_PUBLIC_SOCKET_URL || 'http://72.61.149.55:4000');
 
       this.socket = io(socketUrl, {
         path: '/api/socketio',

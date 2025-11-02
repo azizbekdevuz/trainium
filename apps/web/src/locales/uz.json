@@ -709,10 +709,22 @@
     },
     "techPillars": {
       "items": [
-        { "title": "AI o'lcham tanlash", "desc": "Moslash — gavda, yuk, qadam" },
-        { "title": "SilentDrive", "desc": "Past shovqinli motor sozlamalari" },
-        { "title": "Pro yig'ish", "desc": "White‑glove xizmatlar" },
-        { "title": "Uglerod neytral", "desc": "Har bir yetkazishni kompensatsiya" }
+        {
+          "title": "AI o'lcham tanlash",
+          "desc": "Moslash — gavda, yuk, qadam"
+        },
+        {
+          "title": "SilentDrive",
+          "desc": "Past shovqinli motor sozlamalari"
+        },
+        {
+          "title": "Pro yig'ish",
+          "desc": "White‑glove xizmatlar"
+        },
+        {
+          "title": "Uglerod neytral",
+          "desc": "Har bir yetkazishni kompensatsiya"
+        }
       ]
     },
     "parallax": {
@@ -1101,7 +1113,8 @@
     "yoga-blocks": "Yoga bloklari",
     "yoga-mats": "Yoga gilamlari",
     "yoga-straps": "Yoga tasmalar",
-    "yoga-wheels": "Yoga g'ildiraklari"
+    "yoga-wheels": "Yoga g'ildiraklari",
+    "testcatnew": "TestCatUz"
   },
   "recommendations": {
     "basedOn": "Faoliyat asosida tavsiya",
@@ -1214,7 +1227,7 @@
     "subtitle": "Kuzatuv raqami va emailni kiriting — real vaqt yangilanishlari",
     "title": "Posilkani kuzatish",
     "viewOrderDetails": "Buyurtma tafsilotlarini ko'rish"
-  }, 
+  },
   "userNotifications": {
     "thirtyDayLimit": "Oxirgi 30 kun yoki ro'yxatdan o'tgan kuningizdan boshlab bildirishnomalar ko'rsatiladi.",
     "cleanupInfo": "Tizim yaxshi ishlashi uchun eski bildirishnomalar avtomatik ravishda tozalanadi.",

@@ -703,10 +703,22 @@
     },
     "techPillars": {
       "items": [
-        { "title": "AI 사이징", "desc": "체형·부하·보폭 맞춤" },
-        { "title": "SilentDrive", "desc": "저소음 모터 튜닝" },
-        { "title": "전문 설치", "desc": "화이트글러브 옵션" },
-        { "title": "탄소 중립", "desc": "모든 배송 상쇄" }
+        {
+          "title": "AI 사이징",
+          "desc": "체형·부하·보폭 맞춤"
+        },
+        {
+          "title": "SilentDrive",
+          "desc": "저소음 모터 튜닝"
+        },
+        {
+          "title": "전문 설치",
+          "desc": "화이트글러브 옵션"
+        },
+        {
+          "title": "탄소 중립",
+          "desc": "모든 배송 상쇄"
+        }
       ]
     },
     "parallax": {
@@ -1093,7 +1105,8 @@
     "yoga-blocks": "요가 블록",
     "yoga-mats": "요가 매트",
     "yoga-straps": "요가 스트랩",
-    "yoga-wheels": "요가 휠"
+    "yoga-wheels": "요가 휠",
+    "testcatnew": "TestCatKr"
   },
   "recommendations": {
     "basedOn": "활동 기반 추천",

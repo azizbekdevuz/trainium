@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     },
   }));
 
-  const origin = req.headers.get("origin") ?? "http://localhost:3000";
+  const origin = req.headers.get("origin") ?? "http://72.61.149.55:3000";
 
   const checkout = await stripe.checkout.sessions.create({
     mode: "payment",
