@@ -39,7 +39,7 @@ export function Pagination({
 
   const buildUrl = (page: number) => {
     // Use relative URL construction to avoid window dependency during SSR
-    const url = new URL(baseUrl, typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
+    const url = new URL(baseUrl, typeof window !== 'undefined' ? window.location.origin : 'http://72.61.149.55:3000');
     const searchParams = new URLSearchParams();
     
     // Add existing params

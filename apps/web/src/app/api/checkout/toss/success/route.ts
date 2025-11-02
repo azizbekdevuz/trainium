@@ -194,7 +194,10 @@ export async function GET(req: NextRequest) {
     }
 
     // Redirect to success page with proper parameters
-    return NextResponse.redirect(new URL('/checkout/success?method=toss&test=true', req.url));
+    {
+      const origin = req.headers.get('origin') ?? req.nextUrl.origin;
+      return NextResponse.redirect(new URL('/checkout/success?method=toss&test=true', origin));
+    }
 
   } catch (error) {
     console.error('Toss Payments success handler error:', error);

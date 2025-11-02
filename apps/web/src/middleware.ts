@@ -21,6 +21,9 @@ export async function middleware(req: NextRequest) {
   const segments = url.pathname.split('/').filter(Boolean);
   const first = segments[0];
   const isSupported = first && (SUPPORTED_LOCALES as readonly string[]).includes(first);
+  if (isSupported && segments[1] === 'api') {
+    return NextResponse.next();
+  }
   const isInternal = url.pathname.startsWith('/_next') || url.pathname.startsWith('/favicon') || url.pathname.startsWith('/public') || url.pathname.startsWith('/uploads') || url.pathname.startsWith('/assets') || url.pathname.startsWith('/images');
   const isAPI = url.pathname.startsWith('/api');
 
@@ -55,20 +58,19 @@ export async function middleware(req: NextRequest) {
   }
 
   const pathForAuth = normalizedPathname;
+  // Lightweight guard here: rely on presence of session cookie only.
+  // Full role/auth checks are enforced in app layouts using auth() on server.
+  const hasSessionCookie = Boolean(req.cookies.get(cookieName)?.value);
   if (pathForAuth.startsWith('/admin')) {
-    // Allow unauthenticated access to admin auth pages
     const isAdminAuth = pathForAuth.startsWith('/admin/auth');
-    if (!isAdminAuth) {
-      const role = (token as any)?.role;
-      if (!token || role !== "ADMIN") {
-        const redirectURL = req.nextUrl.clone();
-        redirectURL.pathname = "/";
-        return NextResponse.redirect(redirectURL);
-      }
+    if (!isAdminAuth && !hasSessionCookie) {
+      const redirectURL = req.nextUrl.clone();
+      redirectURL.pathname = "/auth/signin";
+      return NextResponse.redirect(redirectURL);
     }
   }
 
-  if (pathForAuth === "/account" && !token) {
+  if (pathForAuth === "/account" && !hasSessionCookie) {
     const redirectURL = req.nextUrl.clone();
     redirectURL.pathname = "/auth/signin";
     return NextResponse.redirect(redirectURL);
