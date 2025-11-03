@@ -1,0 +1,33 @@
+# VCS
+.git
+.gitignore
+
+# Node
+node_modules
+**/node_modules
+pnpm-store
+.pnpm-store
+
+# Next build outputs
+**/.next
+.next
+out
+
+# Turbo
+.turbo
+
+# Logs
+*.log
+logs
+
+# Local env and editor
+.env*
+!.env.example
+.vscode
+.idea
+.DS_Store
+
+# Prisma generated cache (re-generated in build)
+**/.prisma
+
+
