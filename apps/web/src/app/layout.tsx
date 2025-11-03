@@ -29,7 +29,26 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="body-grid relative min-h-screen flex flex-col">
         <script
           dangerouslySetInnerHTML={{
-            __html: `!function(){try{var m=document.cookie.match(/(?:^|; )theme=([^;]+)/);var t=m?decodeURIComponent(m[1]):localStorage.getItem('theme');var d=t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches);var c=document.documentElement.classList;c[d?'add':'remove']('dark')}catch(e){}}();`
+            __html: `
+              (function() {
+                try {
+                  var cookieMatch = document.cookie.match(/(?:^|;\\s*)theme=([^;]+)/);
+                  var storedTheme = cookieMatch ? decodeURIComponent(cookieMatch[1]) : localStorage.getItem('theme');
+
+                  // default is light unless explicitly "dark"
+                  var isDark = storedTheme === 'dark';
+
+                  var root = document.documentElement;
+                  if (isDark) {
+                    root.classList.add('dark');
+                    root.style.colorScheme = 'dark';
+                  } else {
+                    root.classList.remove('dark');
+                    root.style.colorScheme = 'light';
+                  }
+                } catch (e) {}
+              })();
+            `
           }}
         />
 

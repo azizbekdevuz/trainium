@@ -16,14 +16,14 @@ function getInitialTheme(): Theme {
   if (typeof window === 'undefined') return 'light';
   try {
     // Prefer cookie (set server-side for SSR no-flash correctness)
-    const match = document.cookie.match(/(?:^|; )theme=([^;]+)/);
+    const match = document.cookie.match(/(?:^|;\\s*)theme=([^;]+)/);
     const cookieTheme = match ? decodeURIComponent(match[1]) : undefined;
     if (cookieTheme === 'light' || cookieTheme === 'dark') return cookieTheme as Theme;
+
     const stored = window.localStorage.getItem('theme');
-    if (stored === 'light' || stored === 'dark') return stored;
+    if (stored === 'light' || stored === 'dark') return stored as Theme;
   } catch { /* ignore localStorage/cookie errors */ }
-  const prefersDark = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  return prefersDark ? 'dark' : 'light';
+  return 'light';
 }
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
@@ -33,8 +33,10 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
     const root = document.documentElement;
     if (next === 'dark') {
       root.classList.add('dark');
+      root.style.colorScheme = 'dark';
     } else {
       root.classList.remove('dark');
+      root.style.colorScheme = 'light';
     }
   }, []);
 
@@ -55,18 +57,7 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
 
   useEffect(() => {
     applyTheme(theme);
-    const media = window.matchMedia('(prefers-color-scheme: dark)');
-    const onChange = () => {
-      try {
-        const stored = window.localStorage.getItem('theme');
-        if (stored !== 'light' && stored !== 'dark') {
-          setTheme(media.matches ? 'dark' : 'light');
-        }
-      } catch { /* ignore localStorage errors */ }
-    };
-    media.addEventListener?.('change', onChange);
-    return () => media.removeEventListener?.('change', onChange);
-  }, [theme, applyTheme, setTheme]);
+  }, [theme, applyTheme]);
 
   const value = useMemo(() => ({ theme, setTheme, toggle }), [theme, setTheme, toggle]);
 

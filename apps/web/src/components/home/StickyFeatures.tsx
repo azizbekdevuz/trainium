@@ -31,13 +31,13 @@ export default function StickyFeatures() {
         {/* sticky visual */}
         <div>
           <div className="lg:sticky lg:top-28">
-            <div className="aspect-[4/3] rounded-2xl relative overflow-hidden border bg-white dark:bg-slate-950">
+            <div className="aspect-[4/3] rounded-2xl relative overflow-hidden border bg-[rgba(var(--color-card))]">
               {/* background fill (theme-aware, works with any image colors) */}
-              <div className="absolute inset-0 bg-gradient-to-br from-white to-[rgba(var(--color-muted)/1)] dark:from-slate-950 dark:to-black" aria-hidden />
+              <div className="absolute inset-0 bg-gradient-to-br from-[rgba(var(--color-card))] to-[rgba(var(--color-muted)/1)] dark:from-[rgba(var(--color-card))] dark:to-[rgba(var(--color-muted)/1)]" aria-hidden />
               <div className="absolute -inset-10 opacity-[0.15] [mask-image:radial-gradient(closest-side,white,transparent)] bg-[repeating-linear-gradient(0deg,rgba(14,165,233,0.22),rgba(14,165,233,0.22)_1px,transparent_1px,transparent_18px)]" aria-hidden />
               {!reduce && (
                 <div className="absolute inset-0 flex items-center justify-center" aria-hidden>
-                  <div className="size-[70%] rounded-full bg-cyan-500/15 blur-3xl" />
+                  <div className="size-[70%] rounded-full bg-[rgba(var(--color-primary))]/15 blur-3xl" />
                 </div>
               )}
 
@@ -75,11 +75,11 @@ export default function StickyFeatures() {
                     transition={{ duration: 0.18 }}
                   >
                     <motion.div
-                      className="size-3 rounded-full bg-cyan-500 ring-4 ring-cyan-400/30"
+                      className="size-3 rounded-full bg-[rgba(var(--color-primary))] ring-4 ring-[rgba(var(--color-primary))]/30"
                       animate={reduce ? {} : { scale: [1, 1.06, 1] }}
                       transition={reduce ? undefined : { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
                     />
-                    <div className="mt-2 whitespace-nowrap rounded-xl px-3 py-1 text-xs bg-white text-black border border-black/10 shadow-sm backdrop-blur-sm dark:bg-black/80 dark:text-white dark:border-white/20">
+                    <div className="mt-2 whitespace-nowrap rounded-xl px-3 py-1 text-xs bg-[rgba(var(--color-card))] text-[rgba(var(--color-fg))] border border-[rgba(var(--color-border))]/10 shadow-sm backdrop-blur-sm dark:bg-[rgba(var(--color-card))] dark:text-[rgba(var(--color-fg))] dark:border-[rgba(var(--color-border))]/20">
                       {f.title}
                     </div>
                   </motion.div>
@@ -100,7 +100,11 @@ export default function StickyFeatures() {
                 onMouseEnter={() => setActive(i)}
                 onFocus={() => setActive(i)}
                 onClick={() => setActive(i)}
-                className={`text-left w-full rounded-2xl border p-5 transition-colors bg-white dark:bg-slate-950 ${i === active ? 'ring-2 ring-cyan-500/40' : ''}`}
+                className={[
+                  "text-left w-full rounded-2xl border p-5 transition-colors",  
+                  "bg-[rgba(var(--color-card))] text-[rgb(var(--color-fg))] border-[rgb(var(--color-border))]",
+                  i === active ? "ring-2 ring-[rgba(var(--color-primary))]/40" : "",
+                ].join(' ')}
               >
                 <div className="font-medium">{f.title}</div>
                 <div className="text-sm text-gray-600 dark:text-gray-300">{f.desc}</div>

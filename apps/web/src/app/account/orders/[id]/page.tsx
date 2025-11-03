@@ -50,12 +50,12 @@ export default async function OrderDetailsPage({ params }: Params) {
         <h2 className="font-medium mb-3">{dict.orderPage?.items ?? 'Items'}</h2>
         <ul className="divide-y">
           {order.items.map((it) => (
-            <li key={it.id} className="py-3 flex items-center justify-between text-sm">
-              <div>
-                <div>{it.name}{it.sku ? ` (${it.sku})` : ''}</div>
+            <li key={it.id} className="py-3 flex items-start justify-between gap-3 text-sm">
+              <div className="min-w-0">
+                <div className="truncate">{it.name}{it.sku ? ` (${it.sku})` : ''}</div>
                 <div className="text-gray-500">{dict.orderPage?.qty ?? 'Qty'}: {it.qty}</div>
               </div>
-              <div className="font-medium">{formatCurrency(it.priceCents * it.qty, order.currency)}</div>
+              <div className="font-medium whitespace-nowrap">{formatCurrency(it.priceCents * it.qty, order.currency)}</div>
             </li>
           ))}
         </ul>
