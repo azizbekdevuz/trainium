@@ -1,18 +1,14 @@
-import {
-  Body,
-  // Button,
-  Container,
-  Heading,
-  // Img,
-  Link,
-  Preview,
-  Section,
-  Text,
-  Hr,
-  Row,
-  Column,
-} from '@react-email/components';
 import * as React from 'react';
+
+const Body = ({ children, style }: any) => <div style={style}>{children}</div>;
+const Container = ({ children, style }: any) => <div style={style}>{children}</div>;
+const Section = ({ children, style }: any) => <div style={style}>{children}</div>;
+const Heading = ({ children, style }: any) => <h2 style={style}>{children}</h2>;
+const Text = ({ children, style }: any) => <p style={style as React.CSSProperties}>{children}</p>;
+const Link = ({ children, style, href }: any) => <a href={href} style={style}>{children}</a>;
+const Hr = ({ style }: any) => <hr style={style} />;
+const Row = ({ children, style }: any) => <div style={{ display: 'flex', width: '100%', ...(style || {}) }}>{children}</div>;
+const Column = ({ children, style }: any) => <div style={{ flex: 1, ...(style || {}) }}>{children}</div>;
 import { formatCurrency as formatCurrencyAmount } from '../lib/format';
 
 interface OrderConfirmationEmailProps {
@@ -60,11 +56,8 @@ export const OrderConfirmationEmail = ({
   trackingNumber,
   carrier,
 }: OrderConfirmationEmailProps) => {
-  const previewText = `Order Confirmation - ${orderId}`;
-
   return (
     <>
-      <Preview>{previewText}</Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={header}>
