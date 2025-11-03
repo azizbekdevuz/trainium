@@ -7,13 +7,14 @@ RUN corepack enable
 
 # --- Install deps and build (workspace root) ---
 FROM base AS builder
+ENV NODE_ENV=development
 WORKDIR /repo
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json turbo.json ./
 COPY apps/web/package.json apps/web/package.json
 COPY apps/socket/package.json apps/socket/package.json
 COPY prisma ./prisma
 COPY . ./
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --prod=false
 RUN pnpm --filter @apps/web prisma:generate
 RUN pnpm --filter @apps/web build
 
@@ -26,6 +27,8 @@ WORKDIR /app
 COPY --from=builder /repo/apps/web/.next/standalone ./
 COPY --from=builder /repo/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder /repo/apps/web/public ./apps/web/public
+# Ensure Prisma engines are available at runtime
+COPY --from=builder /repo/apps/web/node_modules/.prisma ./apps/web/node_modules/.prisma
 
 EXPOSE 3000
 CMD ["node", "apps/web/server.js"]
