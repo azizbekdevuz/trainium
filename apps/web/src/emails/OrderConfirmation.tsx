@@ -2,9 +2,7 @@ import {
   Body,
   // Button,
   Container,
-  Head as HeadEmail,
   Heading,
-  Html as HtmlEmail,
   // Img,
   Link,
   Preview,
@@ -65,8 +63,7 @@ export const OrderConfirmationEmail = ({
   const previewText = `Order Confirmation - ${orderId}`;
 
   return (
-    <HtmlEmail>
-      <HeadEmail />
+    <>
       <Preview>{previewText}</Preview>
       <Body style={main}>
         <Container style={container}>
@@ -202,7 +199,7 @@ export const OrderConfirmationEmail = ({
           </Section>
         </Container>
       </Body>
-    </HtmlEmail>
+    </>
   );
 };
 
