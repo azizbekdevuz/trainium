@@ -1,5 +1,4 @@
 import { Resend } from 'resend';
-import { OrderConfirmationEmail } from '../emails/OrderConfirmation';
 import { getDictionary } from './i18n';
 import type { AppLocale } from './i18n-config';
 
@@ -85,6 +84,7 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
     
     const subjectRaw = `i18n.email.orderConfirmation|${data.orderId}`;
     const subject = await translateEmailString(subjectRaw, data.locale ?? 'en');
+    const { OrderConfirmationEmail } = await import('../emails/OrderConfirmation');
     const { data: emailData, error } = await resend.emails.send({
       from: 'Trainium <onboarding@resend.dev>',
       to: [recipientEmail],
