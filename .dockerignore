@@ -11,12 +11,14 @@ pnpm-store
 # Next build outputs
 **/.next
 .next
+dist
 out
 
 # Turbo
 .turbo
 
 # Logs
+**/*.log
 *.log
 logs
 
@@ -30,4 +32,5 @@ logs
 # Prisma generated cache (re-generated in build)
 **/.prisma
 
-
+Dockerfile
+docker-compose.yml
