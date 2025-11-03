@@ -169,7 +169,7 @@ export const OrderConfirmationEmail = ({
                     </Text>
                   )}
                   <Text style={{ margin: '0', fontSize: '12px', color: '#0369a1' }}>
-                    Track your package at: <Link href={`https://trainium.com/track/${trackingNumber}`} style={link}>trainium.com/track/{trackingNumber}</Link>
+                    Track your package at: <Link href={`https://trainium.shop/track/${trackingNumber}?email=${customerEmail}`} style={link}>trainium.shop/track/{trackingNumber}?email={customerEmail}</Link>
                   </Text>
                 </div>
               )}
@@ -189,14 +189,14 @@ export const OrderConfirmationEmail = ({
           <Section style={footer}>
             <Text style={footerText}>
               Questions about your order? Contact us at{' '}
-              <Link href="mailto:support@trainium.com" style={link}>
-                support@trainium.com
+              <Link href="mailto:support@trainium.shop" style={link}>
+                support@trainium.shop
               </Link>
             </Text>
             <Text style={footerText}>
               Track your order at{' '}
-              <Link href={`https://trainium.com/account/orders/${orderId}`} style={link}>
-                trainium.com/account/orders/{orderId}
+              <Link href={`https://trainium.shop/account/orders/${orderId}`} style={link}>
+                trainium.shop/account/orders/{orderId}
               </Link>
             </Text>
           </Section>

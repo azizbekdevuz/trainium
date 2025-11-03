@@ -128,7 +128,7 @@ export async function sendOrderStatusUpdateEmail(
         if (trackingNumber) {
           messageRaw += `\n\ni18n.email.trackingNumber|${trackingNumber}`;
         }
-        messageRaw += `\n\ni18n.email.trackAt|https://trainium.com/account/orders/${orderId}`;
+        messageRaw += `\n\ni18n.email.trackAt|https://trainium.shop/account/orders/${orderId}`;
         break;
       case 'DELIVERED':
         messageRaw += `i18n.email.automated\n\ni18n.email.delivered|${orderId}`;
