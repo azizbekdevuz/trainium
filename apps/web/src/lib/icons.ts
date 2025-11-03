@@ -8,7 +8,8 @@ import {
   Star, Brain, Lightbulb, Clock, Truck, X, 
   Check, ExternalLink, ShoppingCart, Wifi, WifiOff,
   Bell, Search, Filter, Plus, Loader2, ChevronLeft, 
-  ChevronRight, AlertCircle, Send, Loader, Menu, Globe
+  ChevronRight, AlertCircle, Send, Loader, Menu, Globe,
+  Github, Linkedin
 } from 'lucide-react';
 
 export const Icons = {
@@ -79,6 +80,8 @@ export const Icons = {
   loading: Loader,
   menu: Menu,
   globe: Globe,
+  github: Github,
+  linkedin: Linkedin,
 };
 
 export type IconName = keyof typeof Icons;

@@ -8,6 +8,7 @@ import "./globals.css";
 import { ToastContainer } from "../lib/toast";
 import { I18nProvider } from "../components/providers/I18nProvider";
 import ThemeProvider from "../components/providers/ThemeProvider";
+import Footer from "../components/layout/Footer";
 import { ResponsiveNavigation } from "../components/nav/ResponsiveNavigation";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -31,27 +32,23 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             __html: `!function(){try{var m=document.cookie.match(/(?:^|; )theme=([^;]+)/);var t=m?decodeURIComponent(m[1]):localStorage.getItem('theme');var d=t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches);var c=document.documentElement.classList;c[d?'add':'remove']('dark')}catch(e){}}();`
           }}
         />
+
         <SessionProviderWrapper initialSession={session}>
           <I18nProvider lang={lang} dict={dict}>
-          <ThemeProvider>
-          <InteractiveBackground />
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-600/10 via-transparent to-cyan-600/10 animate-pulse" />
-          <header className="site-header inset-x-0 top-0 z-30 border-b glass">
-            <ResponsiveNavigation lang={lang} dict={dict} />
-          </header>
+            <ThemeProvider>
+              <InteractiveBackground />
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-600/10 via-transparent to-cyan-600/10 animate-pulse" />
+              <header className="site-header inset-x-0 top-0 z-30 border-b glass">
+                <ResponsiveNavigation lang={lang} dict={dict} />
+              </header>
 
-          <main className="flex-1 relative z-10">
-            {children}
-          </main>
-          <ToastContainer />
+              <main className="flex-1 relative z-10">
+                {children}
+              </main>
+              <ToastContainer />
 
-          <footer className="inset-x-0 border-t glass">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 py-3 text-xs text-gray-600 flex flex-col sm:flex-row justify-between items-center gap-2">
-              <span>© {new Date().getFullYear()} {dict.brand.name}</span>
-              <span>{dict.footer.tagline}</span>
-            </div>
-          </footer>
-          </ThemeProvider>
+              <Footer year={new Date().getFullYear()} brand={dict.brand.name} tagline={dict.footer.tagline} devDict={dict.pages?.about?.dev} />
+            </ThemeProvider>
           </I18nProvider>
         </SessionProviderWrapper>
       </body>

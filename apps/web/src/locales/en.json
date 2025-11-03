@@ -809,7 +809,18 @@
         }
       ],
       "subtitle": "We are a team of fitness enthusiasts passionate about helping you reach your goals.",
-      "title": "About us"
+      "title": "About us",
+      "dev": {
+        "title": "About the Developer",
+        "intro": "Engineered with performance, accessibility, security, and a cohesive design system. Animations are subtle and GPU‑friendly, theme‑aware, and respect motion preferences.",
+        "principles": [
+          "Consistent design tokens and dark/light parity",
+          "Mobile‑first, responsive, and resilient UI states",
+          "Progressive enhancement with graceful degradation",
+          "Secure data handling and privacy‑minded defaults"
+        ],
+        "tech": ["TypeScript", "Next.js App Router", "Prisma", "PostgreSQL", "Design Tokens"]
+      }
     },
     "contact": {
       "faq": {
