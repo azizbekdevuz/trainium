@@ -59,7 +59,7 @@ class SocketClient {
         : (process.env.NEXT_PUBLIC_SOCKET_URL || 'http://72.61.149.55:4000');
 
       this.socket = io(socketUrl, {
-        path: '/api/socketio',
+        path: '/api/socketio/',
         transports: ['websocket', 'polling'],
         withCredentials: true,
         timeout: 10000,

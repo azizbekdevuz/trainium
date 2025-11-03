@@ -11,7 +11,7 @@ const ORIGINS = DEV
   : [process.env.NEXTAUTH_URL].filter(Boolean); // keep your prod rule
 
 // Optional: keep the same Socket.IO path you used behind Next
-const SOCKET_PATH = process.env.SOCKET_PATH || "/api/socketio";
+const SOCKET_PATH = process.env.SOCKET_PATH || "/api/socketio/";
 
 // ---- HTTP + IO ----
 const app = express();
