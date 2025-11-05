@@ -222,6 +222,19 @@ app.get("/admin/stats", (_req, res) => {
 
 // ---- START ----
 server.listen(PORT, () => {
-  const path = DEV ? `http://localhost:${PORT}` : `${prodPath}:${PORT} path: ${SOCKET_PATH}`;
-  console.log(`Socket server on ${path}  (path: ${SOCKET_PATH})`);
+  const wsBase = process.env.NEXT_PUBLIC_SOCKET_URL
+    ? `${String(process.env.NEXT_PUBLIC_SOCKET_URL).replace(/\/$/, '')}${SOCKET_PATH}`
+    : `${DEV ? `http://localhost:${PORT}` : prodPath}${SOCKET_PATH}`;
+  const httpBase = DEV ? `http://localhost:${PORT}` : `http://127.0.0.1:${PORT}`;
+  const adminSecretSet = Boolean(process.env.SOCKET_ADMIN_SECRET);
+
+  console.log([
+    'Socket server ready',
+    `- env: ${process.env.NODE_ENV}`,
+    `- ws endpoint: ${wsBase}`,
+    `- http base:   ${httpBase}`,
+    `- path:        ${SOCKET_PATH}`,
+    `- cors:        ${ORIGINS.join(', ')}`,
+    `- admin secret:${adminSecretSet ? ' set' : ' MISSING'}`
+  ].join('\n'));
 });

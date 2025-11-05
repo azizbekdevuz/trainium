@@ -29,9 +29,17 @@ export interface ProductAlertData {
 }
 
 function getSocketBaseUrl() {
-  if (process.env.NEXT_PUBLIC_SOCKET_URL) return process.env.NEXT_PUBLIC_SOCKET_URL;
-  if (process.env.NODE_ENV === 'production') return process.env.NEXT_PUBLIC_SOCKET_URL || '';
-  return 'http://72.61.149.55:4000';
+  const serverUrl = process.env.SOCKET_SERVER_URL?.replace(/\/$/, '');
+  if (serverUrl) return serverUrl;
+
+  // Optional: allow public URL for non-admin reads in dev
+  const publicUrl = process.env.NEXT_PUBLIC_SOCKET_URL?.replace(/\/$/, '');
+  if (publicUrl && process.env.NODE_ENV !== 'production') return publicUrl;
+
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('SOCKET_SERVER_URL is required in production');
+  }
+  return 'http://localhost:4000';
 }
 
 async function post(path: string, body: unknown) {

@@ -54,13 +54,12 @@ class SocketClient {
       this.connectionState.error = null;
       this.lastAuth = { userId, userRole };
 
-      const socketUrl = process.env.NODE_ENV === 'production' 
-        ? process.env.NEXT_PUBLIC_SOCKET_URL || window.location.origin
-        : (process.env.NEXT_PUBLIC_SOCKET_URL || 'http://72.61.149.55:4000');
+      const base = process.env.NEXT_PUBLIC_SOCKET_URL?.replace(/\/$/, '');
+      const socketUrl = base || (process.env.NODE_ENV !== 'production'  ? 'http://localhost:4000' : undefined);
 
       this.socket = io(socketUrl, {
         path: '/api/socketio/',
-        transports: ['websocket', 'polling'],
+        transports: process.env.NODE_ENV === 'production' ? ['websocket'] : ['websocket', 'polling'],
         withCredentials: true,
         timeout: 10000,
         reconnection: true,

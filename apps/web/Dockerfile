@@ -37,7 +37,7 @@ RUN NODE_ENV=production pnpm --filter @apps/web build
 
 # ------------------ runtime ------------------
 FROM node:20-bullseye-slim AS runner
-ENV NODE_ENV=development
+ENV NODE_ENV=production
 WORKDIR /app
 
 # standalone server
