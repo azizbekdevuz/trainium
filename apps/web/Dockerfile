@@ -17,6 +17,13 @@ COPY . ./
 RUN pnpm install --frozen-lockfile --prod=false
 RUN pnpm --filter @apps/web prisma:generate
 RUN pnpm --filter @apps/web build
+RUN echo "=== DEBUG: searching for next/document in container ===" && \
+    grep -R --line-number --color "next/document" . \
+      --exclude-dir=node_modules \
+      --exclude-dir=.next \
+      --exclude-dir=dist \
+      || true
+
 
 # --- Runtime: Next.js standalone output ---
 FROM node:20-bullseye-slim AS runner

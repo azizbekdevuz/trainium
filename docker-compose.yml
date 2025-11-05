@@ -6,7 +6,7 @@ services:
     env_file:
       - .env
     ports:
-      - "3000:3000"
+      - "3000:4000"
     restart: unless-stopped
     depends_on:
       - socket
