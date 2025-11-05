@@ -60,7 +60,7 @@ class SocketClient {
 
       this.socket = io(socketUrl, {
         path: '/api/socketio/',
-        transports: ['websocket', 'polling'],
+        transports: process.env.NODE_ENV === 'production' ? ['websocket'] : ['websocket', 'polling'],
         withCredentials: true,
         timeout: 10000,
         reconnection: true,
@@ -124,9 +124,17 @@ class SocketClient {
       });
 
       // Authentication handlers
-      this.socket.on('authenticated', (data) => {
-        console.log('Socket.IO authenticated:', data);
-        this.emit('auth:authenticated', data);
+      this.socket.on('authenticated', (raw: any) => {
+        try {
+          const data = {
+            userId: raw?.userId ? String(raw.userId) : undefined,
+            userRole: raw?.userRole ? String(raw.userRole) : undefined,
+          };
+          console.log('Socket.IO authenticated:', data);
+          this.emit('auth:authenticated', data);
+        } catch (e) {
+          console.error('authenticated handler error:', e);
+        }
       });
 
       this.socket.on('auth_error', (error) => {
@@ -135,34 +143,124 @@ class SocketClient {
       });
 
       // Notification handlers
-      this.socket.on('notification', (notification: SocketNotification) => {
-        console.log('Received notification:', notification);
-        this.emit('notification:received', notification);
+      this.socket.on('notification', (raw: any) => {
+        try {
+          const n = {
+            id: String(raw?.id ?? (globalThis.crypto?.randomUUID?.() ?? Date.now().toString())),
+            type: String(raw?.type ?? 'SYSTEM_ALERT'),
+            title: String(raw?.title ?? ''),
+            message: String(raw?.message ?? ''),
+            data: raw?.data,
+            timestamp: String(raw?.timestamp ?? new Date().toISOString()),
+            read: Boolean(raw?.read ?? false),
+          } as SocketNotification;
+          if (!n.title) {
+            console.warn('Ignoring notification without title', raw);
+            return;
+          }
+          console.log('Received notification:', n);
+          this.emit('notification:received', n);
+        } catch (e) {
+          console.error('notification handler error:', e);
+        }
       });
 
-      this.socket.on('system_notification', (notification: SocketNotification) => {
-        console.log('Received system notification:', notification);
-        this.emit('notification:system', notification);
+      this.socket.on('system_notification', (raw: any) => {
+        try {
+          const n = {
+            id: String(raw?.id ?? (globalThis.crypto?.randomUUID?.() ?? Date.now().toString())),
+            type: 'SYSTEM_ALERT' as const,
+            title: String(raw?.title ?? ''),
+            message: String(raw?.message ?? ''),
+            data: raw?.data,
+            timestamp: String(raw?.timestamp ?? new Date().toISOString()),
+            read: Boolean(raw?.read ?? false),
+          } as SocketNotification;
+          if (!n.title) {
+            console.warn('Ignoring system_notification without title', raw);
+            return;
+          }
+          console.log('Received system notification:', n);
+          this.emit('notification:system', n);
+        } catch (e) {
+          console.error('system_notification handler error:', e);
+        }
       });
 
-      this.socket.on('order_update', (update) => {
-        console.log('Received order update:', update);
-        this.emit('order:update', update);
+      this.socket.on('order_update', (raw: any) => {
+        try {
+          const normalized = {
+            orderId: String(raw?.orderId ?? raw?.order_id ?? ''),
+            status: raw?.status ? String(raw.status) : '',
+            trackingNumber: raw?.trackingNumber ?? raw?.tracking_no ?? undefined,
+            message: raw?.message ? String(raw.message) : '',
+            timestamp: raw?.timestamp ?? new Date().toISOString(),
+          };
+          if (!normalized.orderId) {
+            console.warn('Ignoring order_update without orderId', raw);
+            return;
+          }
+          console.log('Received order update:', normalized);
+          this.emit('order:update', normalized);
+        } catch (e) {
+          console.error('order_update handler error:', e);
+        }
       });
 
-      this.socket.on('product_alert', (alert) => {
-        console.log('Received product alert:', alert);
-        this.emit('product:alert', alert);
+      this.socket.on('product_alert', (raw: any) => {
+        try {
+          const alert = {
+            productId: String(raw?.productId ?? raw?.product_id ?? ''),
+            productName: raw?.productName ? String(raw.productName) : undefined,
+            alertType: raw?.alertType ? String(raw.alertType) : '',
+            message: String(raw?.message ?? ''),
+            currentStock: typeof raw?.currentStock === 'number' ? raw.currentStock : undefined,
+            lowStockAt: raw?.lowStockAt ?? null,
+            newPrice: typeof raw?.newPrice === 'number' ? raw.newPrice : undefined,
+            oldPrice: typeof raw?.oldPrice === 'number' ? raw.oldPrice : undefined,
+            timestamp: raw?.timestamp ?? new Date().toISOString(),
+          };
+          if (!alert.productId || !alert.alertType) {
+            console.warn('Ignoring product_alert missing productId/alertType', raw);
+            return;
+          }
+          console.log('Received product alert:', alert);
+          this.emit('product:alert', alert);
+        } catch (e) {
+          console.error('product_alert handler error:', e);
+        }
       });
 
-      this.socket.on('admin_notification', (notification: SocketNotification) => {
-        console.log('Received admin notification:', notification);
-        this.emit('notification:admin', notification);
+      this.socket.on('admin_notification', (raw: any) => {
+        try {
+          const n = {
+            id: String(raw?.id ?? (globalThis.crypto?.randomUUID?.() ?? Date.now().toString())),
+            type: String(raw?.type ?? 'SYSTEM_ALERT'),
+            title: String(raw?.title ?? ''),
+            message: String(raw?.message ?? ''),
+            data: raw?.data,
+            timestamp: String(raw?.timestamp ?? new Date().toISOString()),
+            read: Boolean(raw?.read ?? false),
+          } as SocketNotification;
+          if (!n.title) {
+            console.warn('Ignoring admin_notification without title', raw);
+            return;
+          }
+          console.log('Received admin notification:', n);
+          this.emit('notification:admin', n);
+        } catch (e) {
+          console.error('admin_notification handler error:', e);
+        }
       });
 
       // Ping/pong for connection health
-      this.socket.on('pong', (data) => {
-        this.emit('connection:pong', data);
+      this.socket.on('pong', (raw: any) => {
+        try {
+          const payload = { timestamp: String(raw?.timestamp ?? new Date().toISOString()) };
+          this.emit('connection:pong', payload);
+        } catch {
+          this.emit('connection:pong', { timestamp: new Date().toISOString() });
+        }
       });
     });
   }
