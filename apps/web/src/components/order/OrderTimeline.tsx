@@ -1,7 +1,6 @@
 'use client';
 
-import { OrderStatus } from '@prisma/client';
-import { getTimelineEventsForStatus } from '../../lib/order-status';
+import { getTimelineEventsForStatus, type OrderStatus } from '../../lib/order-status';
 import { useI18n } from '../providers/I18nProvider';
 import { formatDateTime } from '../../lib/date-utils';
 import { Icon } from '../ui/Icon';

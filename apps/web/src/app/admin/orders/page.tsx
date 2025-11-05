@@ -2,7 +2,7 @@ import { auth } from '../../../auth';
 import { redirect } from 'next/navigation';
 import { prisma } from '../../../lib/db';
 import Link from 'next/link';
-import { OrderStatus } from '@prisma/client';
+import type { OrderStatus } from '../../../lib/order-status';
 import { getDictionary, negotiateLocale } from '../../../lib/i18n';
 import { OrdersTable } from '../../../components/admin/OrdersTable';
 

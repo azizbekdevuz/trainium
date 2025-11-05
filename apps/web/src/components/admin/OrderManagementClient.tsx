@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import { formatCurrency } from '../../lib/format';
-import { OrderStatus } from '@prisma/client';
-import { getNextValidStatuses, getShippingStatusForOrder, ORDER_STATUS } from '../../lib/order-status';
+import { getNextValidStatuses, getShippingStatusForOrder, ORDER_STATUS, type OrderStatus } from '../../lib/order-status';
 import { useRouter } from 'next/navigation';
 import { OrderTrackingTimeline } from '../order/OrderTrackingTimeline';
 import { OrderTimeline } from '../order/OrderTimeline';
