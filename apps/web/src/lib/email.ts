@@ -2,7 +2,13 @@ import { Resend } from 'resend';
 import { getDictionary } from './i18n';
 import type { AppLocale } from './i18n-config';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResend() {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) {
+    throw new Error('RESEND_API_KEY is not set');
+  }
+  return new Resend(key);
+}
 
 export interface OrderEmailData {
   orderId: string;
@@ -85,7 +91,7 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
     const subjectRaw = `i18n.email.orderConfirmation|${data.orderId}`;
     const subject = await translateEmailString(subjectRaw, data.locale ?? 'en');
     const { OrderConfirmationEmail } = await import('../emails/OrderConfirmation');
-    const { data: emailData, error } = await resend.emails.send({
+    const { data: emailData, error } = await getResend().emails.send({
       from: 'Trainium <onboarding@resend.dev>',
       to: [recipientEmail],
       subject,
@@ -143,7 +149,7 @@ export async function sendOrderStatusUpdateEmail(
     }
     const message = await translateEmailString(messageRaw, locale);
 
-    const { data: emailData, error } = await resend.emails.send({
+    const { data: emailData, error } = await getResend().emails.send({
       from: 'Trainium <onboarding@resend.dev>',
       to: [recipientEmail],
       subject,

@@ -9,6 +9,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+      TURBO_TELEMETRY_DISABLED: '1'
+      # May be overridden by the step below if secrets are present
+      DATABASE_URL: ''
     steps:
       - uses: actions/checkout@v4
 
@@ -21,6 +26,19 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
+
+      - name: Set CI env defaults from secrets
+        shell: bash
+        env:
+          DATABASE_URL_SECRET: ${{ secrets.DATABASE_URL }}
+        run: |
+          # Prefer repo/org secrets when present; otherwise provide safe CI defaults
+          : "${DATABASE_URL_SECRET:=}"
+          if [ -n "$DATABASE_URL_SECRET" ]; then
+            echo "DATABASE_URL=$DATABASE_URL_SECRET" >> "$GITHUB_ENV"
+          else
+            echo "DATABASE_URL=postgresql://user:pass@localhost:5432/ci_db" >> "$GITHUB_ENV"
+          fi
 
       - name: Install deps
         run: pnpm install --frozen-lockfile

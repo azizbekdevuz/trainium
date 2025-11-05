@@ -1,0 +1,14 @@
+{
+  "extends": ["next/core-web-vitals"],
+  "overrides": [
+    {
+      "files": ["apps/socket/**/*.js", "ecosystem.config.cjs"],
+      "env": { "node": true },
+      "rules": {
+        "no-undef": "off"
+      }
+    }
+  ]
+}
+
+

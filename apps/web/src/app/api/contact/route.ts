@@ -4,7 +4,13 @@ import { Resend } from 'resend';
 
 export const runtime = 'nodejs';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResend() {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) {
+    throw new Error('RESEND_API_KEY is not set');
+  }
+  return new Resend(key);
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,7 +31,7 @@ export async function POST(req: NextRequest) {
     // Temporary: always send to verified testing address
     const recipient = 'azizbek.dev.ac@gmail.com';
 
-    const { error } = await resend.emails.send({
+    const { error } = await getResend().emails.send({
       from: 'Trainium Support <onboarding@resend.dev>',
       to: [recipient],
       subject: `Contact Form: ${reason} — from ${name}`,
