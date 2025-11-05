@@ -32,7 +32,6 @@ function getSocketBaseUrl() {
   const serverUrl = process.env.SOCKET_SERVER_URL?.replace(/\/$/, '');
   if (serverUrl) return serverUrl;
 
-  // Optional: allow public URL for non-admin reads in dev
   const publicUrl = process.env.NEXT_PUBLIC_SOCKET_URL?.replace(/\/$/, '');
   if (publicUrl && process.env.NODE_ENV !== 'production') return publicUrl;
 
