@@ -161,7 +161,6 @@ async function saveVariant(formData: FormData) {
   'use server';
   const lang = await negotiateLocale();
   const dict = await getDictionary(lang);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const id = String(formData.get('id')); // product id
   const variantId = String(formData.get('variantId'));
   const name = String(formData.get('name') ?? '').trim();
