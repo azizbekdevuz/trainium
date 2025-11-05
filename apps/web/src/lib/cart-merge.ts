@@ -24,7 +24,8 @@ export async function mergeCookieCartIntoUser(userId: string) {
       try {
         await prisma.cart.update({ where: { id: cookieCartId }, data: { userId } });
         await setCartId(cookieCartId);
-      } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (error:any) {
         // Cart might not exist, create a new one for user
         const newCart = await prisma.cart.create({ data: { userId } });
         await setCartId(newCart.id);

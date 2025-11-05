@@ -12,9 +12,6 @@ const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
   serverExternalPackages: ['bcrypt'],
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   async headers() {
     return [
       {

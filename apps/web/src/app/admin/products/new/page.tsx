@@ -79,7 +79,8 @@ async function createProduct(formData: FormData) {
       },
     });
     await sendNewProductNotification(product.id);
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error: any) {
     // ignore notification errors
   }
   revalidatePath('/products');
