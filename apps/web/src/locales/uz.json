@@ -752,6 +752,11 @@
         }
       ],
       "title": "Muhandislik afzalliklari"
+    },
+    "comingSoon": {
+      "title": "Tez kunda",
+      "subtitle": "Yangiliklar xabarnomasiga obuna",
+      "message": "Biz bu xizmatni sizga tez orada qo'llab-quvvatlaymiz. Kuzatishda davom eting!"
     }
   },
   "likes": {

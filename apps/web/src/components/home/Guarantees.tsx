@@ -1,10 +1,21 @@
 'use client';
 
+import { useState } from 'react';
 import { useI18n } from '../providers/I18nProvider';
+import ComingSoonModal from '../ui/ComingSoonModel';
+
 
 export function Guarantees() {
-    const { dict } = useI18n();
-    return (
+  const { dict } = useI18n();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsModalOpen(true);
+  };
+
+  return (
+    <>
       <section className="mx-auto max-w-7xl px-6 py-10">
         <div className="glass p-6 md:p-8">
           <div className="grid gap-6 md:grid-cols-2">
@@ -16,7 +27,7 @@ export function Guarantees() {
                 <li>{dict.home?.guarantees?.warranty ?? 'Warranty & repair network coverage'}</li>
               </ul>
             </div>
-            <form method="post" action="/api/newsletter" className="flex gap-3 items-center">
+            <form onSubmit={handleSubmit} className="flex gap-3 items-center">
               <input
                 name="email"
                 required
@@ -24,12 +35,18 @@ export function Guarantees() {
                 placeholder={dict.home?.guarantees?.newsletterPh ?? 'Email for early deals'}
                 className="h-11 rounded-xl px-3 border w-full bg-white/70"
               />
-              <button className="h-11 rounded-xl px-4 bg-cyan-600 text-white hover-raise">
+              <button type="submit" className="h-11 rounded-xl px-4 bg-cyan-600 text-white hover-raise">
                 {dict.home?.guarantees?.join ?? 'Join'}
               </button>
             </form>
           </div>
         </div>
       </section>
-    );
-  }  
+
+      <ComingSoonModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
+    </>
+  );
+}
