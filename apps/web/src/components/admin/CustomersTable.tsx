@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { formatDate } from '@/lib/date-utils';
 import { useResponsive } from '../../hooks/useResponsive';
 import { UserAvatar } from './UserAvatar';
+import { Icon } from '../ui/Icon';
 
 interface Customer {
   id: string;
@@ -86,7 +87,7 @@ export function CustomersTable({ customers, dict, lang }: CustomersTableProps) {
                   href={`/${lang}/admin/customers/${customer.id}`}
                   className="inline-flex items-center text-sm text-cyan-700 dark:text-cyan-400 hover:underline"
                 >
-                  {dict.admin?.customers?.viewProfile ?? 'View Profile'} <span className="ml-1">→</span>
+                  {dict.admin?.customers?.viewProfile ?? 'View Profile'} <Icon name="arrowRight" className="w-3 h-3 inline ml-1" />
                 </Link>
               </div>
             </div>

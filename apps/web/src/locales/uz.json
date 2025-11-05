@@ -95,7 +95,7 @@
         "view": "Ko'rish"
       },
       "joinedLabel": "Qo'shilgan sana",
-      "manage": "Boshqarish →",
+      "manage": "Boshqarish",
       "ordersLabel": "Buyurtmalar",
       "search": "Qidirish",
       "searchPlaceholder": "Ism yoki email bo'yicha qidirish",
@@ -255,7 +255,7 @@
       "items": "dona",
       "itemsLabel": "Tovarlar",
       "itemsPlural": "dona",
-      "manage": "Boshqarish →",
+      "manage": "Boshqarish",
       "more": "ko'proq",
       "next": "Keyingi",
       "noEmail": "Email yo'q",

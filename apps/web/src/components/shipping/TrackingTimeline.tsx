@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { TrackingEvent, TRACKING_STATUS_MAP } from '../../lib/shipping-tracker';
+import { Icon } from '../ui/Icon';
 
 interface TrackingTimelineProps {
   trackingNumber: string;
@@ -176,7 +177,7 @@ export function TrackingTimeline({ trackingNumber, carrier, events: initialEvent
               window.alert(`This feature is coming soon! Thanks for your patience.`);
             }}
           >
-            Track on carrier website →
+            Track on carrier website <Icon name="arrowRight" className="w-3 h-3 inline ml-1" />
           </a>
         </div>
       </div>
