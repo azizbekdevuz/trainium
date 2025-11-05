@@ -11,8 +11,10 @@ const ORIGINS = DEV
   ? ["http://localhost:3000", "http://127.0.0.1:3000"]
   : [process.env.NEXTAUTH_URL].filter(Boolean); // keep your prod rule
 
+const prodPath = process.env.NEXTAUTH_URL || "https://trainium.shop";
+
 // Optional: keep the same Socket.IO path you used behind Next
-const SOCKET_PATH = process.env.SOCKET_PATH || "/api/socketio";
+const SOCKET_PATH = process.env.SOCKET_PATH || "/api/socketio/";
 
 // ---- HTTP + IO ----
 const app = express();
@@ -220,5 +222,6 @@ app.get("/admin/stats", (_req, res) => {
 
 // ---- START ----
 server.listen(PORT, () => {
-  console.log(`Socket server on http://localhost:${PORT}  (path: ${SOCKET_PATH})`);
+  const path = DEV ? `http://localhost:${PORT}` : `${prodPath}:${PORT} path: ${SOCKET_PATH}`;
+  console.log(`Socket server on ${path}  (path: ${SOCKET_PATH})`);
 });
