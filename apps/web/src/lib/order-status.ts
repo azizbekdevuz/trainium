@@ -1,4 +1,4 @@
-// Standalone order status definitions; avoid coupling to Prisma client types
+import { OrderStatus } from '@prisma/client';
 
 // Unified order status system - single source of truth
 export const ORDER_STATUS = {
@@ -134,8 +134,6 @@ export const TIMELINE_EVENTS = [
 ] as const;
 
 // Utility functions
-export type OrderStatus = keyof typeof ORDER_STATUS;
-
 export function getStatusConfig(status: OrderStatus) {
   return STATUS_CONFIG[status] || STATUS_CONFIG[ORDER_STATUS.PENDING];
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../../../auth";
 import { prisma } from "../../../../../../lib/db";
-import { OrderStatus } from "@prisma/client";
+import { ORDER_STATUS } from "../../../../../../lib/order-status";
 import { revalidatePath } from "next/cache";
 import { createUserNotification, NotificationTemplates } from "../../../../../../lib/notifications";
 import { sendSocketOrderUpdate } from "../../../../../../lib/socket-server";
@@ -19,7 +19,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   const { id } = await params;
   const { status } = await req.json();
 
-  if (!status || !Object.values(OrderStatus).includes(status)) {
+  if (!status || !Object.values(ORDER_STATUS).includes(status)) {
     return NextResponse.json({ error: "Invalid status" }, { status: 400 });
   }
 
