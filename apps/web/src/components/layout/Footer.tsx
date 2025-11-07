@@ -77,15 +77,10 @@ export default function Footer({ year, brand, tagline, devDict }: { year: number
               className={`dev-details ${open ? 'open' : ''} rounded-2xl border mt-3 p-4 sm:p-5 bg-white/80 dark:bg-slate-900/80 md:bg-transparent md:dark:bg-transparent holo`}
             >
               <div className="text-sm">
-                <div className="font-display text-lg mb-1">{title}</div>
-                {intro ? <p className="text-gray-700 dark:text-slate-300 leading-relaxed">{intro}</p> : null}
-                {principles?.length ? (
-                  <ul className="mt-3 space-y-1 text-gray-600 dark:text-slate-400 list-disc list-inside">
-                    {principles.map((p, i) => (<li key={i}>{p}</li>))}
-                  </ul>
-                ) : null}
+                <div className="font-display text-lg mb-2">{title}</div>
+                {intro ? <p className="text-gray-700 dark:text-slate-300 leading-relaxed mb-3">{intro}</p> : null}
                 {tech?.length ? (
-                  <div className="mt-3 flex flex-wrap gap-2">
+                  <div className="mt-2 flex flex-wrap gap-2">
                     {tech.map((t) => (<span key={t} className="cyber-chip">{t}</span>))}
                   </div>
                 ) : null}

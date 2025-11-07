@@ -877,15 +877,9 @@
       "subtitle": "우리는 사용자의 목표 달성을 돕는 데 열정을 가진 피트니스 애호가 팀입니다.",
       "title": "회사 소개",
       "dev": {
-        "title": "개발자 소개",
-        "intro": "성능, 접근성, 보안, 일관된 디자인 시스템을 중점으로 설계했습니다. 애니메이션은 미묘하고 GPU 친화적이며, 테마 인식과 모션 선호를 존중합니다.",
-        "principles": [
-          "일관된 디자인 토큰과 라이트/다크 동등성",
-          "모바일 우선, 반응형, 복원력 있는 UI 상태",
-          "점진적 향상과 우아한 강등",
-          "보안 중심 데이터 처리와 프라이버시 고려"
-        ],
-        "tech": ["TypeScript", "Next.js App Router", "Prisma", "PostgreSQL", "Design Tokens"]
+        "title": "제작자",
+        "intro": "깨끗한 코드, 성능, 사용자 경험에 중점을 둔 풀스택 엔지니어입니다.",
+        "tech": ["MERN", "TypeScript", "Next.js", "Prisma", "PostgreSQL", "C/C++", "Python"]
       }
     },
     "contact": {

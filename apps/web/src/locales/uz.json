@@ -884,15 +884,9 @@
       "subtitle": "Biz sizning maqsadlaringizga erishishingizga yordam berishga ishtiyoqmand jamoamiz.",
       "title": "Haqimizda",
       "dev": {
-        "title": "Dasturchi haqida",
-        "intro": "Ushbu tajriba unumdorlik, qulaylik (accessibility), xavfsizlik va yagona dizayn tizimi asosida yaratilgan. Animatsiyalar yengil va GPU‑ga mos, mavzuni hisobga oladi va harakat afzalliklarini hurmat qiladi.",
-        "principles": [
-          "Bir xil dizayn tokenlari va yorug'/qorong'i rejim mosligi",
-          "Mobile‑first, moslashuvchan va barqaror UI holatlari",
-          "Bosqichma‑bosqich yaxshilash va muloyim pasaytirish",
-          "Xavfsiz ma'lumot ishlovi va maxfiylikka e'tibor"
-        ],
-        "tech": ["TypeScript", "Next.js App Router", "Prisma", "PostgreSQL", "Design Tokens"]
+        "title": "Yaratuvchi",
+        "intro": "Toza kod, ishlash va foydalanuvchi tajribasiga e'tibor qaratgan full-stack muhandis.",
+        "tech": ["MERN", "TypeScript", "Next.js", "Prisma", "PostgreSQL", "C/C++", "Python"]
       }
     },
     "contact": {
