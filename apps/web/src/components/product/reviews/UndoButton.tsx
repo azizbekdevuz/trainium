@@ -21,7 +21,6 @@ export function UndoButton({ reviewId, productId, onUndo }: UndoButtonProps) {
       });
       if (res.ok) {
         const r2 = await fetch(`/api/reviews?productId=${productId}`);
-        const d2 = await r2.json();
         if (r2.ok) {
           onUndo(reviewId);
           if (typeof window !== 'undefined') localStorage.removeItem(`review-undo-${productId}`);

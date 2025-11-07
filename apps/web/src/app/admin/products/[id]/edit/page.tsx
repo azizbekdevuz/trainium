@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { negotiateLocale, getDictionary, type Dictionary } from '../../../../../lib/i18n';
+import { negotiateLocale, getDictionary } from '../../../../../lib/i18n';
 import ToastOnQuery from '../../../../../components/ui/ToastOnQuery';
 import { getProductEditData } from './data';
 import { updateCore, uploadImage, updateInventory, addVariant, saveVariant, removeVariant } from './actions';

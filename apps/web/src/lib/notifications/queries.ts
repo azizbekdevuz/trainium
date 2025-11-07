@@ -1,6 +1,5 @@
 import { prisma } from '../db';
 import { NotificationType } from '@prisma/client';
-import { calculateNotificationStartDate } from './helpers';
 
 /**
  * Build where clause for user notifications

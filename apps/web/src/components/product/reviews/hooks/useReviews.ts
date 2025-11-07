@@ -1,4 +1,4 @@
-import { useState, useEffect, useTransition } from 'react';
+import { useState, useEffect, useTransition, useCallback } from 'react';
 
 export function useReviews(productId: string) {
   const [items, setItems] = useState<any[]>([]);
@@ -6,7 +6,7 @@ export function useReviews(productId: string) {
   const [isPending, startTransition] = useTransition();
   const [loaded, setLoaded] = useState(false);
 
-  const loadReviews = async () => {
+  const loadReviews = useCallback(async () => {
     const res = await fetch(`/api/reviews?productId=${productId}`);
     const data = await res.json();
     if (res.ok) {
@@ -14,14 +14,14 @@ export function useReviews(productId: string) {
       setCursor(data.nextCursor);
       setLoaded(true);
     }
-  };
+  }, [productId]);
 
   useEffect(() => {
     loadReviews();
     const handler = () => loadReviews();
     if (typeof window !== 'undefined') window.addEventListener('review:created', handler);
     return () => { if (typeof window !== 'undefined') window.removeEventListener('review:created', handler); };
-  }, [productId]);
+  }, [productId, loadReviews]);
 
   const loadMore = async () => {
     if (!cursor) return;

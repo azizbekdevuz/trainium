@@ -4,7 +4,7 @@ import { prisma } from '../../../../../lib/db';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { negotiateLocale, getDictionary } from '../../../../../lib/i18n';
-import { currencyMinorUnits, priceToMinorUnits } from '../../../../../lib/product-utils';
+import { priceToMinorUnits } from '../../../../../lib/product-utils';
 import fs from 'fs/promises';
 import path from 'path';
 

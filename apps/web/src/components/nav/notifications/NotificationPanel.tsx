@@ -1,7 +1,7 @@
 import { X, Wifi, WifiOff } from 'lucide-react';
 import Link from 'next/link';
 import { formatDateTime } from '../../../lib/date-utils';
-import { translateNotification, getNotificationActions, deduplicateNotifications } from './utils';
+import { translateNotification, getNotificationActions } from './utils';
 import type { Notification } from './types';
 import type { Dictionary } from '../../../lib/i18n';
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { Notification } from '../types';
 
 export function useDbNotifications(userId?: string) {
@@ -6,7 +6,7 @@ export function useDbNotifications(userId?: string) {
   const [dbUnreadCount, setDbUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const fetchDbNotifications = async () => {
+  const fetchDbNotifications = useCallback(async () => {
     if (!userId) return;
 
     try {
@@ -19,7 +19,7 @@ export function useDbNotifications(userId?: string) {
     } catch (error) {
       console.error('Failed to fetch database notifications:', error);
     }
-  };
+  }, [userId]);
 
   const markDbAsRead = async (notificationIds: string[]) => {
     if (!userId || notificationIds.length === 0) return;
@@ -73,13 +73,13 @@ export function useDbNotifications(userId?: string) {
     if (userId) {
       fetchDbNotifications();
     }
-  }, [userId]);
+  }, [userId, fetchDbNotifications]);
 
   useEffect(() => {
     const onFocus = () => fetchDbNotifications();
     window.addEventListener('focus', onFocus);
     return () => window.removeEventListener('focus', onFocus);
-  }, [userId]);
+  }, [fetchDbNotifications]);
 
   return {
     dbNotifications,

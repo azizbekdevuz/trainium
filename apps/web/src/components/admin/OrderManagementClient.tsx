@@ -29,7 +29,6 @@ export function OrderManagementClient({ order }: OrderManagementClientProps) {
     message: statusMessage,
     handleStatusUpdate,
     validNextStatuses,
-    allStatuses,
   } = useOrderStatus(order.id, order.status, dict);
 
   const {

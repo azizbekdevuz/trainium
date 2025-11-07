@@ -4,11 +4,11 @@ import { showToast } from '../../../lib/toast';
 
 interface ReviewLikeButtonInlineProps {
   reviewId: string;
-  initialCount?: number;
+  initialCount?: number; // Not used currently, but kept for future use
   initialLiked?: boolean;
 }
 
-export function ReviewLikeButtonInline({ reviewId, initialCount = 0, initialLiked = false }: ReviewLikeButtonInlineProps) {
+export function ReviewLikeButtonInline({ reviewId, initialLiked = false }: ReviewLikeButtonInlineProps) {
   const { t } = useI18n();
   const [liked, setLiked] = useState(initialLiked);
   const [isPending, startTransition] = useTransition();

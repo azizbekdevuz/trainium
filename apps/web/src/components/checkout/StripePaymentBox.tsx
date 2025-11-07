@@ -23,7 +23,7 @@ export function StripePaymentBox({
   canPay,
   publishableKey,
 }: StripePaymentBoxProps) {
-  const { t, lang } = useI18n();
+  const { t } = useI18n();
   const { theme } = useTheme();
   const stripe = useStripe();
   const elements = useElements();
