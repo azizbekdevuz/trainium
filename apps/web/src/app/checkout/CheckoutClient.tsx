@@ -97,7 +97,7 @@ export default function CheckoutClient({ cart }: { cart: CartDTO }) {
   );
   const currency = cart.items[0]?.currency ?? "KRW";
 
-  // Build Stripe appearance, hide internal labels for unsupported locales (uz)
+  // Build Stripe appearance with enhanced theming, hide internal labels for unsupported locales (uz)
   const stripeAppearance = useMemo<Appearance>(() => {
     const isDark = theme === 'dark';
     const base: Appearance = {
@@ -110,25 +110,84 @@ export default function CheckoutClient({ cart }: { cart: CartDTO }) {
             colorBackground: '#0f172a',     // slate-900
             colorIcon: '#94a3b8',
             colorDanger: '#ef4444',         // red-500
+            colorSuccess: '#10b981',         // green-500
+            colorWarning: '#f59e0b',        // amber-500
             borderRadius: '12px',
+            spacingUnit: '4px',
+            fontFamily: 'system-ui, -apple-system, sans-serif',
+            fontSizeBase: '16px',
           }
         : {
             colorPrimary: '#0891b2',        // cyan-600
             colorText: '#0b1220',
+            colorTextSecondary: '#64748b',  // slate-500
             colorBackground: '#ffffff',
+            colorIcon: '#64748b',
+            colorDanger: '#ef4444',         // red-500
+            colorSuccess: '#10b981',         // green-500
+            colorWarning: '#f59e0b',        // amber-500
             borderRadius: '12px',
+            spacingUnit: '4px',
+            fontFamily: 'system-ui, -apple-system, sans-serif',
+            fontSizeBase: '16px',
           },
       rules: isDark
         ? {
-            '.Label': { color: '#cbd5e1' },                // slate-300
-            '.Input': { backgroundColor: '#0f172a', borderColor: '#334155', color: '#e2e8f0' },
-            '.Block': { backgroundColor: '#0f172a', borderColor: '#334155' },
-            '.Tab': { backgroundColor: '#0f172a', borderColor: '#334155', color: '#cbd5e1' },
-            '.Tab:hover': { color: '#f1f5f9' },
-            '.Tab--selected': { color: '#f1f5f9', borderColor: '#06b6d4' },
+            '.Label': { color: '#cbd5e1', fontSize: '14px', fontWeight: '500' },                // slate-300
+            '.Input': { 
+              backgroundColor: '#0f172a', 
+              borderColor: '#334155', 
+              color: '#e2e8f0',
+              borderRadius: '12px',
+              padding: '12px',
+              fontSize: '16px',
+            },
+            '.Input:focus': { 
+              borderColor: '#06b6d4',
+              boxShadow: '0 0 0 3px rgba(6, 182, 212, 0.1)',
+            },
+            '.Block': { backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px' },
+            '.Tab': { 
+              backgroundColor: '#0f172a', 
+              borderColor: '#334155', 
+              color: '#cbd5e1',
+              borderRadius: '8px',
+              padding: '10px 16px',
+            },
+            '.Tab:hover': { color: '#f1f5f9', backgroundColor: '#1e293b' },
+            '.Tab--selected': { color: '#f1f5f9', borderColor: '#06b6d4', backgroundColor: '#1e293b' },
             '.Link': { color: '#22d3ee' },                  // cyan-400
+            '.Error': { color: '#ef4444', fontSize: '14px' },
+            '.Text': { color: '#e2e8f0' },
           }
-        : {},
+        : {
+            '.Label': { color: '#0f172a', fontSize: '14px', fontWeight: '500' },
+            '.Input': { 
+              backgroundColor: '#ffffff', 
+              borderColor: '#e2e8f0', 
+              color: '#0b1220',
+              borderRadius: '12px',
+              padding: '12px',
+              fontSize: '16px',
+            },
+            '.Input:focus': { 
+              borderColor: '#0891b2',
+              boxShadow: '0 0 0 3px rgba(8, 145, 178, 0.1)',
+            },
+            '.Block': { backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '12px' },
+            '.Tab': { 
+              backgroundColor: '#ffffff', 
+              borderColor: '#e2e8f0', 
+              color: '#64748b',
+              borderRadius: '8px',
+              padding: '10px 16px',
+            },
+            '.Tab:hover': { color: '#0891b2', backgroundColor: '#f1f5f9' },
+            '.Tab--selected': { color: '#0891b2', borderColor: '#0891b2', backgroundColor: '#f1f5f9' },
+            '.Link': { color: '#0891b2' },
+            '.Error': { color: '#ef4444', fontSize: '14px' },
+            '.Text': { color: '#0b1220' },
+          },
     };
     if (lang === 'uz') {
       base.rules = {
@@ -145,7 +204,7 @@ export default function CheckoutClient({ cart }: { cart: CartDTO }) {
   useEffect(() => {
     (async () => {
       const endpoint = paymentMethod === 'stripe' 
-        ? "/api/checkout/create-intent"
+        ? "/api/checkout/stripe"
         : "/api/checkout/toss/create-intent";
       
       const res = await fetch(endpoint, {
@@ -295,7 +354,7 @@ export default function CheckoutClient({ cart }: { cart: CartDTO }) {
             appearance: stripeAppearance,
           }}
         >
-          <StripePaymentBox cartId={cart.id} address={address} clientSecret={clientSecret!} canPay={isAddressValid} />
+          <StripePaymentBox cartId={cart.id} address={address} clientSecret={clientSecret!} canPay={isAddressValid} publishableKey={publishableKey} />
         </Elements>
       ) : (
         <>
@@ -314,6 +373,7 @@ function StripePaymentBox({
   address,
   clientSecret,
   canPay,
+  publishableKey,
 }: {
   cartId: string;
   address: {
@@ -328,12 +388,19 @@ function StripePaymentBox({
   };
   clientSecret: string;
   canPay: boolean;
+  publishableKey?: string | null;
 }) {
   const { t, lang } = useI18n();
+  const { theme } = useTheme();
   const stripe = useStripe();
   const elements = useElements();
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [showTestCards, setShowTestCards] = useState(false);
+  
+  // Check if we're in test mode (Stripe test keys start with pk_test_)
+  const isTestMode = publishableKey?.startsWith('pk_test_') ?? 
+    (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.startsWith('pk_test_'));
 
   async function onPay() {
     if (!stripe || !elements) return;
@@ -388,9 +455,124 @@ function StripePaymentBox({
   }
 
   return (
-    <div className="rounded-2xl border bg-white p-5 space-y-4">
+    <div className={`rounded-2xl border p-5 space-y-4 ${theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-white border-gray-200'}`}>
+      {/* Test Mode Banner */}
+      {isTestMode && (
+        <div className={`rounded-xl border px-4 py-3 text-sm ${
+          theme === 'dark' 
+            ? 'bg-yellow-900/20 border-yellow-700/50 text-yellow-300' 
+            : 'bg-yellow-50 border-yellow-200 text-yellow-800'
+        }`}>
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex-1">
+              <div className="font-medium mb-1">{t('checkout.stripeTestMode', 'TEST MODE: Use test cards below. No real charges.')}</div>
+              <button
+                onClick={() => setShowTestCards(!showTestCards)}
+                className={`text-xs underline hover:no-underline mt-1 ${
+                  theme === 'dark' ? 'text-yellow-400' : 'text-yellow-700'
+                }`}
+              >
+                {showTestCards 
+                  ? '▼ ' + (lang === 'ko' ? '숨기기' : lang === 'uz' ? 'Yashirish' : 'Hide')
+                  : '▶ ' + t('checkout.stripeTestCardInfo', 'Show test card information')
+                }
+              </button>
+            </div>
+          </div>
+          
+          {/* Test Cards Collapsible Section */}
+          {showTestCards && (
+            <div className={`mt-4 pt-4 border-t space-y-3 ${
+              theme === 'dark' ? 'border-yellow-700/30' : 'border-yellow-200'
+            }`}>
+              <div className="text-xs font-medium mb-2">
+                {t('checkout.stripeTestCards', 'Test Cards')}
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                {/* Success Card */}
+                <div className={`p-3 rounded-lg border ${
+                  theme === 'dark' 
+                    ? 'bg-green-900/20 border-green-700/50' 
+                    : 'bg-green-50 border-green-200'
+                }`}>
+                  <div className={`font-medium mb-1 ${
+                    theme === 'dark' ? 'text-green-300' : 'text-green-700'
+                  }`}>
+                    ✓ {t('checkout.stripeTestCardSuccess', 'Success')}
+                  </div>
+                  <div className={`font-mono text-xs ${
+                    theme === 'dark' ? 'text-green-400' : 'text-green-600'
+                  }`}>
+                    {t('checkout.stripeTestCardSuccessDesc', '4242 4242 4242 4242 - Any future expiry, any CVC')}
+                  </div>
+                </div>
+                
+                {/* Decline Card */}
+                <div className={`p-3 rounded-lg border ${
+                  theme === 'dark' 
+                    ? 'bg-red-900/20 border-red-700/50' 
+                    : 'bg-red-50 border-red-200'
+                }`}>
+                  <div className={`font-medium mb-1 ${
+                    theme === 'dark' ? 'text-red-300' : 'text-red-700'
+                  }`}>
+                    ✗ {t('checkout.stripeTestCardDecline', 'Decline')}
+                  </div>
+                  <div className={`font-mono text-xs ${
+                    theme === 'dark' ? 'text-red-400' : 'text-red-600'
+                  }`}>
+                    {t('checkout.stripeTestCardDeclineDesc', '4000 0000 0000 0002 - Card declined')}
+                  </div>
+                </div>
+                
+                {/* Insufficient Funds Card */}
+                <div className={`p-3 rounded-lg border ${
+                  theme === 'dark' 
+                    ? 'bg-orange-900/20 border-orange-700/50' 
+                    : 'bg-orange-50 border-orange-200'
+                }`}>
+                  <div className={`font-medium mb-1 ${
+                    theme === 'dark' ? 'text-orange-300' : 'text-orange-700'
+                  }`}>
+                    ⚠ {t('checkout.stripeTestCardInsufficient', 'Insufficient Funds')}
+                  </div>
+                  <div className={`font-mono text-xs ${
+                    theme === 'dark' ? 'text-orange-400' : 'text-orange-600'
+                  }`}>
+                    {t('checkout.stripeTestCardInsufficientDesc', '4000 0000 0000 9995 - Insufficient funds')}
+                  </div>
+                </div>
+                
+                {/* 3D Secure Card */}
+                <div className={`p-3 rounded-lg border ${
+                  theme === 'dark' 
+                    ? 'bg-blue-900/20 border-blue-700/50' 
+                    : 'bg-blue-50 border-blue-200'
+                }`}>
+                  <div className={`font-medium mb-1 ${
+                    theme === 'dark' ? 'text-blue-300' : 'text-blue-700'
+                  }`}>
+                    🔒 {t('checkout.stripeTestCard3DS', '3D Secure')}
+                  </div>
+                  <div className={`font-mono text-xs ${
+                    theme === 'dark' ? 'text-blue-400' : 'text-blue-600'
+                  }`}>
+                    {t('checkout.stripeTestCard3DSDesc', '4000 0025 0000 3155 - Requires authentication')}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+      
+      {/* Uzbek Language Helper */}
       {lang === 'uz' && (
-        <div className="text-sm text-gray-700 space-y-1" id="stripe-uz-labels">
+        <div className={`text-sm space-y-1 p-3 rounded-lg ${
+          theme === 'dark' 
+            ? 'bg-slate-800 text-slate-300' 
+            : 'bg-gray-50 text-gray-700'
+        }`} id="stripe-uz-labels">
           <div className="font-medium">{t('checkout.cardHelpTitle', "Kartangiz ma'lumotlarini kiriting")}</div>
           <div>• {t('checkout.cardHelpCardNumber', "Karta raqami")}</div>
           <div>• {t('checkout.cardHelpExpiry', "Amal qilish muddati")}</div>
@@ -398,11 +580,33 @@ function StripePaymentBox({
           <div>• {t('checkout.cardHelpCountry', "Mamlakat")}</div>
         </div>
       )}
+      
+      {/* Stripe Payment Element */}
       <div className="min-h-[220px]">
         <PaymentElement options={{ layout: 'tabs' }} />
       </div>
-      {message && <p className="text-sm text-red-600">{message}</p>}
-      <button onClick={onPay} disabled={!stripe || submitting || !canPay} className="w-full rounded-2xl px-5 py-3 bg-black text-white hover:opacity-90 transition">
+      
+      {/* Error Message */}
+      {message && (
+        <div className={`text-sm p-3 rounded-lg ${
+          theme === 'dark' 
+            ? 'bg-red-900/20 border border-red-700/50 text-red-300' 
+            : 'bg-red-50 border border-red-200 text-red-600'
+        }`}>
+          {message}
+        </div>
+      )}
+      
+      {/* Pay Button */}
+      <button 
+        onClick={onPay} 
+        disabled={!stripe || submitting || !canPay} 
+        className={`w-full rounded-2xl px-5 py-3 font-medium transition ${
+          theme === 'dark'
+            ? 'bg-cyan-600 hover:bg-cyan-700 text-white disabled:opacity-50 disabled:cursor-not-allowed'
+            : 'bg-black hover:opacity-90 text-white disabled:opacity-50 disabled:cursor-not-allowed'
+        }`}
+      >
         {submitting ? t('checkout.processing', 'Processing...') : t('checkout.payNow', 'Pay now')}
       </button>
     </div>

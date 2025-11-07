@@ -6,14 +6,14 @@ module.exports = {
       cwd: './apps/web',
       script: 'pnpm',
       args: 'start',
-      env: { NODE_ENV: 'production', PORT: '3000' }
+      env: { NODE_ENV: 'production', PORT: '3000' }, "node": true
     },
     {
       name: 'trainium-socket',
       cwd: './apps/socket',
       script: 'pnpm',
       args: 'start',
-      env: { NODE_ENV: 'production', PORT: '4000' }
+      env: { NODE_ENV: 'production', PORT: '4000' }, "node": true
     }
   ]
 }
