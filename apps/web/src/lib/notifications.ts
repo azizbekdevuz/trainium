@@ -2,85 +2,14 @@ import { prisma } from './db';
 import { NotificationType } from '@prisma/client';
 import { getCleanupService } from './notification-cleanup';
 import { PAGINATION_DEFAULTS, type OffsetPaginationResult } from './pagination-utils';
+import { calculateNotificationStartDate, getUserEmail, getFirstProductSlugFromOrder } from './notifications/helpers';
+import { buildNotificationWhereClause, getUserForNotifications } from './notifications/queries';
+import { NotificationTemplates } from './notifications/templates';
+import type { NotificationData } from './notifications/types';
 
-/**
- * Get the first product ID from an order
- */
-// async function getFirstProductIdFromOrder(orderId: string): Promise<string | null> {
-//   try {
-//     const order = await prisma.order.findUnique({
-//       where: { id: orderId },
-//       include: {
-//         items: {
-//           take: 1,
-//           orderBy: { id: 'asc' }
-//         }
-//       }
-//     });
-//     
-//     return order?.items[0]?.productId || null;
-//   } catch (error) {
-//     console.error('Error getting first product ID from order:', error);
-//     return null;
-//   }
-// }
-
-/**
- * Get the first product slug from an order
- */
-async function getFirstProductSlugFromOrder(orderId: string): Promise<string | null> {
-  try {
-    // First get the first order item
-    const firstOrderItem = await prisma.orderItem.findFirst({
-      where: { orderId },
-      orderBy: { id: 'asc' },
-      select: { productId: true }
-    });
-    
-    if (!firstOrderItem) return null;
-    
-    // Then get the product slug
-    const product = await prisma.product.findUnique({
-      where: { id: firstOrderItem.productId },
-      select: { slug: true }
-    });
-    
-    return product?.slug || null;
-  } catch (error) {
-    console.error('Error getting first product slug from order:', error);
-    return null;
-  }
-}
-
-/**
- * Get user email from user ID
- */
-async function getUserEmail(userId: string): Promise<string | null> {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { email: true }
-    });
-    
-    return user?.email || null;
-  } catch (error) {
-    console.error('Error getting user email:', error);
-    return null;
-  }
-}
-
-export interface NotificationData {
-  orderId?: string;
-  productId?: string;
-  productSlug?: string;
-  productName?: string;
-  orderStatus?: string;
-  trackingNumber?: string;
-  userEmail?: string | null;
-  firstProductId?: string | null;
-  firstProductSlug?: string | null;
-  [key: string]: string | number | boolean | null | undefined;
-}
+// Re-export types and templates for backward compatibility
+export type { NotificationData } from './notifications/types';
+export { NotificationTemplates } from './notifications/templates';
 
 /**
  * Create a notification for a specific user
@@ -135,22 +64,18 @@ export async function getUserNotificationsPaginated(
     type?: NotificationType;
   } = {}
 ): Promise<OffsetPaginationResult<any>> {
-  const { 
-    page = 1, 
-    limit = PAGINATION_DEFAULTS.PAGE_SIZE, 
-    unreadOnly = false, 
-    type 
+  const {
+    page = 1,
+    limit = PAGINATION_DEFAULTS.PAGE_SIZE,
+    unreadOnly = false,
+    type,
   } = options;
 
   // Trigger lazy cleanup (runs automatically if needed)
   const cleanupService = getCleanupService(prisma);
   cleanupService.lazyCleanup().catch(console.error); // Don't wait for it
 
-  // Get user signup date
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { createdAt: true }
-  });
+  const user = await getUserForNotifications(userId);
 
   if (!user) {
     return {
@@ -163,35 +88,8 @@ export async function getUserNotificationsPaginated(
     };
   }
 
-  // Calculate date range: from user signup date, but not older than 30 days
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-  
-  const startDate = user.createdAt > thirtyDaysAgo ? user.createdAt : thirtyDaysAgo;
-
-  const where: any = {
-    AND: [
-      {
-        OR: [
-          { userId }, // User-specific notifications
-          { userId: null }, // System-wide notifications
-        ],
-      },
-      {
-        createdAt: {
-          gte: startDate, // Only notifications from user signup date or last 30 days
-        },
-      },
-    ],
-  };
-
-  if (unreadOnly) {
-    where.AND.push({ read: false });
-  }
-
-  if (type) {
-    where.AND.push({ type });
-  }
+  const startDate = calculateNotificationStartDate(user.createdAt);
+  const where = buildNotificationWhereClause(userId, startDate, { unreadOnly, type });
 
   // Get total count for pagination
   const totalCount = await prisma.notification.count({ where });
@@ -238,25 +136,14 @@ export async function getUserNotifications(
 /**
  * Mark notifications as read
  */
-export async function markNotificationsAsRead(
-  userId: string,
-  notificationIds: string[]
-) {
-  // Get user signup date
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { createdAt: true }
-  });
+export async function markNotificationsAsRead(userId: string, notificationIds: string[]) {
+  const user = await getUserForNotifications(userId);
 
   if (!user) {
     return { count: 0 };
   }
 
-  // Calculate date range: from user signup date, but not older than 30 days
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-  
-  const startDate = user.createdAt > thirtyDaysAgo ? user.createdAt : thirtyDaysAgo;
+  const startDate = calculateNotificationStartDate(user.createdAt);
 
   return await prisma.notification.updateMany({
     where: {
@@ -270,7 +157,7 @@ export async function markNotificationsAsRead(
         },
         {
           createdAt: {
-            gte: startDate, // Only notifications from user signup date or last 30 days
+            gte: startDate,
           },
         },
       ],
@@ -283,21 +170,13 @@ export async function markNotificationsAsRead(
  * Mark all notifications as read for a user
  */
 export async function markAllNotificationsAsRead(userId: string) {
-  // Get user signup date
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { createdAt: true }
-  });
+  const user = await getUserForNotifications(userId);
 
   if (!user) {
     return { count: 0 };
   }
 
-  // Calculate date range: from user signup date, but not older than 30 days
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-  
-  const startDate = user.createdAt > thirtyDaysAgo ? user.createdAt : thirtyDaysAgo;
+  const startDate = calculateNotificationStartDate(user.createdAt);
 
   return await prisma.notification.updateMany({
     where: {
@@ -310,7 +189,7 @@ export async function markAllNotificationsAsRead(userId: string) {
         },
         {
           createdAt: {
-            gte: startDate, // Only notifications from user signup date or last 30 days
+            gte: startDate,
           },
         },
         { read: false },
@@ -324,21 +203,13 @@ export async function markAllNotificationsAsRead(userId: string) {
  * Get unread notification count for a user
  */
 export async function getUnreadNotificationCount(userId: string) {
-  // Get user signup date
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { createdAt: true }
-  });
+  const user = await getUserForNotifications(userId);
 
   if (!user) {
     return 0;
   }
 
-  // Calculate date range: from user signup date, but not older than 30 days
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-  
-  const startDate = user.createdAt > thirtyDaysAgo ? user.createdAt : thirtyDaysAgo;
+  const startDate = calculateNotificationStartDate(user.createdAt);
 
   return await prisma.notification.count({
     where: {
@@ -351,7 +222,7 @@ export async function getUnreadNotificationCount(userId: string) {
         },
         {
           createdAt: {
-            gte: startDate, // Only notifications from user signup date or last 30 days
+            gte: startDate,
           },
         },
         { read: false },
@@ -388,9 +259,8 @@ export async function deleteOldNotifications(daysOld: number = 30) {
  */
 export async function removeDuplicateNotifications() {
   console.log('🔍 Starting duplicate notification cleanup...');
-  
+
   try {
-    // Get all notifications grouped by potential duplicates
     const notifications = await prisma.notification.findMany({
       orderBy: { createdAt: 'desc' },
     });
@@ -399,10 +269,8 @@ export async function removeDuplicateNotifications() {
     const processed = new Set<string>();
 
     for (const notification of notifications) {
-      // Create a key for grouping potential duplicates
       let key = `${notification.type}-${notification.title}-${Math.floor(notification.createdAt.getTime() / 5000)}`;
-      
-      // For product alerts, include productId to distinguish different products
+
       if (notification.type === 'PRODUCT_ALERT' && notification.data && typeof notification.data === 'object') {
         const data = notification.data as any;
         if (data.productId) {
@@ -411,7 +279,6 @@ export async function removeDuplicateNotifications() {
       }
 
       if (processed.has(key)) {
-        // This is a duplicate - mark for deletion
         duplicatesToDelete.push(notification.id);
         console.log(`🗑️ Marking duplicate for deletion: ${notification.id} (${notification.type})`);
       } else {
@@ -425,7 +292,7 @@ export async function removeDuplicateNotifications() {
           id: { in: duplicatesToDelete },
         },
       });
-      
+
       console.log(`✅ Removed ${result.count} duplicate notifications`);
       return result.count;
     } else {
@@ -437,83 +304,3 @@ export async function removeDuplicateNotifications() {
     throw error;
   }
 }
-
-// Predefined notification templates
-export const NotificationTemplates = {
-  ORDER_STATUS_UPDATE: async (orderId: string, status: string, userId: string) => {
-    const [userEmail, firstProductSlug] = await Promise.all([
-      getUserEmail(userId),
-      getFirstProductSlugFromOrder(orderId)
-    ]);
-    
-    return {
-      type: 'ORDER_UPDATE' as NotificationType,
-      title: 'i18n.notification.orderStatusUpdated',
-      message: `i18n.notification.orderStatusUpdatedMsg|${orderId.slice(0, 8).toUpperCase()}|${status}`,
-      data: { orderId, orderStatus: status, userEmail, firstProductSlug } as NotificationData,
-    };
-  },
-
-  ORDER_SHIPPED: async (orderId: string, trackingNumber: string | undefined, userId: string) => {
-    const [userEmail, firstProductSlug] = await Promise.all([
-      getUserEmail(userId),
-      getFirstProductSlugFromOrder(orderId)
-    ]);
-    
-    return {
-      type: 'ORDER_UPDATE' as NotificationType,
-      title: 'i18n.notification.orderShipped',
-      message: `i18n.notification.orderShippedMsg|${orderId.slice(0, 8).toUpperCase()}|${trackingNumber ?? ''}`,
-      data: { orderId, orderStatus: 'SHIPPED', trackingNumber, userEmail, firstProductSlug } as NotificationData,
-    };
-  },
-
-  ORDER_DELIVERED: async (orderId: string, userId: string) => {
-    const [userEmail, firstProductSlug] = await Promise.all([
-      getUserEmail(userId),
-      getFirstProductSlugFromOrder(orderId)
-    ]);
-    
-    return {
-      type: 'ORDER_UPDATE' as NotificationType,
-      title: 'i18n.notification.orderDelivered',
-      message: `i18n.notification.orderDeliveredMsg|${orderId.slice(0, 8).toUpperCase()}`,
-      data: { orderId, orderStatus: 'DELIVERED', userEmail, firstProductSlug } as NotificationData,
-    };
-  },
-
-  ORDER_CONFIRMED: async (orderId: string, userId: string) => {
-    const [userEmail, firstProductSlug] = await Promise.all([
-      getUserEmail(userId),
-      getFirstProductSlugFromOrder(orderId)
-    ]);
-    
-    return {
-      type: 'ORDER_UPDATE' as NotificationType,
-      title: 'i18n.notification.orderConfirmed',
-      message: `i18n.notification.orderConfirmedMsg|${orderId.slice(0, 8).toUpperCase()}`,
-      data: { orderId, orderStatus: 'PAID', userEmail, firstProductSlug } as NotificationData,
-    };
-  },
-
-  LOW_STOCK_ALERT: (productName: string, productSlug: string) => ({
-    type: 'PRODUCT_ALERT' as NotificationType,
-    title: 'i18n.notification.lowStock',
-    message: `i18n.notification.lowStockMsg|${productName}`,
-    data: { productSlug, productName },
-  }),
-
-  NEW_PRODUCT: (productName: string, productSlug: string) => ({
-    type: 'PRODUCT_ALERT' as NotificationType,
-    title: 'i18n.notification.newProduct',
-    message: `i18n.notification.newProductMsg|${productName}`,
-    data: { productSlug, productName },
-  }),
-
-  SYSTEM_MAINTENANCE: (message: string) => ({
-    type: 'SYSTEM_ALERT' as NotificationType,
-    title: 'i18n.notification.systemNotice',
-    message,
-    data: {},
-  }),
-};
