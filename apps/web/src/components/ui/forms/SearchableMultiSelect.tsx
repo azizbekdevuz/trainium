@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { createPortal } from 'react-dom';
 import { useI18n } from '../../providers/I18nProvider';
@@ -24,38 +24,8 @@ export function SearchableMultiSelect({
   const { dict } = useI18n();
   const optionMap = useMemo(() => new Map(options.map(o => [o.value, o.label])), [options]);
   const [selected, setSelected] = useState<string[]>(defaultSelected);
-  const [isOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [buttonRef, setButtonRef] = useState<HTMLButtonElement | null>(null);
-
-  // Handle scroll behavior when dropdown is open
-  useEffect(() => {
-    if (isOpen) {
-      // Store original overflow style
-      const originalOverflow = document.body.style.overflow;
-      
-      // Prevent body scroll when dropdown is open
-      document.body.style.overflow = 'hidden';
-      
-      // Add event listener to handle scroll prevention
-      const handleWheel = (e: WheelEvent) => {
-        // Allow scrolling within the dropdown, prevent page scroll
-        const target = e.target as Element;
-        const dropdown = target.closest('[role="listbox"]');
-        if (!dropdown) {
-          e.preventDefault();
-        }
-      };
-      
-      document.addEventListener('wheel', handleWheel, { passive: false });
-      
-      // Cleanup function
-      return () => {
-        document.body.style.overflow = originalOverflow;
-        document.removeEventListener('wheel', handleWheel);
-      };
-    }
-  }, [isOpen]);
 
   // Filter options based on search term
   const filteredOptions = useMemo(() => {
@@ -91,14 +61,7 @@ export function SearchableMultiSelect({
       ))}
 
       <Listbox value={selected} onChange={setSelected} multiple>
-        {({ open: _open }) => {
-          // Update isOpen state when dropdown state changes (use useEffect to avoid setState during render)
-          // useEffect(() => {
-          //   if (open !== isOpen) {
-          //     setIsOpen(open);
-          //   }
-          // }, [open, isOpen]);
-          
+        {({ open }) => {
           return (
             <div className="relative">
               <Listbox.Button 
@@ -108,8 +71,17 @@ export function SearchableMultiSelect({
                 <span className="block truncate text-gray-700">{summary}</span>
               </Listbox.Button>
               
-              <Transition as={Fragment} leave="transition ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
-                {isOpen && buttonRef && createPortal(
+              {open && buttonRef && createPortal(
+                <Transition 
+                  as="div"
+                  show={open}
+                  enter="transition ease-out duration-100"
+                  enterFrom="opacity-0"
+                  enterTo="opacity-100"
+                  leave="transition ease-in duration-100" 
+                  leaveFrom="opacity-100" 
+                  leaveTo="opacity-0"
+                >
                   <Listbox.Options 
                     static
                     className="fixed z-50 mt-2 max-h-80 w-80 overflow-hidden rounded-xl border bg-white shadow-xl focus:outline-none"
@@ -204,10 +176,10 @@ export function SearchableMultiSelect({
                       ))
                     )}
                   </div>
-                  </Listbox.Options>,
-                  document.body
-                )}
-              </Transition>
+                  </Listbox.Options>
+                </Transition>,
+                document.body
+              )}
             </div>
           );
         }}

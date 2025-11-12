@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { createPortal } from 'react-dom';
 import { useI18n } from '../../providers/I18nProvider';
@@ -21,37 +21,7 @@ export function MultiSelect({
   const { dict } = useI18n();
   const optionMap = useMemo(() => new Map(options.map(o => [o.value, o.label])), [options]);
   const [selected, setSelected] = useState<string[]>(defaultSelected);
-  const [isOpen] = useState(false);
   const [buttonRef, setButtonRef] = useState<HTMLButtonElement | null>(null);
-
-  // Handle scroll behavior when dropdown is open
-  useEffect(() => {
-    if (isOpen) {
-      // Store original overflow style
-      const originalOverflow = document.body.style.overflow;
-      
-      // Prevent body scroll when dropdown is open
-      document.body.style.overflow = 'hidden';
-      
-      // Add event listener to handle scroll prevention
-      const handleWheel = (e: WheelEvent) => {
-        // Allow scrolling within the dropdown, prevent page scroll
-        const target = e.target as Element;
-        const dropdown = target.closest('[role="listbox"]');
-        if (!dropdown) {
-          e.preventDefault();
-        }
-      };
-      
-      document.addEventListener('wheel', handleWheel, { passive: false });
-      
-      // Cleanup function
-      return () => {
-        document.body.style.overflow = originalOverflow;
-        document.removeEventListener('wheel', handleWheel);
-      };
-    }
-  }, [isOpen]);
 
   const summary = selected.length
     ? selected.slice(0, 2).map(v => optionMap.get(v) ?? v).join(', ') + (selected.length > 2 ? ` +${selected.length - 2}` : '')
@@ -66,9 +36,7 @@ export function MultiSelect({
       ))}
 
       <Listbox value={selected} onChange={setSelected} multiple>
-        {({ open: _open }) => {
-          // Update isOpen state when dropdown state changes (use useEffect to avoid setState during render)
-          
+        {({ open }) => {
           return (
             <div className="relative">
               <Listbox.Button 
@@ -77,8 +45,17 @@ export function MultiSelect({
               >
                 <span className="block truncate">{summary}</span>
               </Listbox.Button>
-          <Transition as={Fragment} leave="transition ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
-            {isOpen && buttonRef && createPortal(
+          {open && buttonRef && createPortal(
+            <Transition 
+              as="div"
+              show={open}
+              enter="transition ease-out duration-100"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="transition ease-in duration-100" 
+              leaveFrom="opacity-100" 
+              leaveTo="opacity-0"
+            >
               <Listbox.Options 
                 static
                 className="fixed z-50 mt-2 max-h-72 w-64 overflow-y-auto overflow-x-hidden rounded-xl border bg-white shadow-xl focus:outline-none scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
@@ -135,10 +112,10 @@ export function MultiSelect({
                   )}
                 </Listbox.Option>
               ))}
-              </Listbox.Options>,
-              document.body
-            )}
-          </Transition>
+              </Listbox.Options>
+            </Transition>,
+            document.body
+          )}
             </div>
           );
         }}
