@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useI18n } from '../providers/I18nProvider';
-import { showToast } from '../../lib/toast';
+import { showToast } from '../../lib/ui/toast';
 import { useReviews } from './reviews/hooks/useReviews';
 import { useUndo } from './reviews/hooks/useUndo';
 import { ReviewItem } from './reviews/ReviewItem';

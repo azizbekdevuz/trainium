@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useI18n } from '../providers/I18nProvider';
-import ComingSoonModal from '../ui/ComingSoonModel';
+import ComingSoonModal from '../ui/feedback/ComingSoonModel';
 
 
 export function Guarantees() {

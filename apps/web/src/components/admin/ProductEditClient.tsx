@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { CategoryCreationForm } from './CategoryCreationForm';
-import { Badge } from '../ui/badge';
+import { Badge } from '../ui/primitives/badge';
 import { Search, Filter } from 'lucide-react';
-import { Input } from '../ui/input';
-import { getCategoryDisplayName, sortCategories } from '../../lib/category-utils';
+import { Input } from '../ui/primitives/input';
+import { getCategoryDisplayName, sortCategories } from '../../lib/product/category-utils';
 import { useFormValidation } from '../../hooks/useFormValidation';
 
 interface ProductEditClientProps {

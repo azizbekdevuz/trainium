@@ -1,4 +1,4 @@
-import { prisma } from '../../db';
+import { prisma } from '../../database/db';
 import { UserActivityData } from './types';
 
 export class UserActivityService {

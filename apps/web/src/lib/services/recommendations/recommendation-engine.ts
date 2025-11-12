@@ -1,6 +1,6 @@
 import { UserActivityService } from './user-activity-service';
 import { ProductSimilarityService } from './product-similarity';
-import { prisma } from '../../db';
+import { prisma } from '../../database/db';
 import { 
   RecommendationRequest, 
   RecommendationResponse, 

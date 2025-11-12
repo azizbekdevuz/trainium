@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { formatCurrency } from '../../lib/format';
+import { formatCurrency } from '../../lib/utils/format';
 import { useI18n } from '../providers/I18nProvider';
 import type { CartDTO } from './types';
 

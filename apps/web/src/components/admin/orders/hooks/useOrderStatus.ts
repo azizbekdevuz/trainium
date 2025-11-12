@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { OrderStatus } from '@prisma/client';
-import { getNextValidStatuses, getShippingStatusForOrder, ORDER_STATUS } from '../../../../lib/order-status';
-import type { Dictionary } from '../../../../lib/i18n';
+import { getNextValidStatuses, getShippingStatusForOrder, ORDER_STATUS } from '../../../../lib/order/order-status';
+import type { Dictionary } from '../../../../lib/i18n/i18n';
 
 export function useOrderStatus(
   orderId: string,

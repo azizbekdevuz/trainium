@@ -1,5 +1,5 @@
 import { auth } from '../../auth'
-import { negotiateLocale, getDictionary } from '../../lib/i18n'
+import { negotiateLocale, getDictionary } from '../../lib/i18n/i18n'
 import { listUserFavoriteProducts } from '../../lib/services/favorites'
 import { listUserLikedProducts } from '../../lib/services/likes'
 import { FavouritesClient } from '../../components/account/FavouritesClient'

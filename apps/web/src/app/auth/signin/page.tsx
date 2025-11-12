@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import AuthForm from '../../../components/auth/AuthForm';
 import Link from 'next/link';
-import { getDictionary, negotiateLocale } from '../../../lib/i18n';
+import { getDictionary, negotiateLocale } from '../../../lib/i18n/i18n';
 
 export default async function SignInPage() {
   const lang = await negotiateLocale();

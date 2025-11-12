@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { useSession } from 'next-auth/react';
 import { Bell } from 'lucide-react';
 import { useSocket } from '../../hooks/useSocket';
-import { Pagination, type PaginationParams } from '../ui/Pagination';
+import { Pagination, type PaginationParams } from '../ui/navigation/Pagination';
 import { useI18n } from '../providers/I18nProvider';
 import { useDbNotifications } from './notifications/hooks/useDbNotifications';
 import { ConnectionStatus } from './notifications/ConnectionStatus';

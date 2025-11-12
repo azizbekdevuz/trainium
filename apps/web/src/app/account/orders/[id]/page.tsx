@@ -1,10 +1,10 @@
 import { auth } from '../../../../auth';
 import { notFound, redirect } from 'next/navigation';
-import { prisma } from '../../../../lib/db';
-import { formatCurrency } from '../../../../lib/format';
+import { prisma } from '../../../../lib/database/db';
+import { formatCurrency } from '../../../../lib/utils/format';
 import { OrderTimeline } from '../../../../components/order/OrderTimeline';
 import { OrderTrackingTimeline } from '../../../../components/order/OrderTrackingTimeline';
-import { getDictionary, negotiateLocale } from '../../../../lib/i18n';
+import { getDictionary, negotiateLocale } from '../../../../lib/i18n/i18n';
 
 export const runtime = 'nodejs';
 

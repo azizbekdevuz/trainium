@@ -1,6 +1,6 @@
-import { formatCurrency } from '../../../lib/format';
+import { formatCurrency } from '../../../lib/utils/format';
 import type { OrderData } from './types';
-import type { Dictionary } from '../../../lib/i18n';
+import type { Dictionary } from '../../../lib/i18n/i18n';
 
 interface OrderItemsSectionProps {
   order: OrderData;

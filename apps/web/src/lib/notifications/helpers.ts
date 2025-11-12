@@ -1,4 +1,4 @@
-import { prisma } from '../db';
+import { prisma } from '../database/db';
 
 /**
  * Get the first product slug from an order

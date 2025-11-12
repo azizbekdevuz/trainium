@@ -3,11 +3,11 @@
 import React from 'react';
 import { useI18n } from '../providers/I18nProvider';
 import { useResponsive } from '../../hooks/useResponsive';
-import { getCategoryDisplayName } from '../../lib/category-utils';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { getCategoryDisplayName } from '../../lib/product/category-utils';
+import { Button } from '@/components/ui/primitives/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/primitives/card';
+import { Badge } from '@/components/ui/primitives/badge';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/primitives/dropdown-menu';
 import { 
   ChevronDown, 
   ChevronRight, 

@@ -1,10 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { formatCurrency } from '@/lib/format';
-import { formatDate } from '@/lib/date-utils';
+import { formatCurrency } from '@/lib/utils/format';
+import { formatDate } from '@/lib/utils/date-utils';
 import { useResponsive } from '../../hooks/useResponsive';
-import { Icon } from '../ui/Icon';
+import { Icon } from '../ui/media/Icon';
 
 interface Order {
   id: string;

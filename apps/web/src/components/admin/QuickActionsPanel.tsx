@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Icon } from '../ui/Icon';
+import { Icon } from '../ui/media/Icon';
 
 interface QuickActionsPanelProps {
   dict: any;

@@ -10,7 +10,7 @@ import MiniCart from './MiniCart';
 import { NotificationBell } from './NotificationBell';
 import AuthLinks from './AuthLinks';
 import LanguageSwitcher from './LanguageSwitcher';
-import { Icon } from '../ui/Icon';
+import { Icon } from '../ui/media/Icon';
 
 interface ResponsiveNavigationProps {
   lang: 'en' | 'ko' | 'uz';

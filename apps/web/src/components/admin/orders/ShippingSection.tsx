@@ -1,5 +1,5 @@
 import type { OrderData } from './types';
-import type { Dictionary } from '../../../lib/i18n';
+import type { Dictionary } from '../../../lib/i18n/i18n';
 
 interface ShippingSectionProps {
   shipping: NonNullable<OrderData['shipping']>;

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import CuteMascot from '../components/ui/CuteMascot';
+import CuteMascot from '../components/ui/media/CuteMascot';
 import { useI18n } from '../components/providers/I18nProvider';
 
 export default function GlobalError({

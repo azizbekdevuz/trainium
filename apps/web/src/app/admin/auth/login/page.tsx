@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { auth, signIn } from '../../../../auth';
-import { getDictionary, negotiateLocale } from '../../../../lib/i18n';
+import { getDictionary, negotiateLocale } from '../../../../lib/i18n/i18n';
 
 export const runtime = 'nodejs';
 

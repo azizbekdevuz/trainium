@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Icon } from '../ui/Icon';
+import { Icon } from '../ui/media/Icon';
 import { useI18n } from '../providers/I18nProvider';
 import type { Address, TossPaymentData } from './types';
 

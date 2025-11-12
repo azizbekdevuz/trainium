@@ -9,7 +9,7 @@ const Link = ({ children, style, href }: any) => <a href={href} style={style}>{c
 const Hr = ({ style }: any) => <hr style={style} />;
 const Row = ({ children, style }: any) => <div style={{ display: 'flex', width: '100%', ...(style || {}) }}>{children}</div>;
 const Column = ({ children, style }: any) => <div style={{ flex: 1, ...(style || {}) }}>{children}</div>;
-import { formatCurrency as formatCurrencyAmount } from '../lib/format';
+import { formatCurrency as formatCurrencyAmount } from '../lib/utils/format';
 
 interface OrderConfirmationEmailProps {
   orderId: string;

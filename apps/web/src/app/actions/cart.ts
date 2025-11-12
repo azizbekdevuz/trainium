@@ -1,8 +1,8 @@
 'use server';
 
-import { addToCart, updateItemQty, removeItem } from '../../lib/cart';
+import { addToCart, updateItemQty, removeItem } from '../../lib/cart/cart';
 // import { redirect } from 'next/navigation';
-import { setCartId } from '../../lib/cookies';
+import { setCartId } from '../../lib/utils/cookies';
 
 export async function addToCartAction(formData: FormData) {
   const productId = String(formData.get('productId') ?? '');

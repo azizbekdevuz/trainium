@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../../auth";
 import { createSystemNotification } from "../../../../../lib/notifications";
-import { sendSocketSystemNotification } from "../../../../../lib/socket-server";
+import { sendSocketSystemNotification } from "../../../../../lib/socket/socket-server";
 
 export const runtime = "nodejs";
 

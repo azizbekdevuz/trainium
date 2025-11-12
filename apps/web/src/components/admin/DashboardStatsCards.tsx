@@ -1,8 +1,8 @@
 'use client';
 
-import { formatCurrency } from '@/lib/format';
+import { formatCurrency } from '@/lib/utils/format';
 import { useState, useEffect } from 'react';
-import { Icon } from '../ui/Icon';
+import { Icon } from '../ui/media/Icon';
 
 interface StatsData {
   totalOrders: number;

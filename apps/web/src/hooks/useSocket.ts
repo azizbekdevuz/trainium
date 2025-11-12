@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useSession } from 'next-auth/react';
-import { socketClient, SocketConnectionState, SocketNotification } from '../lib/socket-client';
+import { socketClient, SocketConnectionState, SocketNotification } from '../lib/socket/socket-client';
 
 export interface UseSocketReturn {
   // Connection state

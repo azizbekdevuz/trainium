@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useEffect } from 'react'
 import { useI18n } from '../providers/I18nProvider'
-import { showToast } from '../../lib/toast'
+import { showToast } from '../../lib/ui/toast'
 
 export function ReviewForm({ productId }: { productId: string }) {
   const { t } = useI18n()

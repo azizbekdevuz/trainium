@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { emitCartChanged } from '../../lib/cart-events';
-import { showToast } from '../../lib/toast';
+import { emitCartChanged } from '../../lib/cart/cart-events';
+import { showToast } from '../../lib/ui/toast';
 import { useI18n } from '../providers/I18nProvider';
 
 export default function QtyAndAdd({ available, formId = 'add-to-cart-form' }: { available: number; formId?: string }) {

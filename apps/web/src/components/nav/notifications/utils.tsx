@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Package, ExternalLink, ShoppingCart } from 'lucide-react';
 import type { Notification } from './types';
-import type { Dictionary } from '../../../lib/i18n';
+import type { Dictionary } from '../../../lib/i18n/i18n';
 
 export function translateNotification(raw: string, dict: Dictionary): string {
   if (!raw || typeof raw !== 'string') return raw as any;

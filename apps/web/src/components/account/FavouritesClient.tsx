@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { useI18n } from '../providers/I18nProvider'
-import { ProductCard } from '../ProductCard'
+import { ProductCard } from '../product/ProductCard'
 
 type CardItem = {
   id: string

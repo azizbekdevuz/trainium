@@ -1,8 +1,8 @@
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
-import { getDictionary, negotiateLocale } from '@/lib/i18n';
-import { Icon } from '@/components/ui/Icon';
-import { prisma } from '@/lib/db';
+import { getDictionary, negotiateLocale } from '@/lib/i18n/i18n';
+import { Icon } from '@/components/ui/media/Icon';
+import { prisma } from '@/lib/database/db';
 import Link from 'next/link';
 import { DashboardStatsCards } from '@/components/admin/DashboardStatsCards';
 import { RecentOrdersPreview } from '@/components/admin/RecentOrdersPreview';

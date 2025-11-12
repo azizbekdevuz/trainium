@@ -1,8 +1,8 @@
-import { prisma } from '../../lib/db';
+import { prisma } from '../../lib/database/db';
 import { Prisma } from '@prisma/client';
 import { ProductWithRelations } from '../../types/prisma';
-import { sortCategories } from '../../lib/category-utils';
-import type { Dictionary } from '../../lib/i18n';
+import { sortCategories } from '../../lib/product/category-utils';
+import type { Dictionary } from '../../lib/i18n/i18n';
 import type { ParsedSearchParams } from './types';
 import { buildWhereClause, buildOrderBy } from './filters';
 

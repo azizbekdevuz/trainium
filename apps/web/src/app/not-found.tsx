@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { negotiateLocale, getDictionary } from '../lib/i18n';
-import CuteMascot from '../components/ui/CuteMascot';
+import { negotiateLocale, getDictionary } from '../lib/i18n/i18n';
+import CuteMascot from '../components/ui/media/CuteMascot';
 
 export const runtime = 'nodejs';
 

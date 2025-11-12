@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../../../auth";
-import { prisma } from "../../../../../../lib/db";
-import { ORDER_STATUS } from "../../../../../../lib/order-status";
+import { prisma } from "../../../../../../lib/database/db";
+import { ORDER_STATUS } from "../../../../../../lib/order/order-status";
 import { revalidatePath } from "next/cache";
 import { createUserNotification, NotificationTemplates } from "../../../../../../lib/notifications";
-import { sendSocketOrderUpdate } from "../../../../../../lib/socket-server";
+import { sendSocketOrderUpdate } from "../../../../../../lib/socket/socket-server";
 
 export const runtime = "nodejs";
 

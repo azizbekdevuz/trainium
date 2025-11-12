@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { SUPPORTED_LOCALES, DEFAULT_LOCALE, LOCALE_COOKIE } from "./lib/i18n-config";
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE, LOCALE_COOKIE } from "./lib/i18n/i18n-config";
 
 export async function middleware(req: NextRequest) {
   const url = req.nextUrl;

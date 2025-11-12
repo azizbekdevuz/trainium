@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../../auth";
-import { checkLowStockProducts, checkOutOfStockProducts } from "../../../../../lib/product-notifications";
+import { checkLowStockProducts, checkOutOfStockProducts } from "../../../../../lib/product/product-notifications";
 
 export const runtime = "nodejs";
 

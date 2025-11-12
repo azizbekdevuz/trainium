@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useEffect } from 'react';
 import { useI18n } from '../../../components/providers/I18nProvider';
-import { ThinkingEmoji } from '../../../components/ui/ThinkingEmoji';
+import { ThinkingEmoji } from '../../../components/ui/media/ThinkingEmoji';
 
 interface FaqTranslation {
   id: string;

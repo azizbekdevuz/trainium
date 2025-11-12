@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { OrderTrackingTimeline } from '../order/OrderTrackingTimeline';
-import { TrackingEvent } from '../../lib/shipping-tracker';
+import { TrackingEvent } from '../../lib/order/shipping-tracker';
 import { useI18n } from '../providers/I18nProvider';
 
 interface TrackingResultsProps {

@@ -2,14 +2,14 @@
 
 import React from 'react';
 import { useI18n } from '../providers/I18nProvider';
-import { getCategoryDisplayName } from '../../lib/category-utils';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { Select } from '@/components/ui/select';
-import { BottomSheet } from '@/components/ui/bottom-sheet';
+import { getCategoryDisplayName } from '../../lib/product/category-utils';
+import { Button } from '@/components/ui/primitives/button';
+import { Input } from '@/components/ui/primitives/input';
+import { Label } from '@/components/ui/primitives/label';
+import { Textarea } from '@/components/ui/primitives/textarea';
+import { Switch } from '@/components/ui/primitives/switch';
+import { Select } from '@/components/ui/primitives/select';
+import { BottomSheet } from '@/components/ui/navigation/bottom-sheet';
 
 interface FaqTranslation {
   id?: string;

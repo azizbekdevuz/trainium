@@ -1,4 +1,4 @@
-import type { Dictionary } from '../../../lib/i18n';
+import type { Dictionary } from '../../../lib/i18n/i18n';
 import type { Inventory } from '@prisma/client';
 
 interface InventoryFormProps {

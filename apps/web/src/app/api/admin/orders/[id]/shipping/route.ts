@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../../../auth";
-import { prisma } from "../../../../../../lib/db";
+import { prisma } from "../../../../../../lib/database/db";
 import { revalidatePath } from "next/cache";
-import { sendSocketOrderUpdate } from "../../../../../../lib/socket-server";
+import { sendSocketOrderUpdate } from "../../../../../../lib/socket/socket-server";
 import { NotificationTemplates, createUserNotification } from "../../../../../../lib/notifications";
 
 export const runtime = "nodejs";

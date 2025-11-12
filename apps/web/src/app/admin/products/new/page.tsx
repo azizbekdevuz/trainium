@@ -1,12 +1,12 @@
-import { prisma } from '../../../../lib/db';
+import { prisma } from '../../../../lib/database/db';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import FileUpload from '../../../../components/ui/FileUpload';
-import { sendNewProductNotification } from '../../../../lib/product-notifications';
-import { negotiateLocale, getDictionary } from '../../../../lib/i18n';
-import ToastOnQuery from '../../../../components/ui/ToastOnQuery';
-import { sortCategories } from '../../../../lib/category-utils';
+import FileUpload from '../../../../components/ui/media/FileUpload';
+import { sendNewProductNotification } from '../../../../lib/product/product-notifications';
+import { negotiateLocale, getDictionary } from '../../../../lib/i18n/i18n';
+import ToastOnQuery from '../../../../components/ui/feedback/ToastOnQuery';
+import { sortCategories } from '../../../../lib/product/category-utils';
 import { ProductFormClient } from '../../../../components/admin/ProductFormClient';
 import fs from 'fs/promises';
 import path from 'path';

@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { formatCurrency } from '@/lib/format';
-import { Icon } from '../ui/Icon';
+import { formatCurrency } from '@/lib/utils/format';
+import { Icon } from '../ui/media/Icon';
 
 interface Product {
   id: string;

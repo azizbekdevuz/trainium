@@ -1,7 +1,7 @@
-import { prisma } from '../../lib/db';
-import { ProductCard } from '../ProductCard';
+import { prisma } from '../../lib/database/db';
+import { ProductCard } from '../product/ProductCard';
 import { ProductWithRelations } from '../../types/prisma';
-import { getDictionary, negotiateLocale } from '../../lib/i18n';
+import { getDictionary, negotiateLocale } from '../../lib/i18n/i18n';
 import { auth } from '../../auth';
 import { Prisma } from '@prisma/client';
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCart } from '../../../../lib/cart';
+import { getCart } from '../../../../lib/cart/cart';
 
 export const runtime = 'nodejs';
 

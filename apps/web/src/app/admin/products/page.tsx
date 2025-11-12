@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { prisma } from '../../../lib/db';
-import { getDictionary, negotiateLocale } from '../../../lib/i18n';
+import { prisma } from '../../../lib/database/db';
+import { getDictionary, negotiateLocale } from '../../../lib/i18n/i18n';
 import ProductsTable from '../../../components/admin/ProductsTable';
-import ToastOnQuery from '../../../components/ui/ToastOnQuery';
+import ToastOnQuery from '../../../components/ui/feedback/ToastOnQuery';
 
 export const dynamic = 'force-dynamic';
 

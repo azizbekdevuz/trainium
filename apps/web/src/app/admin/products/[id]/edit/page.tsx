@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { negotiateLocale, getDictionary } from '../../../../../lib/i18n';
-import ToastOnQuery from '../../../../../components/ui/ToastOnQuery';
+import { negotiateLocale, getDictionary } from '../../../../../lib/i18n/i18n';
+import ToastOnQuery from '../../../../../components/ui/feedback/ToastOnQuery';
 import { getProductEditData } from './data';
 import { updateCore, uploadImage, updateInventory, addVariant, saveVariant, removeVariant } from './actions';
 import { CoreDetailsForm } from '../../../../../components/admin/product-edit/CoreDetailsForm';

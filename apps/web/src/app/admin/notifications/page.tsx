@@ -1,7 +1,7 @@
 import { auth } from '../../../auth';
 import { redirect } from 'next/navigation';
 import { NotificationClient } from '../../../components/admin/NotificationClient';
-import { negotiateLocale, getDictionary } from '../../../lib/i18n';
+import { negotiateLocale, getDictionary } from '../../../lib/i18n/i18n';
 import Link from 'next/link';
 
 export const runtime = 'nodejs';

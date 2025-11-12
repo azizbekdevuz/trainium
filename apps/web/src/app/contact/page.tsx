@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ContactForm } from './sections/ContactForm';
 import { FaqSection } from './sections/FaqSection';
-import { getDictionary, negotiateLocale } from '../../lib/i18n';
+import { getDictionary, negotiateLocale } from '../../lib/i18n/i18n';
 
 export default async function Contact() {
   const lang = await negotiateLocale();

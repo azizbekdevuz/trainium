@@ -1,8 +1,8 @@
 import { Check } from 'lucide-react';
-import { formatDateTime } from '../../../lib/date-utils';
+import { formatDateTime } from '../../../lib/utils/date-utils';
 import { getNotificationIcon, getNotificationColor, getNotificationActions, translateNotification } from './utils';
 import type { Notification } from './types';
-import type { Dictionary } from '../../../lib/i18n';
+import type { Dictionary } from '../../../lib/i18n/i18n';
 
 interface NotificationItemProps {
   notification: Notification;

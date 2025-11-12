@@ -1,10 +1,10 @@
 'use server';
 
-import { prisma } from '../../../../../lib/db';
+import { prisma } from '../../../../../lib/database/db';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { negotiateLocale, getDictionary } from '../../../../../lib/i18n';
-import { priceToMinorUnits } from '../../../../../lib/product-utils';
+import { negotiateLocale, getDictionary } from '../../../../../lib/i18n/i18n';
+import { priceToMinorUnits } from '../../../../../lib/product/product-utils';
 import fs from 'fs/promises';
 import path from 'path';
 

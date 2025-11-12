@@ -1,6 +1,6 @@
 import type { OrderStatus } from '@prisma/client';
 import type { StatusOption } from './types';
-import type { Dictionary } from '../../../lib/i18n';
+import type { Dictionary } from '../../../lib/i18n/i18n';
 
 interface StatusSectionProps {
   currentStatus: OrderStatus;

@@ -1,5 +1,5 @@
 import 'server-only'
-import { prisma } from '../../lib/db'
+import { prisma } from '../../lib/database/db'
 import { RecommendationCacheInvalidation } from './recommendations/cache-invalidation'
 
 export async function isProductLikedByUser(userId: string, productId: string): Promise<boolean> {

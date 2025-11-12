@@ -1,17 +1,17 @@
 'use client';
 
-import SmartImage from "../../components/ui/SmartImage";
+import SmartImage from "../../components/ui/media/SmartImage";
 import Link from "next/link";
 import { useMemo, useState, Fragment } from "react";
 import dynamic from "next/dynamic";
 import { signOut } from "next-auth/react";
 import { Dialog, Transition } from "@headlessui/react";
 import { createPortal } from "react-dom";
-import { formatCurrency } from "../../lib/format";
-import { getStatusConfig } from "../../lib/order-status";
+import { formatCurrency } from "../../lib/utils/format";
+import { getStatusConfig } from "../../lib/order/order-status";
 import { useI18n } from "../../components/providers/I18nProvider";
-import { formatDateTime } from "../../lib/date-utils";
-import { Icon } from "../../components/ui/Icon";
+import { formatDateTime } from "../../lib/utils/date-utils";
+import { Icon } from "../../components/ui/media/Icon";
 
 type OrderItemDTO = { id: string; name: string; sku: string | null; qty: number; priceCents: number; };
 type ShippingDTO = { fullName: string; phone: string; address1: string; address2: string | null; city: string; state: string | null; postalCode: string; country: string; status: string | null; carrier: string | null; trackingNo: string | null; };

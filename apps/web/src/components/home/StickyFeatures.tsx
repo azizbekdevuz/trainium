@@ -1,6 +1,6 @@
 "use client";
 
-import Reveal from '../ui/Reveal';
+import Reveal from '../ui/animations/Reveal';
 import { useI18n } from '../providers/I18nProvider';
 import { useState } from 'react';
 import Image from 'next/image';

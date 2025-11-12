@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { emitCartCleared, emitCartChanged } from '../../lib/cart-events';
+import { emitCartCleared, emitCartChanged } from '../../lib/cart/cart-events';
 
 export default function CartClearOnSuccess() {
   useEffect(() => {

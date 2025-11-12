@@ -2,14 +2,14 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import SmartImage from '../ui/SmartImage';
-import { formatCurrency } from '../../lib/format';
+import SmartImage from '../ui/media/SmartImage';
+import { formatCurrency } from '../../lib/utils/format';
 import CartCount from './CartCount';
-import { onCartChanged, onCartCleared } from '../../lib/cart-events';
+import { onCartChanged, onCartCleared } from '../../lib/cart/cart-events';
 import { ShoppingCart } from 'lucide-react';
 import { useI18n } from '../providers/I18nProvider';
 import { useResponsive } from '../../hooks/useResponsive';
-import { showToast } from '../../lib/toast';
+import { showToast } from '../../lib/ui/toast';
 
 type MiniItem = {
   id: string;

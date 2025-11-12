@@ -5,7 +5,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import type { Stripe } from "@stripe/stripe-js";
 import { useI18n } from "../../components/providers/I18nProvider";
 import { useTheme } from "../../components/providers/ThemeProvider";
-import { getStripeLocale } from "../../lib/checkout-utils";
+import { getStripeLocale } from "../../lib/checkout/checkout-utils";
 import { useStripeAppearance } from "../../components/checkout/hooks/useStripeAppearance";
 import { useAddressValidation } from "../../components/checkout/hooks/useAddressValidation";
 import { usePaymentIntent } from "../../components/checkout/hooks/usePaymentIntent";

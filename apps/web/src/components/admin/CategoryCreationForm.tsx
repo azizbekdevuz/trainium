@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Form } from '../ui/Form';
+import { Form } from '../ui/forms/Form';
 import { Plus, Loader2 } from 'lucide-react';
 
 interface CategoryCreationFormProps {

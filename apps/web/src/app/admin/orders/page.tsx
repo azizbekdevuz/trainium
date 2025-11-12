@@ -1,9 +1,9 @@
 import { auth } from '../../../auth';
 import { redirect } from 'next/navigation';
-import { prisma } from '../../../lib/db';
+import { prisma } from '../../../lib/database/db';
 import Link from 'next/link';
 import { OrderStatus } from '@prisma/client';
-import { getDictionary, negotiateLocale } from '../../../lib/i18n';
+import { getDictionary, negotiateLocale } from '../../../lib/i18n/i18n';
 import { OrdersTable } from '../../../components/admin/OrdersTable';
 
 export const runtime = 'nodejs';

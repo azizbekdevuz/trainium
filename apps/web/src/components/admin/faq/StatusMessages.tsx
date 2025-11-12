@@ -1,4 +1,4 @@
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert, AlertDescription } from '@/components/ui/primitives/alert';
 import { AlertCircle, CheckCircle } from 'lucide-react';
 
 interface StatusMessagesProps {

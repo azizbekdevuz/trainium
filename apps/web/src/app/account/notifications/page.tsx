@@ -3,9 +3,8 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { getUserNotificationsPaginated, getUnreadNotificationCount } from '../../../lib/notifications';
 import { NotificationClient } from '../../../components/account/NotificationClient';
-import { negotiateLocale } from '../../../lib/i18n';
-import { getDictionary } from '../../../lib/i18n';
-import { parsePaginationOptions, validatePaginationOptions } from '../../../lib/pagination-utils';
+import { negotiateLocale, getDictionary } from '../../../lib/i18n/i18n';
+import { parsePaginationOptions, validatePaginationOptions } from '../../../lib/utils/pagination-utils';
 
 export const runtime = 'nodejs';
 

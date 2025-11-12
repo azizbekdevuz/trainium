@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { updateQtyAction } from '../../app/actions/cart';
-import { emitCartChanged } from '../../lib/cart-events';
-import { showToast } from '../../lib/toast';
+import { emitCartChanged } from '../../lib/cart/cart-events';
+import { showToast } from '../../lib/ui/toast';
 import { useI18n } from '../providers/I18nProvider';
 
 interface CartQtyUpdateProps {

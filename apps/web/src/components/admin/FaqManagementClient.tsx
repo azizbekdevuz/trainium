@@ -1,12 +1,12 @@
 'use client';
 
 import { useI18n } from '../providers/I18nProvider';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/primitives/button';
 import { Plus, Loader2 } from 'lucide-react';
 import { CategoryForm } from './CategoryForm';
 import { FaqForm } from './FaqForm';
 import { CategoryCard } from './CategoryCard';
-import { ConfirmationDialog } from '../ui/confirmation-dialog';
+import { ConfirmationDialog } from '../ui/feedback/confirmation-dialog';
 import { useFaqManagement } from './faq/hooks/useFaqManagement';
 import { useFaqOperations } from './faq/hooks/useFaqOperations';
 import { StatusMessages } from './faq/StatusMessages';

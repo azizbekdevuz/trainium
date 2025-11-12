@@ -60,3 +60,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# prisma ERD diagrams (generated files)
+prisma/ERDs/
+prisma/schema.prisma.backup

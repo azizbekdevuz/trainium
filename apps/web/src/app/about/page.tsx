@@ -1,4 +1,4 @@
-import { getDictionary, negotiateLocale } from '../../lib/i18n';
+import { getDictionary, negotiateLocale } from '../../lib/i18n/i18n';
 
 export default async function About() {
   const lang = await negotiateLocale();

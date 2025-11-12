@@ -1,4 +1,4 @@
-import { ProductCard } from '../../components/ProductCard';
+import { ProductCard } from '../../components/product/ProductCard';
 import { ProductWithRelations } from '../../types/prisma';
 
 interface ProductGridProps {

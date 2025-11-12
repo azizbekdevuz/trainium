@@ -1,5 +1,5 @@
-import FileUpload from '../../../components/ui/FileUpload';
-import type { Dictionary } from '../../../lib/i18n';
+import FileUpload from '../../../components/ui/media/FileUpload';
+import type { Dictionary } from '../../../lib/i18n/i18n';
 
 interface ImageUploadFormProps {
   productId: string;

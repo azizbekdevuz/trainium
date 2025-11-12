@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { prisma } from '../../lib/db';
-import Tilt from '../ui/Tilt';
-import { getDictionary, negotiateLocale } from '../../lib/i18n';
-import { getCategoryDisplayName } from '../../lib/category-utils';
+import { prisma } from '../../lib/database/db';
+import Tilt from '../ui/animations/Tilt';
+import { getDictionary, negotiateLocale } from '../../lib/i18n/i18n';
+import { getCategoryDisplayName } from '../../lib/product/category-utils';
 import { Dumbbell, Bike, Activity, HeartPulse, Boxes, Flame } from 'lucide-react';
 
 function getIconForCategory(slug: string | null | undefined) {

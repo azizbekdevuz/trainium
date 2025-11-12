@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { useI18n } from '../providers/I18nProvider';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { BottomSheet } from '@/components/ui/bottom-sheet';
+import { Button } from '@/components/ui/primitives/button';
+import { Input } from '@/components/ui/primitives/input';
+import { Label } from '@/components/ui/primitives/label';
+import { Switch } from '@/components/ui/primitives/switch';
+import { BottomSheet } from '@/components/ui/navigation/bottom-sheet';
 
 interface FaqCategoryTranslation {
   id: string;

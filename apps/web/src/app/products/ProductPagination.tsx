@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { ParsedSearchParams } from './types';
-import type { Dictionary } from '../../lib/i18n';
+import type { Dictionary } from '../../lib/i18n/i18n';
 
 interface ProductPaginationProps {
   lang: string;

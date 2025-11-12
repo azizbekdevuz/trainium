@@ -2,7 +2,7 @@
 
 import { useTheme } from '../providers/ThemeProvider';
 import { useState } from 'react';
-import { SunIcon, MoonIcon } from '../ui/Icon';
+import { SunIcon, MoonIcon } from '../ui/media/Icon';
 
 export default function ThemeToggle() {
   const { toggle } = useTheme();

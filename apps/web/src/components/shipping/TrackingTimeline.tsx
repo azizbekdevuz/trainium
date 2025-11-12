@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { TrackingEvent, TRACKING_STATUS_MAP } from '../../lib/shipping-tracker';
-import { Icon } from '../ui/Icon';
+import { TrackingEvent, TRACKING_STATUS_MAP } from '../../lib/order/shipping-tracker';
+import { Icon } from '../ui/media/Icon';
 
 interface TrackingTimelineProps {
   trackingNumber: string;
@@ -40,7 +40,7 @@ export function TrackingTimeline({ trackingNumber, carrier, events: initialEvent
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load tracking information');
       // Fallback to mock data for development
-      const mockEvents = await import('../../lib/shipping-tracker').then(m => 
+      const mockEvents = await import('../../lib/order/shipping-tracker').then(m => 
         m.generateMockTrackingEvents(trackingNumber)
       );
       setEvents(mockEvents);

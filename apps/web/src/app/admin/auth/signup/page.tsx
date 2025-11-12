@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 import { auth } from '../../../../auth';
-import { prisma } from '../../../../lib/db';
-import { hashPassword } from '../../../../lib/password';
-import { getDictionary, negotiateLocale } from '../../../../lib/i18n';
+import { prisma } from '../../../../lib/database/db';
+import { hashPassword } from '../../../../lib/auth/password';
+import { getDictionary, negotiateLocale } from '../../../../lib/i18n/i18n';
 
 export const runtime = 'nodejs';
 

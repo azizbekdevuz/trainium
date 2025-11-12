@@ -1,7 +1,7 @@
-import { prisma } from './db';
+import { prisma } from '../lib/database/db';
 import { NotificationType } from '@prisma/client';
 import { getCleanupService } from './notification-cleanup';
-import { PAGINATION_DEFAULTS, type OffsetPaginationResult } from './pagination-utils';
+import { PAGINATION_DEFAULTS, type OffsetPaginationResult } from '../lib/utils/pagination-utils';
 import { calculateNotificationStartDate } from './notifications/helpers';
 import { buildNotificationWhereClause, getUserForNotifications } from './notifications/queries';
 import type { NotificationData } from './notifications/types';

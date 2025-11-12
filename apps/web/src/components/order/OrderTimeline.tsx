@@ -1,10 +1,10 @@
 'use client';
 
 import { OrderStatus } from '@prisma/client';
-import { getTimelineEventsForStatus } from '../../lib/order-status';
+import { getTimelineEventsForStatus } from '../../lib/order/order-status';
 import { useI18n } from '../providers/I18nProvider';
-import { formatDateTime } from '../../lib/date-utils';
-import { Icon } from '../ui/Icon';
+import { formatDateTime } from '../../lib/utils/date-utils';
+import { Icon } from '../ui/media/Icon';
 
 // Icon mapping using Lucide icons
 const iconMap: Record<string, string> = {

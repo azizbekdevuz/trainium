@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useI18n } from '@/components/providers/I18nProvider';
-import { ProductCard } from '@/components/ProductCard';
-import { Button } from '../ui/button';
-import { Skeleton } from '../ui/skeleton';
-// import { Alert, AlertDescription } from '../ui/alert';
+import { ProductCard } from '@/components/product/ProductCard';
+import { Button } from '../ui/primitives/button';
+import { Skeleton } from '../ui/primitives/skeleton';
+// import { Alert, AlertDescription } from '../ui/primitives/alert';
 import { 
   RecommendedProduct, 
   RecommendationResponse, 
@@ -19,7 +19,7 @@ import {
   Sparkles,
   Loader2
 } from 'lucide-react';
-import { FitnessCharacter } from '../ui/FitnessCharacter';
+import { FitnessCharacter } from '../ui/media/FitnessCharacter';
 
 interface RecommendedProductsProps {
   context?: 'product' | 'home' | 'cart';

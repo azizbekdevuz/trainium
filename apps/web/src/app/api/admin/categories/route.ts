@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../auth";
-import { prisma } from "../../../../lib/db";
-import { addCategoryTranslation } from "../../../../lib/category-translations";
-import { validateCategoryRequest } from "../../../../lib/validation";
+import { prisma } from "../../../../lib/database/db";
+import { addCategoryTranslation } from "../../../../lib/product/category-translations";
+import { validateCategoryRequest } from "../../../../lib/utils/validation";
 import { ERROR_MESSAGES } from "../../../../types/api";
 import type { CreateCategoryRequest, CreateCategoryResponse, GetCategoriesResponse, ApiErrorResponse } from "../../../../types/api";
 

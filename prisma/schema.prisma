@@ -308,16 +308,6 @@ model Payment {
   updatedAt   DateTime        @updatedAt
 }
 
-// ===== Simple in-app CMS content for homepage =====
-model HomeContent {
-  id           String   @id @default("home")
-  heroHeadline String?
-  heroSub      String?
-  badges       Json?
-  promoMarquee String?
-  updatedAt    DateTime @updatedAt
-}
-
 // ===== Notification System =====
 model Notification {
   id        String           @id @default(cuid())

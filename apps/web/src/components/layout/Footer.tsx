@@ -15,7 +15,6 @@ export default function Footer({ year, brand, tagline, devDict }: { year: number
   const [open, setOpen] = useState(false);
   const title = devDict?.title || 'About the Developer';
   const intro = devDict?.intro || '';
-  const principles = useMemo(() => Array.isArray(devDict?.principles) ? devDict?.principles as string[] : [], [devDict]);
   const tech = useMemo(() => Array.isArray(devDict?.tech) ? devDict?.tech as string[] : [], [devDict]);
   return (
     <footer className="inset-x-0 border-t glass">

@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { TrackingResults } from '../../../components/shipping/TrackingResults';
-import { getDictionary, negotiateLocale } from '../../../lib/i18n';
+import { getDictionary, negotiateLocale } from '../../../lib/i18n/i18n';
 
 export const runtime = 'nodejs';
 

@@ -1,5 +1,5 @@
 import 'server-only';
-import { prisma } from '../../../lib/db';
+import { prisma } from '../../../lib/database/db';
 import type { FaqWithTranslations, FaqCategoryWithFaqs } from './types';
 
 const faqTranslationSelect = {

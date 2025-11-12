@@ -1,6 +1,6 @@
 import { auth } from "../../auth";
 import { redirect } from "next/navigation";
-import { prisma } from "../../lib/db";
+import { prisma } from "../../lib/database/db";
 import CheckoutClient from "./CheckoutClient";
 
 export const runtime = "nodejs";

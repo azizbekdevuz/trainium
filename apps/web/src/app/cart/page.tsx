@@ -1,11 +1,11 @@
-import { getCart, cartTotals } from '../../lib/cart';
-import { formatCurrency } from '../../lib/format';
+import { getCart, cartTotals } from '../../lib/cart/cart';
+import { formatCurrency } from '../../lib/utils/format';
 import Link from 'next/link';
 import CartRemoveButton from '../../components/cart/CartRemoveButton';
 import Image from 'next/image';
 import CartQtyUpdate from '../../components/cart/CartQtyUpdate';
-import { prisma } from '../../lib/db';
-import { getDictionary, negotiateLocale } from '../../lib/i18n';
+import { prisma } from '../../lib/database/db';
+import { getDictionary, negotiateLocale } from '../../lib/i18n/i18n';
 import { RecommendedProducts } from '../../components/recommendations/RecommendedProducts';
 
 export const dynamic = "force-dynamic";

@@ -1,9 +1,9 @@
 import { auth } from "../../auth";
 import Link from "next/link";
-import { getDictionary, negotiateLocale } from "../../lib/i18n";
+import { getDictionary, negotiateLocale } from "../../lib/i18n/i18n";
 
 export default async function SpecialBargain() {
-  const session = await auth();   // ✅ from "@/auth" (not "next-auth")
+  const session = await auth();   
   const lang = await negotiateLocale();
   const dict = await getDictionary(lang);
   if (!session) { 

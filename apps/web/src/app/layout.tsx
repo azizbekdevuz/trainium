@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
-import { getDictionary, negotiateLocale } from "../lib/i18n";
+import { getDictionary, negotiateLocale } from "../lib/i18n/i18n";
 import SessionProviderWrapper from "../components/providers/SessionProviderWrapper";
 import { auth } from "../auth";
 import InteractiveBackground from "../components/background/InteractiveBackground";
 import "./globals.css";
-import { ToastContainer } from "../lib/toast";
+import { ToastContainer } from "../lib/ui/toast";
 import { I18nProvider } from "../components/providers/I18nProvider";
 import ThemeProvider from "../components/providers/ThemeProvider";
 import Footer from "../components/layout/Footer";

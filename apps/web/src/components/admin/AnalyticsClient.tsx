@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { formatCurrency } from '../../lib/format';
+import { formatCurrency } from '../../lib/utils/format';
 import { useI18n } from '../providers/I18nProvider';
 
 type DailyPoint = { day: string; orders: number; revenue: number };

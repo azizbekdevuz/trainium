@@ -1,4 +1,4 @@
-import { prisma } from '../../db';
+import { prisma } from '../../database/db';
 import { RecommendedProduct } from './types';
 
 export class ProductSimilarityService {

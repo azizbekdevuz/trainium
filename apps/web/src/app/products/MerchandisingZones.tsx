@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { Icon } from '../../components/ui/Icon';
-import type { Dictionary } from '../../lib/i18n';
+import { Icon } from '../../components/ui/media/Icon';
+import type { Dictionary } from '../../lib/i18n/i18n';
 
 interface MerchandisingZonesProps {
   lang: string;

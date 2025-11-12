@@ -1,10 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { formatDate } from '@/lib/date-utils';
+import { formatDate } from '@/lib/utils/date-utils';
 import { useResponsive } from '../../hooks/useResponsive';
 import { UserAvatar } from './UserAvatar';
-import { Icon } from '../ui/Icon';
+import { Icon } from '../ui/media/Icon';
 
 interface Customer {
   id: string;

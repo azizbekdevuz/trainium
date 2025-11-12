@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../../auth";
-import { prisma } from "../../../../../lib/db";
+import { prisma } from "../../../../../lib/database/db";
 // import { finalizeOrderFromCart } from "../../../../../lib/order-finalize";
-import { sendOrderConfirmationEmail } from "../../../../../lib/email";
-import { generateTrackingNumber, generateCarrier } from "../../../../../lib/tracking-generator";
+import { sendOrderConfirmationEmail } from "../../../../../lib/email/email";
+import { generateTrackingNumber, generateCarrier } from "../../../../../lib/order/tracking-generator";
 import { createUserNotification, NotificationTemplates, NotificationData } from "../../../../../lib/notifications";
-import { checkLowStockProducts } from "../../../../../lib/product-notifications";
+import { checkLowStockProducts } from "../../../../../lib/product/product-notifications";
 
 export const runtime = "nodejs";
 

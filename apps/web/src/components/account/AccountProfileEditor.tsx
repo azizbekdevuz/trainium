@@ -3,8 +3,8 @@
 import { useEffect, useState, useTransition } from 'react';
 import { signOut } from 'next-auth/react';
 import { useI18n } from '../providers/I18nProvider';
-import { Form } from '../ui/Form';
-import FileUpload from '../ui/FileUpload';
+import { Form } from '../ui/forms/Form';
+import FileUpload from '../ui/media/FileUpload';
 
 export default function AccountProfileEditor({ initialName, initialImage, initialEmail, onUpdated, onClose }: { initialName: string | null; initialImage: string | null; initialEmail?: string | null; onUpdated: (u: { name: string | null; image: string | null }) => void; onClose: () => void }) {
   const { t, lang } = useI18n();

@@ -1,6 +1,6 @@
-import { MultiSelect } from '../../components/ui/MultiSelect';
-import { getCategoryDisplayName } from '../../lib/category-utils';
-import type { Dictionary } from '../../lib/i18n';
+import { MultiSelect } from '../../components/ui/forms/MultiSelect';
+import { getCategoryDisplayName } from '../../lib/product/category-utils';
+import type { Dictionary } from '../../lib/i18n/i18n';
 import type { Category } from '@prisma/client';
 import type { ParsedSearchParams } from './types';
 

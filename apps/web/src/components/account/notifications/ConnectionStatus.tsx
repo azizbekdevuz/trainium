@@ -1,5 +1,5 @@
 import { Wifi, WifiOff } from 'lucide-react';
-import type { Dictionary } from '../../../lib/i18n';
+import type { Dictionary } from '../../../lib/i18n/i18n';
 
 interface ConnectionStatusProps {
   isConnected: boolean;

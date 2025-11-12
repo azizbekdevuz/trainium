@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "../../auth";
-import { prisma } from "../../lib/db";
+import { prisma } from "../../lib/database/db";
 import AccountClient from "./AccountClient";
 
 export const runtime = "nodejs"; // ensure Node runtime for Prisma etc.

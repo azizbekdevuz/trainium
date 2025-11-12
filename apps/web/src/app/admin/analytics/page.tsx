@@ -1,10 +1,10 @@
 import { auth } from '../../../auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { prisma } from '../../../lib/db';
-import { formatCurrency } from '../../../lib/format';
+import { prisma } from '../../../lib/database/db';
+import { formatCurrency } from '../../../lib/utils/format';
 import { AnalyticsClient } from '../../../components/admin/AnalyticsClient';
-import { getDictionary, negotiateLocale } from '../../../lib/i18n';
+import { getDictionary, negotiateLocale } from '../../../lib/i18n/i18n';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

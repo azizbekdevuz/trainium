@@ -3,8 +3,8 @@
 import Image from 'next/image';
 import logoBanner from '../../../public/images/logo-banner.png';
 import { motion, useReducedMotion } from 'framer-motion';
-import Spotlight from '../ui/Spotlight';
-import MagneticButton from '../ui/MagneticButton';
+import Spotlight from '../ui/animations/Spotlight';
+import MagneticButton from '../ui/animations/MagneticButton';
 import { useI18n } from '../providers/I18nProvider';
 
 export function Hero({ title, sub }: { title?: string; sub?: string }) {

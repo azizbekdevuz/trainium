@@ -1,6 +1,6 @@
-import { prisma } from '../../../../../lib/db';
-import { sortCategories } from '../../../../../lib/category-utils';
-import type { Dictionary } from '../../../../../lib/i18n';
+import { prisma } from '../../../../../lib/database/db';
+import { sortCategories } from '../../../../../lib/product/category-utils';
+import type { Dictionary } from '../../../../../lib/i18n/i18n';
 
 /**
  * Fetch product edit page data

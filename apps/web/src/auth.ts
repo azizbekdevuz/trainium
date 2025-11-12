@@ -2,9 +2,9 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "./lib/db";
-import { mergeCookieCartIntoUser } from "./lib/cart-merge";
-import { verifyPassword } from "./lib/password";
+import { prisma } from "./lib/database/db";
+import { mergeCookieCartIntoUser } from "./lib/cart/cart-merge";
+import { verifyPassword } from "./lib/auth/password";
 import Kakao from "./auth/providers/kakao";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({

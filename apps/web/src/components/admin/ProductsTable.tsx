@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { formatCurrency } from '../../lib/format';
+import { formatCurrency } from '../../lib/utils/format';
 import { useResponsive } from '../../hooks/useResponsive';
 import { ProductImage } from './ProductImage';
 

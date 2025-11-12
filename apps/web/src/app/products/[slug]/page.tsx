@@ -1,18 +1,18 @@
 import { addToCartAction } from '../../actions/cart';
 import QtyAndAdd from '../../../components/product/QtyAndAdd';
-import { prisma } from '../../../lib/db';
+import { prisma } from '../../../lib/database/db';
 import { notFound } from 'next/navigation';
-import { formatCurrency } from '../../../lib/format';
-import { getStockBadgeConfig } from '../../../lib/inventory-utils';
-import SmartImage from '../../../components/ui/SmartImage';
-import { getDictionary, negotiateLocale } from '../../../lib/i18n';
-import { getCategoryDisplayName } from '../../../lib/category-utils';
-import { Icon } from '../../../components/ui/Icon';
+import { formatCurrency } from '../../../lib/utils/format';
+import { getStockBadgeConfig } from '../../../lib/product/inventory-utils';
+import SmartImage from '../../../components/ui/media/SmartImage';
+import { getDictionary, negotiateLocale } from '../../../lib/i18n/i18n';
+import { getCategoryDisplayName } from '../../../lib/product/category-utils';
+import { Icon } from '../../../components/ui/media/Icon';
 import { auth } from '../../../auth';
 import { FavoriteButton } from '../../../components/product/FavoriteButton';
 import { ProductLikeButton } from '../../../components/product/LikeButton';
 import { ReviewsSection } from '../../../components/product/ReviewsSection';
-import { ProductCard } from '../../../components/ProductCard';
+import { ProductCard } from '../../../components/product/ProductCard';
 import { ReviewForm } from '../../../components/product/ReviewForm';
 import { RecommendedProducts } from '../../../components/recommendations/RecommendedProducts';
 

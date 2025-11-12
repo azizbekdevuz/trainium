@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
-import { getDictionary, negotiateLocale } from '@/lib/i18n';
+import { getDictionary, negotiateLocale } from '@/lib/i18n/i18n';
 import { FaqManagementClient } from '@/components/admin/FaqManagementClient';
 import Link from 'next/link';
 

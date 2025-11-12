@@ -2,8 +2,8 @@
 
 import { OrderStatus } from '@prisma/client';
 import { useI18n } from '../providers/I18nProvider';
-import { formatDateTime } from '../../lib/date-utils';
-import { Icon } from '../ui/Icon';
+import { formatDateTime } from '../../lib/utils/date-utils';
+import { Icon } from '../ui/media/Icon';
 
 interface OrderTrackingTimelineProps {
   orderStatus: OrderStatus;

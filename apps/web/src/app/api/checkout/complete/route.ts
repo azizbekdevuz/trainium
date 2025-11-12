@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../auth";
-import { finalizeOrderFromCart } from "../../../../lib/order-finalize";
+import { finalizeOrderFromCart } from "../../../../lib/order/order-finalize";
 
 export const runtime = "nodejs";
 

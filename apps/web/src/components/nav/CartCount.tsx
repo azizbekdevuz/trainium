@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from 'react';
-import { onCartChanged, onCartCleared } from '../../lib/cart-events';
+import { onCartChanged, onCartCleared } from '../../lib/cart/cart-events';
 import { usePathname } from 'next/navigation';
 
 export default function CartCount() {

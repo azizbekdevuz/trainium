@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import CartClearOnSuccess from '../../../components/cart/CartClearOnSuccess';
-import { getDictionary, negotiateLocale } from '../../../lib/i18n';
-import { CelebrationIcon } from '../../../components/ui/Icon';
+import { getDictionary, negotiateLocale } from '../../../lib/i18n/i18n';
+import { CelebrationIcon } from '../../../components/ui/media/Icon';
 
 export default async function SuccessPage({
   searchParams,

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { createPortal } from 'react-dom';
 import { useSession, signOut } from 'next-auth/react';
-import { Icon } from '../ui/Icon';
+import { Icon } from '../ui/media/Icon';
 import { useI18n } from '../providers/I18nProvider';
 import ThemeToggle from './ThemeToggle';
 import LanguageSwitcher from './LanguageSwitcher';

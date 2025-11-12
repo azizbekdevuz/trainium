@@ -1,4 +1,4 @@
-import { ORDER_STATUS } from '../../../lib/order-status';
+import { ORDER_STATUS } from '../../../lib/order/order-status';
 import type { OrderStatus } from '@prisma/client';
 import type { StatusOption } from './types';
 

@@ -1,4 +1,4 @@
-import { getDictionary, negotiateLocale } from '../../lib/i18n';
+import { getDictionary, negotiateLocale } from '../../lib/i18n/i18n';
 import { auth } from '../../auth';
 import { normalizeMulti } from './filters';
 import { getProductsPageData, getProductInteractionData } from './data';
