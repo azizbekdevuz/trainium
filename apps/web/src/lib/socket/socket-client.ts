@@ -31,25 +31,101 @@ class SocketClient {
     reconnectAttempts: 0,
   };
   private listeners: Map<string, Function[]> = new Map();
+  private connectionPromise: Promise<void> | null = null;
+  private eventHandlersAttached: boolean = false;
 
   /**
    * Initialize Socket.IO connection
    */
   connect(userId?: string, userRole?: string): Promise<void> {
     return new Promise((resolve, reject) => {
+      // If already connected, just authenticate if needed and resolve
       if (this.socket?.connected) {
-        // Notify any new listeners about current connection immediately
-        if (this.lastAuth.userId) {
-          this.authenticate(this.lastAuth.userId, this.lastAuth.userRole);
-        } else if (userId) {
-          this.authenticate(userId, userRole);
+        // Update auth info if provided
+        if (userId) {
+          const userChanged = this.lastAuth.userId !== userId;
           this.lastAuth = { userId, userRole };
+          // Only re-authenticate if user changed
+          if (userChanged) {
+            this.authenticate(userId, userRole);
+          }
+        } else if (this.lastAuth.userId) {
+          // Use existing auth if no new auth provided
+          this.authenticate(this.lastAuth.userId, this.lastAuth.userRole);
         }
         this.emit('connection:connected');
         resolve();
         return;
       }
 
+      // If connection is already in progress, wait for it instead of creating a new one
+      if (this.connectionPromise) {
+        this.connectionPromise
+          .then(() => {
+            // Update auth info for the pending connection
+            if (userId) {
+              this.lastAuth = { userId, userRole };
+            }
+            resolve();
+          })
+          .catch(reject);
+        return;
+      }
+
+      // If socket exists but not connected (e.g., disconnected), reuse it
+      // Socket.IO will handle reconnection automatically if enabled
+      if (this.socket && !this.socket.connected) {
+        // Update auth info
+        if (userId) {
+          this.lastAuth = { userId, userRole };
+        }
+        
+        // If there's already a connection promise (reconnection in progress), wait for it
+        if (this.connectionPromise) {
+          this.connectionPromise
+            .then(() => {
+              if (this.lastAuth.userId) {
+                this.authenticate(this.lastAuth.userId, this.lastAuth.userRole);
+              }
+              resolve();
+            })
+            .catch(reject);
+          return;
+        }
+        
+        // Create a promise for this reconnection attempt
+        this.connectionPromise = new Promise((innerResolve, innerReject) => {
+          const reconnectHandler = () => {
+            this.socket?.off('connect', reconnectHandler);
+            this.socket?.off('connect_error', errorHandler);
+            if (this.lastAuth.userId) {
+              this.authenticate(this.lastAuth.userId, this.lastAuth.userRole);
+            }
+            this.emit('connection:connected');
+            innerResolve();
+          };
+          const errorHandler = (error: Error) => {
+            this.socket?.off('connect', reconnectHandler);
+            this.socket?.off('connect_error', errorHandler);
+            innerReject(error);
+          };
+          this.socket.once('connect', reconnectHandler);
+          this.socket.once('connect_error', errorHandler);
+        });
+        
+        this.connectionPromise
+          .then(() => {
+            this.connectionPromise = null;
+            resolve();
+          })
+          .catch((error) => {
+            this.connectionPromise = null;
+            reject(error);
+          });
+        return;
+      }
+
+      // Start new connection
       this.connectionState.isConnecting = true;
       this.connectionState.error = null;
       this.lastAuth = { userId, userRole };
@@ -57,6 +133,7 @@ class SocketClient {
       const base = process.env.NEXT_PUBLIC_SOCKET_URL?.replace(/\/$/, '');
       const socketUrl = base || (process.env.NODE_ENV !== 'production'  ? 'http://localhost:4000' : undefined);
 
+      // Create new socket instance
       this.socket = io(socketUrl, {
         path: '/api/socketio/',
         transports: process.env.NODE_ENV === 'production' ? ['websocket'] : ['websocket', 'polling'],
@@ -68,208 +145,260 @@ class SocketClient {
         reconnectionDelayMax: 10000,
       });
 
-      // Connection event handlers
-      this.socket.on('connect', () => {
-        console.log('Socket.IO connected:', this.socket?.id);
-        this.connectionState.isConnected = true;
-        this.connectionState.isConnecting = false;
-        this.connectionState.error = null;
-        this.connectionState.reconnectAttempts = 0;
-
-        // Authenticate if user info is provided
-        if (this.lastAuth.userId) {
-          this.authenticate(this.lastAuth.userId, this.lastAuth.userRole);
-        }
-
-        this.emit('connection:connected');
-        resolve();
-      });
-
-      this.socket.on('disconnect', (reason) => {
-        console.log('Socket.IO disconnected:', reason);
-        this.connectionState.isConnected = false;
-        this.connectionState.isConnecting = false;
-        this.emit('connection:disconnected', reason);
-      });
-
-      this.socket.on('connect_error', (error) => {
-        console.error('Socket.IO connection error:', error);
-        this.connectionState.isConnecting = false;
-        this.connectionState.error = error.message;
-        this.emit('connection:error', error);
-        reject(error);
-      });
-
-      this.socket.on('reconnect', (attemptNumber) => {
-        console.log('Socket.IO reconnected after', attemptNumber, 'attempts');
-        this.connectionState.isConnected = true;
-        this.connectionState.reconnectAttempts = attemptNumber;
-        if (this.lastAuth.userId) {
-          this.authenticate(this.lastAuth.userId, this.lastAuth.userRole);
-        }
-        this.emit('connection:reconnected', attemptNumber);
-      });
-
-      this.socket.on('reconnect_attempt', (attemptNumber) => {
-        console.log('Socket.IO reconnection attempt:', attemptNumber);
-        this.connectionState.reconnectAttempts = attemptNumber;
-        this.emit('connection:reconnecting', attemptNumber);
-      });
-
-      this.socket.on('reconnect_error', (error) => {
-        console.error('Socket.IO reconnection error:', error);
-        this.connectionState.error = error.message;
-        this.emit('connection:reconnect_error', error);
-      });
-
-      // Authentication handlers
-      this.socket.on('authenticated', (raw: any) => {
-        try {
-          const data = {
-            userId: raw?.userId ? String(raw.userId) : undefined,
-            userRole: raw?.userRole ? String(raw.userRole) : undefined,
+      // Store the connection promise to prevent duplicate connections
+      this.connectionPromise = new Promise((innerResolve, innerReject) => {
+        // Attach event handlers only once per socket instance
+        if (!this.eventHandlersAttached) {
+          this.attachEventHandlers(innerResolve, innerReject);
+          this.eventHandlersAttached = true;
+        } else {
+          // If handlers already attached, just wait for connection
+          const connectHandler = () => {
+            this.socket?.off('connect', connectHandler);
+            this.socket?.off('connect_error', errorHandler);
+            innerResolve();
           };
-          console.log('Socket.IO authenticated:', data);
-          this.emit('auth:authenticated', data);
-        } catch (e) {
-          console.error('authenticated handler error:', e);
-        }
-      });
-
-      this.socket.on('auth_error', (error) => {
-        console.error('Socket.IO authentication error:', error);
-        this.emit('auth:error', error);
-      });
-
-      // Notification handlers
-      this.socket.on('notification', (raw: any) => {
-        try {
-          const n = {
-            id: String(raw?.id ?? (globalThis.crypto?.randomUUID?.() ?? Date.now().toString())),
-            type: String(raw?.type ?? 'SYSTEM_ALERT'),
-            title: String(raw?.title ?? ''),
-            message: String(raw?.message ?? ''),
-            data: raw?.data,
-            timestamp: String(raw?.timestamp ?? new Date().toISOString()),
-            read: Boolean(raw?.read ?? false),
-          } as SocketNotification;
-          if (!n.title) {
-            console.warn('Ignoring notification without title', raw);
-            return;
-          }
-          console.log('Received notification:', n);
-          this.emit('notification:received', n);
-        } catch (e) {
-          console.error('notification handler error:', e);
-        }
-      });
-
-      this.socket.on('system_notification', (raw: any) => {
-        try {
-          const n = {
-            id: String(raw?.id ?? (globalThis.crypto?.randomUUID?.() ?? Date.now().toString())),
-            type: 'SYSTEM_ALERT' as const,
-            title: String(raw?.title ?? ''),
-            message: String(raw?.message ?? ''),
-            data: raw?.data,
-            timestamp: String(raw?.timestamp ?? new Date().toISOString()),
-            read: Boolean(raw?.read ?? false),
-          } as SocketNotification;
-          if (!n.title) {
-            console.warn('Ignoring system_notification without title', raw);
-            return;
-          }
-          console.log('Received system notification:', n);
-          this.emit('notification:system', n);
-        } catch (e) {
-          console.error('system_notification handler error:', e);
-        }
-      });
-
-      this.socket.on('order_update', (raw: any) => {
-        try {
-          const normalized = {
-            orderId: String(raw?.orderId ?? raw?.order_id ?? ''),
-            status: raw?.status ? String(raw.status) : '',
-            trackingNumber: raw?.trackingNumber ?? raw?.tracking_no ?? undefined,
-            message: raw?.message ? String(raw.message) : '',
-            timestamp: raw?.timestamp ?? new Date().toISOString(),
+          const errorHandler = (error: Error) => {
+            this.socket?.off('connect', connectHandler);
+            this.socket?.off('connect_error', errorHandler);
+            innerReject(error);
           };
-          if (!normalized.orderId) {
-            console.warn('Ignoring order_update without orderId', raw);
-            return;
-          }
-          console.log('Received order update:', normalized);
-          this.emit('order:update', normalized);
-        } catch (e) {
-          console.error('order_update handler error:', e);
+          this.socket.once('connect', connectHandler);
+          this.socket.once('connect_error', errorHandler);
         }
       });
 
-      this.socket.on('product_alert', (raw: any) => {
-        try {
-          const alert = {
-            productId: String(raw?.productId ?? raw?.product_id ?? ''),
-            productName: raw?.productName ? String(raw.productName) : undefined,
-            alertType: raw?.alertType ? String(raw.alertType) : '',
-            message: String(raw?.message ?? ''),
-            currentStock: typeof raw?.currentStock === 'number' ? raw.currentStock : undefined,
-            lowStockAt: raw?.lowStockAt ?? null,
-            newPrice: typeof raw?.newPrice === 'number' ? raw.newPrice : undefined,
-            oldPrice: typeof raw?.oldPrice === 'number' ? raw.oldPrice : undefined,
-            timestamp: raw?.timestamp ?? new Date().toISOString(),
-          };
-          if (!alert.productId || !alert.alertType) {
-            console.warn('Ignoring product_alert missing productId/alertType', raw);
-            return;
-          }
-          console.log('Received product alert:', alert);
-          this.emit('product:alert', alert);
-        } catch (e) {
-          console.error('product_alert handler error:', e);
-        }
-      });
+      this.connectionPromise
+        .then(() => {
+          this.connectionPromise = null;
+          resolve();
+        })
+        .catch((error) => {
+          this.connectionPromise = null;
+          reject(error);
+        });
+    });
+  }
 
-      this.socket.on('admin_notification', (raw: any) => {
-        try {
-          const n = {
-            id: String(raw?.id ?? (globalThis.crypto?.randomUUID?.() ?? Date.now().toString())),
-            type: String(raw?.type ?? 'SYSTEM_ALERT'),
-            title: String(raw?.title ?? ''),
-            message: String(raw?.message ?? ''),
-            data: raw?.data,
-            timestamp: String(raw?.timestamp ?? new Date().toISOString()),
-            read: Boolean(raw?.read ?? false),
-          } as SocketNotification;
-          if (!n.title) {
-            console.warn('Ignoring admin_notification without title', raw);
-            return;
-          }
-          console.log('Received admin notification:', n);
-          this.emit('notification:admin', n);
-        } catch (e) {
-          console.error('admin_notification handler error:', e);
-        }
-      });
+  /**
+   * Attach event handlers to the socket (called once per socket instance)
+   */
+  private attachEventHandlers(resolve: () => void, reject: (error: Error) => void) {
+    if (!this.socket) return;
 
-      // Ping/pong for connection health
-      this.socket.on('pong', (raw: any) => {
-        try {
-          const payload = { timestamp: String(raw?.timestamp ?? new Date().toISOString()) };
-          this.emit('connection:pong', payload);
-        } catch {
-          this.emit('connection:pong', { timestamp: new Date().toISOString() });
+    // Connection event handlers
+    this.socket.on('connect', () => {
+      console.log('Socket.IO connected:', this.socket?.id);
+      this.connectionState.isConnected = true;
+      this.connectionState.isConnecting = false;
+      this.connectionState.error = null;
+      this.connectionState.reconnectAttempts = 0;
+      
+      // Reset authenticated user ID on new connection
+      this.authenticatedUserId = null;
+
+      // Authenticate if user info is provided
+      if (this.lastAuth.userId) {
+        this.authenticate(this.lastAuth.userId, this.lastAuth.userRole);
+      }
+
+      this.emit('connection:connected');
+      resolve();
+    });
+
+    this.socket.on('disconnect', (reason) => {
+      console.log('Socket.IO disconnected:', reason);
+      this.connectionState.isConnected = false;
+      this.connectionState.isConnecting = false;
+      this.authenticatedUserId = null; // Reset on disconnect
+      this.emit('connection:disconnected', reason);
+    });
+
+    this.socket.on('connect_error', (error) => {
+      console.error('Socket.IO connection error:', error);
+      this.connectionState.isConnecting = false;
+      this.connectionState.error = error.message;
+      this.emit('connection:error', error);
+      reject(error);
+    });
+
+    this.socket.on('reconnect', (attemptNumber) => {
+      console.log('Socket.IO reconnected after', attemptNumber, 'attempts');
+      this.connectionState.isConnected = true;
+      this.connectionState.reconnectAttempts = attemptNumber;
+      // Reset authenticated user ID on reconnect to allow re-authentication
+      this.authenticatedUserId = null;
+      if (this.lastAuth.userId) {
+        this.authenticate(this.lastAuth.userId, this.lastAuth.userRole);
+      }
+      this.emit('connection:reconnected', attemptNumber);
+    });
+
+    this.socket.on('reconnect_attempt', (attemptNumber) => {
+      console.log('Socket.IO reconnection attempt:', attemptNumber);
+      this.connectionState.reconnectAttempts = attemptNumber;
+      this.emit('connection:reconnecting', attemptNumber);
+    });
+
+    this.socket.on('reconnect_error', (error) => {
+      console.error('Socket.IO reconnection error:', error);
+      this.connectionState.error = error.message;
+      this.emit('connection:reconnect_error', error);
+    });
+
+    // Authentication handlers
+    this.socket.on('authenticated', (raw: any) => {
+      try {
+        const data = {
+          userId: raw?.userId ? String(raw.userId) : undefined,
+          userRole: raw?.userRole ? String(raw.userRole) : undefined,
+        };
+        console.log('Socket.IO authenticated:', data);
+        this.emit('auth:authenticated', data);
+      } catch (e) {
+        console.error('authenticated handler error:', e);
+      }
+    });
+
+    this.socket.on('auth_error', (error) => {
+      console.error('Socket.IO authentication error:', error);
+      this.emit('auth:error', error);
+    });
+
+    // Notification handlers
+    this.socket.on('notification', (raw: any) => {
+      try {
+        const n = {
+          id: String(raw?.id ?? (globalThis.crypto?.randomUUID?.() ?? Date.now().toString())),
+          type: String(raw?.type ?? 'SYSTEM_ALERT'),
+          title: String(raw?.title ?? ''),
+          message: String(raw?.message ?? ''),
+          data: raw?.data,
+          timestamp: String(raw?.timestamp ?? new Date().toISOString()),
+          read: Boolean(raw?.read ?? false),
+        } as SocketNotification;
+        if (!n.title) {
+          console.warn('Ignoring notification without title', raw);
+          return;
         }
-      });
+        console.log('Received notification:', n);
+        this.emit('notification:received', n);
+      } catch (e) {
+        console.error('notification handler error:', e);
+      }
+    });
+
+    this.socket.on('system_notification', (raw: any) => {
+      try {
+        const n = {
+          id: String(raw?.id ?? (globalThis.crypto?.randomUUID?.() ?? Date.now().toString())),
+          type: 'SYSTEM_ALERT' as const,
+          title: String(raw?.title ?? ''),
+          message: String(raw?.message ?? ''),
+          data: raw?.data,
+          timestamp: String(raw?.timestamp ?? new Date().toISOString()),
+          read: Boolean(raw?.read ?? false),
+        } as SocketNotification;
+        if (!n.title) {
+          console.warn('Ignoring system_notification without title', raw);
+          return;
+        }
+        console.log('Received system notification:', n);
+        this.emit('notification:system', n);
+      } catch (e) {
+        console.error('system_notification handler error:', e);
+      }
+    });
+
+    this.socket.on('order_update', (raw: any) => {
+      try {
+        const normalized = {
+          orderId: String(raw?.orderId ?? raw?.order_id ?? ''),
+          status: raw?.status ? String(raw.status) : '',
+          trackingNumber: raw?.trackingNumber ?? raw?.tracking_no ?? undefined,
+          message: raw?.message ? String(raw.message) : '',
+          timestamp: raw?.timestamp ?? new Date().toISOString(),
+        };
+        if (!normalized.orderId) {
+          console.warn('Ignoring order_update without orderId', raw);
+          return;
+        }
+        console.log('Received order update:', normalized);
+        this.emit('order:update', normalized);
+      } catch (e) {
+        console.error('order_update handler error:', e);
+      }
+    });
+
+    this.socket.on('product_alert', (raw: any) => {
+      try {
+        const alert = {
+          productId: String(raw?.productId ?? raw?.product_id ?? ''),
+          productName: raw?.productName ? String(raw.productName) : undefined,
+          alertType: raw?.alertType ? String(raw.alertType) : '',
+          message: String(raw?.message ?? ''),
+          currentStock: typeof raw?.currentStock === 'number' ? raw.currentStock : undefined,
+          lowStockAt: raw?.lowStockAt ?? null,
+          newPrice: typeof raw?.newPrice === 'number' ? raw.newPrice : undefined,
+          oldPrice: typeof raw?.oldPrice === 'number' ? raw.oldPrice : undefined,
+          timestamp: raw?.timestamp ?? new Date().toISOString(),
+        };
+        if (!alert.productId || !alert.alertType) {
+          console.warn('Ignoring product_alert missing productId/alertType', raw);
+          return;
+        }
+        console.log('Received product alert:', alert);
+        this.emit('product:alert', alert);
+      } catch (e) {
+        console.error('product_alert handler error:', e);
+      }
+    });
+
+    this.socket.on('admin_notification', (raw: any) => {
+      try {
+        const n = {
+          id: String(raw?.id ?? (globalThis.crypto?.randomUUID?.() ?? Date.now().toString())),
+          type: String(raw?.type ?? 'SYSTEM_ALERT'),
+          title: String(raw?.title ?? ''),
+          message: String(raw?.message ?? ''),
+          data: raw?.data,
+          timestamp: String(raw?.timestamp ?? new Date().toISOString()),
+          read: Boolean(raw?.read ?? false),
+        } as SocketNotification;
+        if (!n.title) {
+          console.warn('Ignoring admin_notification without title', raw);
+          return;
+        }
+        console.log('Received admin notification:', n);
+        this.emit('notification:admin', n);
+      } catch (e) {
+        console.error('admin_notification handler error:', e);
+      }
+    });
+
+    // Ping/pong for connection health
+    this.socket.on('pong', (raw: any) => {
+      try {
+        const payload = { timestamp: String(raw?.timestamp ?? new Date().toISOString()) };
+        this.emit('connection:pong', payload);
+      } catch {
+        this.emit('connection:pong', { timestamp: new Date().toISOString() });
+      }
     });
   }
 
   /**
    * Authenticate with the server
+   * Only authenticates once per connection to prevent duplicate auth events
    */
+  private authenticatedUserId: string | null = null;
   authenticate(userId: string, userRole?: string) {
     if (this.socket?.connected) {
-      this.socket.emit('authenticate', { userId, userRole });
+      // Only authenticate if not already authenticated for this user
+      if (this.authenticatedUserId !== userId) {
+        this.authenticatedUserId = userId;
+        this.socket.emit('authenticate', { userId, userRole });
+      }
     }
   }
 
@@ -309,6 +438,8 @@ class SocketClient {
       this.socket = null;
       this.connectionState.isConnected = false;
       this.connectionState.isConnecting = false;
+      this.connectionPromise = null;
+      this.eventHandlersAttached = false;
     }
   }
 
