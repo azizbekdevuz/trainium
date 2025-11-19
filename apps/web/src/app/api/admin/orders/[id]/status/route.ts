@@ -5,6 +5,7 @@ import { ORDER_STATUS } from "../../../../../../lib/order/order-status";
 import { revalidatePath } from "next/cache";
 import { createUserNotification, NotificationTemplates } from "../../../../../../lib/notifications";
 import { sendSocketOrderUpdate } from "../../../../../../lib/socket/socket-server";
+import { sendOrderStatusUpdateEmail } from "../../../../../../lib/email/email";
 
 export const runtime = "nodejs";
 
@@ -98,6 +99,23 @@ export async function PATCH(req: NextRequest, { params }: Params) {
             message: notificationTemplate.message,
           }
         );
+
+        // Send email notification to customer
+        if (updatedOrder.user.email && updatedOrder.user.name) {
+          try {
+            await sendOrderStatusUpdateEmail(
+              updatedOrder.id,
+              updatedOrder.user.email,
+              updatedOrder.user.name,
+              status,
+              trackingNumber,
+              'en' // TODO: Get user's locale preference from user settings
+            );
+          } catch (emailError) {
+            console.error('Failed to send order status update email:', emailError);
+            // Don't fail the order update if email fails
+          }
+        }
       } catch (error) {
         console.error('Failed to send notification:', error);
         // Don't fail the order update if notification fails

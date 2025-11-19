@@ -31,11 +31,17 @@ export async function POST(req: NextRequest) {
     // Temporary: always send to verified testing address
     const recipient = 'azizbek.dev.ac@gmail.com';
 
+    const { ContactFormEmail } = await import('../../../emails/ContactFormEmail');
     const { error } = await getResend().emails.send({
       from: 'Trainium Support <onboarding@resend.dev>',
       to: [recipient],
       subject: `Contact Form: ${reason} — from ${name}`,
-      text: `Name: ${name}\nEmail: ${email}\nReason: ${reason}\n\nMessage:\n${message}`,
+      react: ContactFormEmail({
+        name,
+        email,
+        reason,
+        message,
+      }),
       reply_to: email,
     } as any);
 

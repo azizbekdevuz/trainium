@@ -76,7 +76,8 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
     // For development, send to verified email address
     const recipientEmail = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production'
       ? 'azizbek.dev.ac@gmail.com' 
-      : data.customerEmail;
+      : 'azizbek.dev.ac@gmail.com'; //Resend free plan only allows sending to verified email addresses. 
+      // you can replace with actual customer email if you have a paid plan
     
     console.log('📧 Sending order confirmation email:', {
       originalRecipient: data.customerEmail,
@@ -120,40 +121,26 @@ export async function sendOrderStatusUpdateEmail(
   locale: AppLocale = 'en'
 ) {
   try {
-    // For development, send to verified email address
-    const recipientEmail = process.env.NODE_ENV === 'development' 
+    // For development/production, send to verified email address
+    const recipientEmail = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production'
       ? 'azizbek.dev.ac@gmail.com' 
-      : customerEmail;
+      : 'azizbek.dev.ac@gmail.com'; //Resend free plan only allows sending to verified email addresses. 
+      // you can replace with actual customer email if you have a paid plan
     
     const subject = await translateEmailString(`i18n.email.orderUpdate|${orderId}`, locale);
-    let messageRaw = `i18n.email.hello|${customerName}\n\n`;
-    
-    switch (status) {
-      case 'SHIPPED':
-        messageRaw += `i18n.email.automated\n\ni18n.email.shipped|${orderId}`;
-        if (trackingNumber) {
-          messageRaw += `\n\ni18n.email.trackingNumber|${trackingNumber}`;
-        }
-        messageRaw += `\n\ni18n.email.trackAt|https://trainium.shop/account/orders/${orderId}`;
-        break;
-      case 'DELIVERED':
-        messageRaw += `i18n.email.automated\n\ni18n.email.delivered|${orderId}`;
-        messageRaw += `\n\ni18n.email.thanks`;
-        break;
-      case 'CANCELLED':
-        messageRaw += `i18n.email.automated\n\ni18n.email.cancelled|${orderId}`;
-        messageRaw += `\n\ni18n.email.contactSupport`;
-        break;
-      default:
-        messageRaw += `i18n.email.automated\n\ni18n.email.statusUpdated|${orderId}|${status}`;
-    }
-    const message = await translateEmailString(messageRaw, locale);
-
+    const { OrderStatusUpdateEmail } = await import('../../emails/OrderStatusUpdate');
     const { data: emailData, error } = await getResend().emails.send({
       from: 'Trainium <onboarding@resend.dev>',
       to: [recipientEmail],
       subject,
-      text: message,
+      react: OrderStatusUpdateEmail({
+        orderId,
+        customerEmail,
+        customerName,
+        status,
+        trackingNumber,
+        locale,
+      }),
     });
 
     if (error) {

@@ -1,55 +1,63 @@
 /* eslint-disable @next/next/no-head-element */
 /* eslint-disable @next/next/no-img-element */
 import * as React from 'react';
-import { formatCurrency as formatCurrencyAmount } from '../lib/utils/format';
 
-interface OrderConfirmationEmailProps {
+interface OrderStatusUpdateEmailProps {
   orderId: string;
   customerName: string;
   customerEmail: string;
-  orderDate: string;
-  items: Array<{
-    name: string;
-    sku?: string;
-    qty: number;
-    priceCents: number;
-  }>;
-  subtotalCents: number;
-  totalCents: number;
-  currency: string;
-  shippingAddress?: {
-    fullName: string;
-    phone: string;
-    address1: string;
-    address2?: string | null;
-    city: string;
-    state?: string | null;
-    postalCode: string;
-    country: string;
-  };
-  paymentMethod: string;
+  status: string;
   trackingNumber?: string;
-  carrier?: string;
+  locale?: string;
 }
 
-export const OrderConfirmationEmail = ({
+export const OrderStatusUpdateEmail = ({
   orderId,
   customerName,
   customerEmail,
-  orderDate,
-  items,
-  subtotalCents,
-  totalCents,
-  currency,
-  shippingAddress,
-  paymentMethod,
+  status,
   trackingNumber,
-  carrier,
-}: OrderConfirmationEmailProps) => {
+}: OrderStatusUpdateEmailProps) => {
   const trackOrderUrl = `https://trainium.shop/account/orders/${orderId}`;
   const trackPackageUrl = trackingNumber 
     ? `https://trainium.shop/track/${trackingNumber}?email=${encodeURIComponent(customerEmail)}`
     : trackOrderUrl;
+
+  // Status-specific content
+  const getStatusContent = () => {
+    switch (status) {
+      case 'SHIPPED':
+        return {
+          title: 'Your Order Has Shipped! 🚀',
+          message: `Great news! Your order ${orderId.slice(0, 8).toUpperCase()} has been shipped and is on its way to you.`,
+          icon: '📦',
+          color: primaryColor,
+        };
+      case 'DELIVERED':
+        return {
+          title: 'Order Delivered! ✅',
+          message: `Your order ${orderId.slice(0, 8).toUpperCase()} has been successfully delivered. We hope you love your purchase!`,
+          icon: '🎉',
+          color: '#10b981', // green-500
+        };
+      case 'CANCELLED':
+        return {
+          title: 'Order Cancelled',
+          message: `Your order ${orderId.slice(0, 8).toUpperCase()} has been cancelled. If you have any questions, please contact our support team.`,
+          icon: '⚠️',
+          color: '#ef4444', // red-500
+        };
+      default:
+        return {
+          title: 'Order Status Updated',
+          message: `Your order ${orderId.slice(0, 8).toUpperCase()} status has been updated to ${status}.`,
+          icon: '📋',
+          color: primaryColor,
+        };
+    }
+  };
+
+  const statusContent = getStatusContent();
 
   return (
     <html>
@@ -81,15 +89,16 @@ export const OrderConfirmationEmail = ({
                   </td>
                 </tr>
 
-                {/* Hero Section */}
+                {/* Status Hero Section */}
                 <tr>
                   <td style={heroCell}>
                     <table role="presentation" cellSpacing="0" cellPadding="0" border={0} width="100%">
                       <tr>
                         <td align="center" style={heroContent}>
-                          <h1 style={h1Style}>Order Confirmed!</h1>
-                          <p style={subtitleStyle}>Thank you for your purchase, {customerName}!</p>
-                          <p style={messageStyle}>We&apos;ve received your order and will begin processing it shortly.</p>
+                          <div style={{ fontSize: '48px', marginBottom: '16px' }}>{statusContent.icon}</div>
+                          <h1 style={{ ...h1Style, color: statusContent.color }}>{statusContent.title}</h1>
+                          <p style={subtitleStyle}>Hello {customerName},</p>
+                          <p style={messageStyle}>{statusContent.message}</p>
                         </td>
                       </tr>
                     </table>
@@ -109,18 +118,10 @@ export const OrderConfirmationEmail = ({
                                 <p style={infoValue}>{orderId}</p>
                               </td>
                               <td width="50%" style={infoCell}>
-                                <p style={infoLabel}>Order Date</p>
-                                <p style={infoValue}>{orderDate}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td width="50%" style={infoCell}>
-                                <p style={infoLabel}>Customer</p>
-                                <p style={infoValue}>{customerName}</p>
-                              </td>
-                              <td width="50%" style={infoCell}>
-                                <p style={infoLabel}>Email</p>
-                                <p style={infoValue}>{customerEmail}</p>
+                                <p style={infoLabel}>Status</p>
+                                <p style={{ ...infoValue, color: statusContent.color, fontWeight: '600' }}>
+                                  {status}
+                                </p>
                               </td>
                             </tr>
                           </table>
@@ -130,90 +131,8 @@ export const OrderConfirmationEmail = ({
                   </td>
                 </tr>
 
-                {/* Order Items */}
-                <tr>
-                  <td style={sectionCell}>
-                    <h2 style={h2Style}>Order Items</h2>
-                    <table role="presentation" cellSpacing="0" cellPadding="0" border={0} width="100%" style={itemsTable}>
-                      <thead>
-                        <tr>
-                          <th align="left" style={tableHeader}>Item</th>
-                          <th align="right" style={tableHeader}>Price</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {items.map((item, index) => (
-                          <tr key={index}>
-                            <td style={itemCell}>
-                              <p style={itemNameStyle}>{item.name}</p>
-                              {item.sku && <p style={itemSkuStyle}>SKU: {item.sku}</p>}
-                              <p style={itemQtyStyle}>Quantity: {item.qty}</p>
-                            </td>
-                            <td align="right" style={itemPriceCell}>
-                              <p style={itemPriceStyle}>
-                                {formatCurrencyAmount(item.priceCents * item.qty, currency)}
-                              </p>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </td>
-                </tr>
-
-                {/* Totals */}
-                <tr>
-                  <td style={sectionCell}>
-                    <table role="presentation" cellSpacing="0" cellPadding="0" border={0} width="100%" style={totalsTable}>
-                      <tr>
-                        <td width="70%" align="right" style={totalLabelCell}>
-                          <p style={totalLabelStyle}>Subtotal</p>
-                        </td>
-                        <td width="30%" align="right" style={totalValueCell}>
-                          <p style={totalValueStyle}>{formatCurrencyAmount(subtotalCents, currency)}</p>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td width="70%" align="right" style={totalLabelCell}>
-                          <p style={grandTotalLabelStyle}>Total</p>
-                        </td>
-                        <td width="30%" align="right" style={totalValueCell}>
-                          <p style={grandTotalValueStyle}>{formatCurrencyAmount(totalCents, currency)}</p>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-
-                {/* Shipping Address */}
-                {shippingAddress && (
-                  <tr>
-                    <td style={sectionCell}>
-                      <h2 style={h2Style}>Shipping Address</h2>
-                      <table role="presentation" cellSpacing="0" cellPadding="0" border={0} width="100%" style={cardTable}>
-                        <tr>
-                          <td style={addressCell}>
-                            <p style={addressTextStyle}>
-                              {shippingAddress.fullName}<br />
-                              {shippingAddress.phone}<br />
-                              {shippingAddress.address1}<br />
-                              {shippingAddress.address2 && (
-                                <>
-                                  {shippingAddress.address2}<br />
-                                </>
-                              )}
-                              {shippingAddress.city}{shippingAddress.state ? `, ${shippingAddress.state}` : ''} {shippingAddress.postalCode}<br />
-                              {shippingAddress.country}
-                            </p>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                )}
-
                 {/* Tracking Information */}
-                {trackingNumber && (
+                {trackingNumber && status === 'SHIPPED' && (
                   <tr>
                     <td style={sectionCell}>
                       <table role="presentation" cellSpacing="0" cellPadding="0" border={0} width="100%" style={trackingTable}>
@@ -222,16 +141,13 @@ export const OrderConfirmationEmail = ({
                             <table role="presentation" cellSpacing="0" cellPadding="0" border={0} width="100%">
                               <tr>
                                 <td>
-                                  <p style={trackingTitleStyle}>📦 Tracking Information</p>
+                                  <p style={trackingTitleStyle}>📦 Tracking Number</p>
                                   <p style={trackingNumberStyle}>{trackingNumber}</p>
-                                  {carrier && (
-                                    <p style={trackingCarrierStyle}>Carrier: {carrier}</p>
-                                  )}
                                   <table role="presentation" cellSpacing="0" cellPadding="0" border={0}>
                                     <tr>
                                       <td align="center" style={buttonCell}>
                                         <a href={trackPackageUrl} style={buttonStyle}>
-                                          Track Package
+                                          Track Your Package
                                         </a>
                                       </td>
                                     </tr>
@@ -245,23 +161,6 @@ export const OrderConfirmationEmail = ({
                     </td>
                   </tr>
                 )}
-
-                {/* Payment Information */}
-                <tr>
-                  <td style={sectionCell}>
-                    <h2 style={h2Style}>Payment Information</h2>
-                    <table role="presentation" cellSpacing="0" cellPadding="0" border={0} width="100%" style={cardTable}>
-                      <tr>
-                        <td style={paymentCell}>
-                          <p style={paymentTextStyle}>
-                            <strong>Payment Method:</strong> {paymentMethod}<br />
-                            <strong>Status:</strong> <span style={paidBadge}>Paid</span>
-                          </p>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
 
                 {/* Action Buttons */}
                 <tr>
@@ -284,6 +183,41 @@ export const OrderConfirmationEmail = ({
                   </td>
                 </tr>
 
+                {/* Additional Message */}
+                {status === 'DELIVERED' && (
+                  <tr>
+                    <td style={sectionCell}>
+                      <table role="presentation" cellSpacing="0" cellPadding="0" border={0} width="100%" style={cardTable}>
+                        <tr>
+                          <td style={cardCell}>
+                            <p style={messageStyle}>
+                              Thank you for choosing Trainium! We hope you&apos;re satisfied with your purchase. 
+                              If you have any questions or need assistance, our support team is here to help.
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                )}
+
+                {status === 'CANCELLED' && (
+                  <tr>
+                    <td style={sectionCell}>
+                      <table role="presentation" cellSpacing="0" cellPadding="0" border={0} width="100%" style={cardTable}>
+                        <tr>
+                          <td style={cardCell}>
+                            <p style={messageStyle}>
+                              If you have any questions about this cancellation or would like to place a new order, 
+                              please don&apos;t hesitate to contact our support team.
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                )}
+
                 {/* Divider */}
                 <tr>
                   <td style={dividerCell}>
@@ -295,7 +229,7 @@ export const OrderConfirmationEmail = ({
                 <tr>
                   <td style={footerCell}>
                     <p style={footerTextStyle}>
-                      Questions about your order? Contact us at{' '}
+                      Questions? Contact us at{' '}
                       <a href="mailto:support@trainium.shop" style={linkStyle}>
                         support@trainium.shop
                       </a>
@@ -321,14 +255,13 @@ export const OrderConfirmationEmail = ({
 
 // Brand Colors
 const primaryColor = '#0ea5e9'; // cyan-500
-const primaryDark = '#0891b2'; // cyan-600
 const textDark = '#0f172a'; // slate-900
 const textMedium = '#475569'; // slate-600
 const textLight = '#64748b'; // slate-500
 const bgLight = '#f8fafc'; // slate-50
 const borderColor = '#e2e8f0'; // slate-200
 
-// Base Styles
+// Base Styles (reusing from OrderConfirmation)
 const bodyStyle: React.CSSProperties = {
   margin: 0,
   padding: 0,
@@ -361,7 +294,6 @@ const mainTable: React.CSSProperties = {
   boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)',
 };
 
-// Header Styles
 const headerCell: React.CSSProperties = {
   padding: '32px 24px 24px',
   backgroundColor: '#ffffff',
@@ -378,7 +310,6 @@ const logoStyle: React.CSSProperties = {
   height: 'auto',
 };
 
-// Hero Section
 const heroCell: React.CSSProperties = {
   padding: '0 24px 32px',
   backgroundColor: '#ffffff',
@@ -408,21 +339,13 @@ const messageStyle: React.CSSProperties = {
   margin: '0',
   fontSize: '16px',
   color: textMedium,
+  lineHeight: '1.6',
 };
 
-// Section Styles
 const sectionCell: React.CSSProperties = {
   padding: '0 24px 24px',
 };
 
-const h2Style: React.CSSProperties = {
-  margin: '0 0 16px',
-  fontSize: '20px',
-  fontWeight: '600',
-  color: textDark,
-};
-
-// Card Styles
 const cardTable: React.CSSProperties = {
   width: '100%',
   backgroundColor: '#ffffff',
@@ -456,120 +379,6 @@ const infoValue: React.CSSProperties = {
   color: textDark,
 };
 
-// Items Table
-const itemsTable: React.CSSProperties = {
-  width: '100%',
-  borderCollapse: 'collapse',
-  backgroundColor: '#ffffff',
-  border: `1px solid ${borderColor}`,
-  borderRadius: '8px',
-  overflow: 'hidden',
-};
-
-const tableHeader: React.CSSProperties = {
-  padding: '12px 16px',
-  backgroundColor: bgLight,
-  fontSize: '12px',
-  fontWeight: '600',
-  color: textLight,
-  textTransform: 'uppercase',
-  letterSpacing: '0.5px',
-  borderBottom: `1px solid ${borderColor}`,
-};
-
-const itemCell: React.CSSProperties = {
-  padding: '16px',
-  borderBottom: `1px solid ${borderColor}`,
-};
-
-const itemNameStyle: React.CSSProperties = {
-  margin: '0 0 4px',
-  fontSize: '15px',
-  fontWeight: '600',
-  color: textDark,
-};
-
-const itemSkuStyle: React.CSSProperties = {
-  margin: '0 0 4px',
-  fontSize: '13px',
-  color: textLight,
-};
-
-const itemQtyStyle: React.CSSProperties = {
-  margin: '0',
-  fontSize: '13px',
-  color: textLight,
-};
-
-const itemPriceCell: React.CSSProperties = {
-  padding: '16px',
-  borderBottom: `1px solid ${borderColor}`,
-  verticalAlign: 'top',
-};
-
-const itemPriceStyle: React.CSSProperties = {
-  margin: '0',
-  fontSize: '15px',
-  fontWeight: '600',
-  color: textDark,
-};
-
-// Totals
-const totalsTable: React.CSSProperties = {
-  width: '100%',
-  marginTop: '8px',
-};
-
-const totalLabelCell: React.CSSProperties = {
-  padding: '8px 0',
-};
-
-const totalLabelStyle: React.CSSProperties = {
-  margin: '0',
-  fontSize: '15px',
-  color: textMedium,
-};
-
-const grandTotalLabelStyle: React.CSSProperties = {
-  margin: '0',
-  fontSize: '17px',
-  fontWeight: '600',
-  color: textDark,
-  paddingTop: '8px',
-};
-
-const totalValueCell: React.CSSProperties = {
-  padding: '8px 0',
-};
-
-const totalValueStyle: React.CSSProperties = {
-  margin: '0',
-  fontSize: '15px',
-  color: textDark,
-  fontWeight: '500',
-};
-
-const grandTotalValueStyle: React.CSSProperties = {
-  margin: '0',
-  fontSize: '20px',
-  fontWeight: '700',
-  color: primaryColor,
-  paddingTop: '8px',
-};
-
-// Address
-const addressCell: React.CSSProperties = {
-  padding: '20px',
-};
-
-const addressTextStyle: React.CSSProperties = {
-  margin: '0',
-  fontSize: '15px',
-  lineHeight: '1.6',
-  color: textDark,
-};
-
-// Tracking
 const trackingTable: React.CSSProperties = {
   width: '100%',
   backgroundColor: '#f0f9ff',
@@ -590,44 +399,14 @@ const trackingTitleStyle: React.CSSProperties = {
 };
 
 const trackingNumberStyle: React.CSSProperties = {
-  margin: '0 0 8px',
+  margin: '0 0 16px',
   fontSize: '18px',
   fontWeight: '700',
-  color: primaryDark,
+  color: primaryColor,
   fontFamily: 'monospace',
   letterSpacing: '1px',
 };
 
-const trackingCarrierStyle: React.CSSProperties = {
-  margin: '0 0 16px',
-  fontSize: '14px',
-  color: primaryDark,
-};
-
-// Payment
-const paymentCell: React.CSSProperties = {
-  padding: '20px',
-};
-
-const paymentTextStyle: React.CSSProperties = {
-  margin: '0',
-  fontSize: '15px',
-  lineHeight: '1.6',
-  color: textDark,
-};
-
-const paidBadge: React.CSSProperties = {
-  display: 'inline-block',
-  padding: '4px 12px',
-  backgroundColor: '#d1fae5',
-  color: '#065f46',
-  fontSize: '13px',
-  fontWeight: '600',
-  borderRadius: '4px',
-  marginLeft: '4px',
-};
-
-// Buttons
 const buttonContainerCell: React.CSSProperties = {
   padding: '8px 0',
 };
@@ -662,7 +441,6 @@ const buttonStyle: React.CSSProperties = {
   lineHeight: '1',
 };
 
-// Divider
 const dividerCell: React.CSSProperties = {
   padding: '0 24px',
 };
@@ -673,7 +451,6 @@ const dividerStyle: React.CSSProperties = {
   margin: '0',
 };
 
-// Footer
 const footerCell: React.CSSProperties = {
   padding: '24px',
   textAlign: 'center',
@@ -698,4 +475,5 @@ const linkStyle: React.CSSProperties = {
   textDecoration: 'underline',
 };
 
-export default OrderConfirmationEmail;
+export default OrderStatusUpdateEmail;
+
