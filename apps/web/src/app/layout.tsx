@@ -15,8 +15,58 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const space = Space_Grotesk({ subsets: ['latin'], variable: '--font-space' });
 
 export const metadata: Metadata = {
-  title: "Trainium",
-  description: "High-tech fitness equipments",
+  metadataBase: new URL('https://trainium.shop'),
+  title: {
+    default: 'Trainium | Premium Fitness Equipment',
+    template: '%s | Trainium'
+  },
+  description: 'Premium fitness equipment for serious training. Treadmills, dumbbells, exercise bikes with fast delivery in Korea.',
+  keywords: [
+    'trainium', 'fitness equipment', 'fitness', 'gym equipment', 'home gym', 'treadmill', 'dumbbells',
+    'exercise bike', 'ellipticals', 'strength equipment', 'cardio equipment',
+    '피트니스 장비', '헬스 기구', '홈짐', '러닝머신', '덤벨', '실내 자전거', '피트니스', '헬스'
+  ],
+  alternates: {
+    canonical: 'https://trainium.shop',
+    languages: {
+      'x-default': 'https://trainium.shop/en',
+      'en': 'https://trainium.shop/en',
+      'ko': 'https://trainium.shop/ko',
+      'uz': 'https://trainium.shop/uz',
+    },
+  },
+  openGraph: {
+    type: 'website',
+    url: 'https://trainium.shop',
+    siteName: 'Trainium',
+    title: 'Trainium | Premium Fitness Equipment',
+    description: 'High-tech fitness equipment with fast delivery in Korea',
+    images: [
+      { url: '/images/logo-banner.png', width: 1200, height: 630, alt: 'Trainium' }
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Trainium | Premium Fitness Equipment',
+    description: 'High-tech fitness equipment',
+    images: ['/images/logo-banner.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    other: {
+      'naver-site-verification': '88cc9b2a952e4659e0905d5a52dd09aff516dcc7'
+    }
+  },
 };
 
 

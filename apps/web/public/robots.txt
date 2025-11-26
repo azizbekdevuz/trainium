@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Disallow internal/admin/auth/api/checkout
+Disallow: /admin
+Disallow: /auth
+Disallow: /api
+Disallow: /checkout
+
+Sitemap: https://trainium.shop/sitemap.xml
+
+
