@@ -105,6 +105,45 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <SessionProviderWrapper initialSession={session}>
           <I18nProvider lang={lang} dict={dict}>
             <ThemeProvider>
+              {/* JSON-LD: WebSite with Sitelinks Search Box */}
+              <script
+                type="application/ld+json"
+                suppressHydrationWarning
+                dangerouslySetInnerHTML={{
+                  __html: JSON.stringify({
+                    '@context': 'https://schema.org',
+                    '@type': 'WebSite',
+                    name: 'Trainium',
+                    url: 'https://trainium.shop',
+                    potentialAction: {
+                      '@type': 'SearchAction',
+                      target: {
+                        '@type': 'EntryPoint',
+                        urlTemplate: 'https://trainium.shop/en/products?q={search_term_string}',
+                      },
+                      'query-input': 'required name=search_term_string',
+                    },
+                  }),
+                }}
+              />
+              {/* JSON-LD: SiteNavigation */}
+              <script
+                type="application/ld+json"
+                suppressHydrationWarning
+                dangerouslySetInnerHTML={{
+                  __html: JSON.stringify({
+                    '@context': 'https://schema.org',
+                    '@type': 'ItemList',
+                    itemListElement: [
+                      { '@type': 'SiteNavigationElement', name: 'Shop', url: 'https://trainium.shop/en/products' },
+                      { '@type': 'SiteNavigationElement', name: 'Deals', url: 'https://trainium.shop/en/special-bargain' },
+                      { '@type': 'SiteNavigationElement', name: 'About', url: 'https://trainium.shop/en/about' },
+                      { '@type': 'SiteNavigationElement', name: 'Contact', url: 'https://trainium.shop/en/contact' },
+                      { '@type': 'SiteNavigationElement', name: 'Track', url: 'https://trainium.shop/en/track' },
+                    ],
+                  }),
+                }}
+              />
               <InteractiveBackground />
               <div className="absolute inset-0 bg-gradient-to-br from-cyan-600/10 via-transparent to-cyan-600/10 animate-pulse" />
               <header className="site-header inset-x-0 top-0 z-30 border-b glass">
