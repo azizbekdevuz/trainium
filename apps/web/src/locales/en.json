@@ -68,6 +68,23 @@
       "toss": "Toss",
       "units": "units"
     },
+    "analyticsSeo": {
+      "title": "Visitor Analytics",
+      "subtitle": "Traffic, pages, devices, referrers and more.",
+      "range": "Range",
+      "visitors": "Visitors",
+      "pageviews": "Pageviews",
+      "bounce": "Bounce rate",
+      "time": "Total time",
+      "topPages": "Top pages",
+      "referrers": "Referrers",
+      "devices": "Devices",
+      "browsers": "Browsers",
+      "oses": "Operating systems",
+      "countries": "Countries",
+      "notConfiguredTitle": "Umami is not configured",
+      "notConfiguredBody": "Set UMAMI_API_URL, UMAMI_WEBSITE_ID, and UMAMI_API_TOKEN environment variables and redeploy."
+    },
     "auth": {
       "create": "Create Admin",
       "email": "Email",

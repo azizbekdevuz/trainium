@@ -68,6 +68,23 @@
       "toss": "Toss",
       "units": "dona"
     },
+    "analyticsSeo": {
+      "title": "Tashriflar analitikasi",
+      "subtitle": "Trafik, sahifalar, qurilmalar, yo'naltiruvchilar va boshqalar",
+      "range": "Oraliq",
+      "visitors": "Tashrifchilar",
+      "pageviews": "Sahifa ko'rishlar",
+      "bounce": "Chiqib ketish darajasi",
+      "time": "Jami vaqt",
+      "topPages": "Eng ko'p ko'rilgan sahifalar",
+      "referrers": "Yo'naltiruvchilar",
+      "devices": "Qurilmalar",
+      "browsers": "Brauzerlar",
+      "oses": "Operatsion tizimlar",
+      "countries": "Mamlakatlar",
+      "notConfiguredTitle": "Umami sozlanmagan",
+      "notConfiguredBody": "UMAMI_API_URL, UMAMI_WEBSITE_ID va UMAMI_API_TOKEN muhit o'zgaruvchilarini o'rnating va qayta joylang."
+    },
     "auth": {
       "create": "Admin yaratish",
       "email": "Email",

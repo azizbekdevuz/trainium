@@ -68,6 +68,23 @@
       "toss": "Toss",
       "units": "개"
     },
+    "analyticsSeo": {
+      "title": "방문자 분석",
+      "subtitle": "트래픽, 페이지, 기기, 유입경로 등",
+      "range": "기간",
+      "visitors": "방문자",
+      "pageviews": "페이지 조회수",
+      "bounce": "이탈률",
+      "time": "총 체류시간",
+      "topPages": "인기 페이지",
+      "referrers": "유입 경로",
+      "devices": "기기",
+      "browsers": "브라우저",
+      "oses": "운영체제",
+      "countries": "국가",
+      "notConfiguredTitle": "Umami가 구성되지 않았습니다",
+      "notConfiguredBody": "UMAMI_API_URL, UMAMI_WEBSITE_ID, UMAMI_API_TOKEN 환경 변수를 설정하고 배포하세요."
+    },
     "auth": {
       "create": "관리자 생성",
       "email": "이메일",

@@ -102,6 +102,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           }}
         />
 
+        {/* Umami analytics (enabled only if env present) */}
+        {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
+          <script
+            async
+            defer
+            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+            src={`${process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL || 'https://trainium.shop:3001'}/script.js`}
+          />
+        )}
+
         <SessionProviderWrapper initialSession={session}>
           <I18nProvider lang={lang} dict={dict}>
             <ThemeProvider>
