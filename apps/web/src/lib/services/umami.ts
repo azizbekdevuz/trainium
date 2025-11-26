@@ -33,7 +33,12 @@ async function fetchUmami<T>(path: string, params: Record<string, string | numbe
   if (!UMAMI_API_URL || !UMAMI_WEBSITE_ID || !UMAMI_API_TOKEN) {
     throw new Error('Umami is not configured');
   }
-  const url = new URL(`${UMAMI_API_URL.replace(/\/+$/, '')}/api/websites/${UMAMI_WEBSITE_ID}/${path}`);
+  // UMAMI_API_URL should point to the API base:
+  // - Self-hosted: https://my-umami-domain/api
+  // - Cloud:       https://api.umami.is/v1
+  // We append /websites/{id}/{path} regardless of host
+  const base = UMAMI_API_URL.replace(/\/+$/, '');
+  const url = new URL(`${base}/websites/${UMAMI_WEBSITE_ID}/${path}`);
   for (const [k, v] of Object.entries(params)) {
     url.searchParams.set(k, String(v));
   }
