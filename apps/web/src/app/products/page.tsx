@@ -7,12 +7,50 @@ import { ProductFilters } from './ProductFilters';
 import { ProductGrid } from './ProductGrid';
 import { ProductPagination } from './ProductPagination';
 import type { SearchParams, ParsedSearchParams } from './types';
+import type { Metadata } from 'next';
 
 type Props = {
   searchParams?: Promise<SearchParams>;
 };
 
 export const revalidate = 60; // ISR every 60s
+
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const sp = (await searchParams) ?? {};
+  const q = (sp.q ?? '').trim();
+  const category = (sp.category ?? '').trim();
+  const brand = (sp.brand ?? '').trim();
+
+  const parts: string[] = [];
+  if (q) parts.push(`Search: ${q}`);
+  if (category) parts.push(`Category: ${category}`);
+  if (brand) parts.push(`Brand: ${brand}`);
+  const suffix = parts.length ? ` – ${parts.join(' · ')}` : '';
+
+  const title = `Shop Fitness Equipment${suffix} | Trainium`;
+  const description =
+    q || category || brand
+      ? `Browse Trainium products${q ? ` for "${q}"` : ''}${category ? ` in ${category}` : ''}${brand ? ` by ${brand}` : ''}.`
+      : 'Browse premium fitness equipment at Trainium: treadmills, dumbbells, bikes, strength & cardio.';
+
+  return {
+    title,
+    description,
+    alternates: {
+      languages: {
+        'en': 'https://trainium.shop/en/products',
+        'ko': 'https://trainium.shop/ko/products',
+        'uz': 'https://trainium.shop/uz/products',
+      },
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: 'https://trainium.shop/en/products',
+    },
+  };
+}
 
 export default async function ProductsPage({ searchParams }: Props) {
   const lang = await negotiateLocale();
@@ -57,6 +95,22 @@ export default async function ProductsPage({ searchParams }: Props) {
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-10">
+      {/* JSON-LD ItemList for visible products */}
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            itemListElement: products.map((p, index) => ({
+              '@type': 'ListItem',
+              position: index + 1,
+              url: `https://trainium.shop/${lang}/products/${encodeURIComponent(p.slug)}`,
+            })),
+          }),
+        }}
+      />
       <div className="flex flex-col gap-4 md:gap-6">
         <div>
           <h2 className="font-display text-3xl">{dict.pages.products.title}</h2>

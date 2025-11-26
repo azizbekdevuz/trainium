@@ -15,12 +15,61 @@ import { ReviewsSection } from '../../../components/product/ReviewsSection';
 import { ProductCard } from '../../../components/product/ProductCard';
 import { ReviewForm } from '../../../components/product/ReviewForm';
 import { RecommendedProducts } from '../../../components/recommendations/RecommendedProducts';
+import type { Metadata } from 'next';
 
 type Props = {
     params: Promise<{ slug: string }>;
 };
 
 export const revalidate = 60;
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const { slug } = await params;
+    const product = await prisma.product.findUnique({
+        where: { slug },
+        select: {
+            name: true,
+            summary: true,
+            description: true,
+            images: true,
+            currency: true,
+            priceCents: true,
+            updatedAt: true,
+        },
+    });
+    if (!product) return { title: 'Product Not Found | Trainium' };
+
+    const primaryImage = (Array.isArray(product.images) && (product.images as { src: string }[])[0]?.src) || undefined;
+    const title = `${product.name} | Trainium`;
+    const description =
+        product.summary ||
+        (typeof product.description === 'string' ? product.description.slice(0, 160) : 'Premium fitness equipment from Trainium.');
+
+    return {
+        title,
+        description,
+        alternates: {
+            languages: {
+                'en': `https://trainium.shop/en/products/${encodeURIComponent(slug)}`,
+                'ko': `https://trainium.shop/ko/products/${encodeURIComponent(slug)}`,
+                'uz': `https://trainium.shop/uz/products/${encodeURIComponent(slug)}`,
+            },
+        },
+        openGraph: {
+            title,
+            description,
+            type: 'website',
+            url: `https://trainium.shop/en/products/${encodeURIComponent(slug)}`,
+            images: primaryImage ? [{ url: primaryImage }] : undefined,
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title,
+            description,
+            images: primaryImage ? [primaryImage] : undefined,
+        },
+    };
+}
 
 export default async function ProductPage({ params }: Props) {
     const lang = await negotiateLocale();
@@ -80,6 +129,41 @@ export default async function ProductPage({ params }: Props) {
     const initiallyFavorited = !!favMineRows[0]?.exists;
     const initialLiked = !!likeMineRows[0]?.exists;
 
+    // Reviews aggregate for JSON-LD (only include when reviews exist)
+    const reviewsAgg = await prisma.review.aggregate({
+        where: { productId: product.id, status: 'ACTIVE' as any },
+        _avg: { rating: true },
+        _count: { _all: true },
+    });
+    const reviewCount = (reviewsAgg._count as any)?._all ?? 0;
+    const avgRating = reviewsAgg._avg?.rating ?? null;
+
+    const productJsonLd: any = {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: product.name,
+        description: product.description || product.summary || '',
+        image: primaryImage ? [primaryImage] : undefined,
+        brand: product.brand ? { '@type': 'Brand', name: product.brand } : undefined,
+        offers: {
+            '@type': 'Offer',
+            price: (firstVariant?.priceCents ?? product.priceCents) / 100,
+            priceCurrency: product.currency,
+            availability:
+                (product.inventory?.inStock ?? 0) > 0
+                    ? 'https://schema.org/InStock'
+                    : 'https://schema.org/OutOfStock',
+            url: `https://trainium.shop/${lang}/products/${encodeURIComponent(product.slug)}`,
+        },
+    };
+    if (reviewCount > 0 && avgRating) {
+        productJsonLd.aggregateRating = {
+            '@type': 'AggregateRating',
+            ratingValue: Number(avgRating.toFixed(2)),
+            reviewCount: reviewCount,
+        };
+    }
+
     function StockInfo({ inStock, lowStockAt }: { inStock: number; lowStockAt?: number | null }) {
         if (inStock === 0) {
             return (
@@ -108,6 +192,8 @@ export default async function ProductPage({ params }: Props) {
 
     return (
         <div className="mx-auto max-w-6xl px-6 py-10">
+            <script type="application/ld+json" suppressHydrationWarning
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
             <div className="grid gap-10 md:grid-cols-2">
                 <div className="aspect-[4/3] rounded-2xl bg-gray-100 dark:bg-slate-800 overflow-hidden relative">
                     {primaryImage ? (
