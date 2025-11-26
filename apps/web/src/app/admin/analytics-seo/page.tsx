@@ -42,8 +42,10 @@ export default async function AdminAnalyticsSeoPage({
         getMetrics('os', range),
         getMetrics('country', range),
       ]);
+    //eslint-disable-next-line @typescript-eslint/no-unused-vars    
     } catch (e) {
       // fall back to empty if API fails
+      //eslint-disable-next-line @typescript-eslint/no-unused-vars
       stats = null;
     }
   }
