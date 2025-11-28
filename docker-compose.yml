@@ -34,35 +34,3 @@ services:
       interval: 20s
       timeout: 5s
       retries: 6
-
-  umami-db:
-    image: postgres:15-alpine
-    env_file:
-      - .env
-    environment:
-      - POSTGRES_DB=${UMAMI_DB_NAME}
-      - POSTGRES_USER=${UMAMI_DB_USER}
-      - POSTGRES_PASSWORD=${UMAMI_DB_PASSWORD}
-    volumes:
-      - umami-db-data:/var/lib/postgresql/data
-    restart: unless-stopped
-
-  umami:
-    image: ghcr.io/umami-software/umami:postgresql-latest
-    ports:
-      - "3001:3000"
-    env_file:
-      - .env
-    environment:
-      - DATABASE_URL=postgresql://${UMAMI_DB_USER}:${UMAMI_DB_PASSWORD}@umami-db:5432/${UMAMI_DB_NAME}
-      - DATABASE_TYPE=postgresql
-      - APP_SECRET=${UMAMI_APP_SECRET}
-      - TRACKER_SCRIPT_NAME=${UMAMI_TRACKER_SCRIPT_NAME:-script.js}
-      - DISABLE_TELEMETRY=1
-      - PORT=3000
-    depends_on:
-      - umami-db
-    restart: unless-stopped
-
-volumes:
-  umami-db-data:
