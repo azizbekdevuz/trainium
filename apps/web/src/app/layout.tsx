@@ -10,6 +10,7 @@ import { I18nProvider } from "../components/providers/I18nProvider";
 import ThemeProvider from "../components/providers/ThemeProvider";
 import Footer from "../components/layout/Footer";
 import { ResponsiveNavigation } from "../components/nav/ResponsiveNavigation";
+import { UmamiAnalytics } from "../components/analytics/UmamiAnalytics";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const space = Space_Grotesk({ subsets: ['latin'], variable: '--font-space' });
@@ -102,16 +103,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           }}
         />
 
-        {/* Umami analytics (enabled only if env present) */}
-        {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
-          <script
-            async
-            defer
-            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
-            src={`${process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL || 'https://trainium.shop:3001'}/script.js`}
-          />
-        )}
-
         <SessionProviderWrapper initialSession={session}>
           <I18nProvider lang={lang} dict={dict}>
             <ThemeProvider>
@@ -169,6 +160,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </ThemeProvider>
           </I18nProvider>
         </SessionProviderWrapper>
+        <UmamiAnalytics />
       </body>
     </html >
   );
