@@ -1,26 +1,24 @@
 'use client';
 import Script from 'next/script';
-import React from 'react';
 
-export const UmamiAnalytics = () => {
+export function UmamiAnalytics() {
   const websiteId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
   const scriptUrl = process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL;
 
-  // Only render the script if the website ID is set (e.g., in production)
+  // Only render the script if the website ID is set
   if (!websiteId) {
     return null;
   }
 
-  const base = (scriptUrl || 'https://analytics.umami.is').replace(/\/+$/, '');
-  const src = base.endsWith('/script.js') ? base : `${base}/script.js`;
+  // Umami Cloud uses cloud.umami.is; self-hosted uses your own domain
+  const defaultUrl = 'https://cloud.umami.is/script.js';
+  const src = scriptUrl || defaultUrl;
 
   return (
     <Script
-      async
       src={src}
       data-website-id={websiteId}
-      // The afterInteractive strategy is suitable for most analytics scripts
-      strategy="afterInteractive" 
+      strategy="afterInteractive"
     />
   );
-};
+}
