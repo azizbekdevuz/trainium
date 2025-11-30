@@ -42,8 +42,11 @@ async function fetchUmami<T>(path: string, params: Record<string, string | numbe
   for (const [k, v] of Object.entries(params)) {
     url.searchParams.set(k, String(v));
   }
+  // pass in the API key via a custom header x-umami-api-key
   const res = await fetch(url.toString(), {
-    headers: getHeaders(),
+    headers: {
+      'x-umami-api-key': UMAMI_API_TOKEN ?? '',
+    },
     cache: 'no-store',
   });
   if (!res.ok) {

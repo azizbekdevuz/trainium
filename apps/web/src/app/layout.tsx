@@ -10,7 +10,8 @@ import { I18nProvider } from "../components/providers/I18nProvider";
 import ThemeProvider from "../components/providers/ThemeProvider";
 import Footer from "../components/layout/Footer";
 import { ResponsiveNavigation } from "../components/nav/ResponsiveNavigation";
-import { UmamiAnalytics } from "../components/analytics/UmamiAnalytics";
+import Script from "next/script";
+import { UmamiAnalytics } from "@/components/analytics/UmamiAnalytics";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const space = Space_Grotesk({ subsets: ['latin'], variable: '--font-space' });
@@ -70,7 +71,6 @@ export const metadata: Metadata = {
   },
 };
 
-
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
   const lang = await negotiateLocale();
@@ -78,6 +78,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={lang} className={`${inter.variable} ${space.variable}`} suppressHydrationWarning>
       <body className="body-grid relative min-h-screen flex flex-col">
+        
+        {/* 
+          1. Theme Script
+        */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -103,15 +107,20 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           }}
         />
 
-        <SessionProviderWrapper initialSession={session}>
-          <I18nProvider lang={lang} dict={dict}>
-            <ThemeProvider>
-              {/* JSON-LD: WebSite with Sitelinks Search Box */}
-              <script
-                type="application/ld+json"
-                suppressHydrationWarning
-                dangerouslySetInnerHTML={{
-                  __html: JSON.stringify({
+        {/* 
+          2. Umami Analytics
+        */}
+        <UmamiAnalytics /> 
+        
+        {/* 
+          3. JSON-LD Schema
+        */}
+        <Script
+            id="schema-website"
+            type="application/ld+json"
+            strategy="beforeInteractive" // Hoists script to <head>
+            dangerouslySetInnerHTML={{
+                __html: JSON.stringify({
                     '@context': 'https://schema.org',
                     '@type': 'WebSite',
                     name: 'Trainium',
@@ -124,27 +133,31 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                       },
                       'query-input': 'required name=search_term_string',
                     },
-                  }),
-                }}
-              />
-              {/* JSON-LD: SiteNavigation */}
-              <script
-                type="application/ld+json"
-                suppressHydrationWarning
-                dangerouslySetInnerHTML={{
-                  __html: JSON.stringify({
-                    '@context': 'https://schema.org',
-                    '@type': 'ItemList',
-                    itemListElement: [
-                      { '@type': 'SiteNavigationElement', name: 'Shop', url: 'https://trainium.shop/en/products' },
-                      { '@type': 'SiteNavigationElement', name: 'Deals', url: 'https://trainium.shop/en/special-bargain' },
-                      { '@type': 'SiteNavigationElement', name: 'About', url: 'https://trainium.shop/en/about' },
-                      { '@type': 'SiteNavigationElement', name: 'Contact', url: 'https://trainium.shop/en/contact' },
-                      { '@type': 'SiteNavigationElement', name: 'Track', url: 'https://trainium.shop/en/track' },
-                    ],
-                  }),
-                }}
-              />
+                }),
+            }}
+        />
+        <Script
+          id="schema-navigation"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'ItemList',
+              itemListElement: [
+                { '@type': 'SiteNavigationElement', name: 'Shop', url: 'https://trainium.shop/en/products' },
+                { '@type': 'SiteNavigationElement', name: 'Deals', url: 'https://trainium.shop/en/special-bargain' },
+                { '@type': 'SiteNavigationElement', name: 'About', url: 'https://trainium.shop/en/about' },
+                { '@type': 'SiteNavigationElement', name: 'Contact', url: 'https://trainium.shop/en/contact' },
+                { '@type': 'SiteNavigationElement', name: 'Track', url: 'https://trainium.shop/en/track' },
+              ],
+            }),
+          }}
+        />
+
+        <SessionProviderWrapper initialSession={session}>
+          <I18nProvider lang={lang} dict={dict}>
+            <ThemeProvider>
               <InteractiveBackground />
               <div className="absolute inset-0 bg-gradient-to-br from-cyan-600/10 via-transparent to-cyan-600/10 animate-pulse" />
               <header className="site-header inset-x-0 top-0 z-30 border-b glass">
@@ -160,7 +173,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </ThemeProvider>
           </I18nProvider>
         </SessionProviderWrapper>
-        <UmamiAnalytics />
       </body>
     </html >
   );

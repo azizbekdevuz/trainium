@@ -19,6 +19,7 @@ export function UmamiAnalytics() {
       src={src}
       data-website-id={websiteId}
       strategy="afterInteractive"
+      async
     />
   );
 }
