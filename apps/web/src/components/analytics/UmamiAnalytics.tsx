@@ -5,6 +5,8 @@ export function UmamiAnalytics() {
   const websiteId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
   const scriptUrl = process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL;
 
+  console.log("Umami Website ID being used:", websiteId ? websiteId.substring(0, 8) + '...' : 'MISSING');
+
   // Only render the script if the website ID is set
   if (!websiteId) {
     return null;
@@ -16,6 +18,7 @@ export function UmamiAnalytics() {
 
   return (
     <Script
+      defer
       src={src}
       data-website-id={websiteId}
       strategy="afterInteractive"
