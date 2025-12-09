@@ -2,7 +2,32 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "dev": { "cache": false, "persistent": true },
-    "build": { "cache": true, "dependsOn": ["^build"], "outputs": [".next/**", "dist/**", "build/**"] },
+    "build": { 
+      "cache": true, 
+      "dependsOn": ["^build"], 
+      "outputs": [".next/**", "dist/**", "build/**"],
+      "env": [
+        "NODE_ENV",
+        "DATABASE_URL",
+        "NEXTAUTH_SECRET",
+        "AUTH_SECRET",
+        "AUTH_TRUST_HOST",
+        "KAKAO_CLIENT_ID",
+        "KAKAO_CLIENT_SECRET",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET",
+        "NEXTAUTH_URL",
+        "AUTH_URL",
+        "TOSS_SECRET_KEY",
+        "STRIPE_SECRET_KEY",
+        "STRIPE_WEBHOOK_ENABLED",
+        "RESEND_API_KEY",
+        "EMAIL_SERVER",
+        "EMAIL_FROM",
+        "SOCKET_ADMIN_SECRET",
+        "REVALIDATE_SECRET"
+      ]
+    },
     "start": { "cache": false, "persistent": true },
     "lint": { 
       "dependsOn": [],

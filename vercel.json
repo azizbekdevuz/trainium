@@ -1,7 +1,7 @@
 {
-    "buildCommand": "cd ../.. && pnpm install && pnpm --filter @apps/web build",
+    "buildCommand": "pnpm install --include=dev --ignore-scripts && pnpm rebuild @prisma/client @prisma/engines && pnpm --filter @apps/web prisma:generate && pnpm --filter @apps/web build",
     "outputDirectory": ".next",
-    "installCommand": "cd ../.. && pnpm install",
+    "installCommand": "pnpm install --include=dev --ignore-scripts && pnpm rebuild @prisma/client @prisma/engines",
     "framework": "nextjs",
     "rootDirectory": "apps/web",
     "crons": [
