@@ -3,6 +3,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { useI18n } from '../../../components/providers/I18nProvider';
 import { ThinkingEmoji } from '../../../components/ui/media/ThinkingEmoji';
+import DOMPurify from 'dompurify';
 
 interface FaqTranslation {
   id: string;
@@ -216,7 +217,7 @@ export function FaqSection({ items }: { items?: FaqItem[] }) {
                 {openIdx === idx && (
                   <div 
                     className="mt-2 text-gray-700 text-sm"
-                    dangerouslySetInnerHTML={{ __html: item.a }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.a) }}
                   />
                 )}
               </div>
@@ -282,7 +283,7 @@ export function FaqSection({ items }: { items?: FaqItem[] }) {
             {openIdx === idx && (
               <div 
                 className="mt-2 text-gray-700 text-xs sm:text-sm"
-                dangerouslySetInnerHTML={{ __html: item.a }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.a) }}
               />
             )}
           </div>
