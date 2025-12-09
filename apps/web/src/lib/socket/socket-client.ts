@@ -130,8 +130,16 @@ class SocketClient {
       this.connectionState.error = null;
       this.lastAuth = { userId, userRole };
 
+      // For Vercel deployments, socket server runs on Docker (trainium.shop)
+      // For Docker deployments, socket server runs on same domain
       const base = process.env.NEXT_PUBLIC_SOCKET_URL?.replace(/\/$/, '');
-      const socketUrl = base || (process.env.NODE_ENV !== 'production'  ? 'http://localhost:4000' : undefined);
+      const socketUrl = base || (
+        process.env.NODE_ENV !== 'production' 
+          ? 'http://localhost:4000' 
+          : process.env.VERCEL 
+            ? 'https://ws.trainium.shop' // Vercel deployment connects to Docker socket server
+            : undefined
+      );
 
       // Create new socket instance
       this.socket = io(socketUrl, {

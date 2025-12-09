@@ -12,10 +12,16 @@
     ],
     "functions": {
       "apps/web/src/app/**/*.ts": {
-        "maxDuration": 30
+        "maxDuration": 60
       },
       "apps/web/src/app/**/*.tsx": {
-        "maxDuration": 30
+        "maxDuration": 60
+      },
+      "apps/web/src/app/admin/analytics/**": {
+        "maxDuration": 60
+      },
+      "apps/web/src/app/admin/analytics-seo/**": {
+        "maxDuration": 60
       }
     }
   }
