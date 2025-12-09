@@ -1,0 +1,21 @@
+{
+    "buildCommand": "cd ../.. && pnpm install && pnpm --filter @apps/web build",
+    "outputDirectory": ".next",
+    "installCommand": "cd ../.. && pnpm install",
+    "framework": "nextjs",
+    "rootDirectory": "apps/web",
+    "crons": [
+      {
+        "path": "/api/admin/notifications/cleanup",
+        "schedule": "0 2 * * *"
+      }
+    ],
+    "functions": {
+      "apps/web/src/app/**/*.ts": {
+        "maxDuration": 30
+      },
+      "apps/web/src/app/**/*.tsx": {
+        "maxDuration": 30
+      }
+    }
+  }

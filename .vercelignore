@@ -1,0 +1,8 @@
+apps/socket/
+docker-compose.yml
+Dockerfile
+*.md
+.git/
+node_modules/
+.next/
+.turbo/

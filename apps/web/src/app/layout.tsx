@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { getDictionary, negotiateLocale } from "../lib/i18n/i18n";
 import SessionProviderWrapper from "../components/providers/SessionProviderWrapper";
@@ -173,6 +174,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </ThemeProvider>
           </I18nProvider>
         </SessionProviderWrapper>
+        <Analytics />
       </body>
     </html >
   );
