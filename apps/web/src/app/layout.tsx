@@ -12,7 +12,6 @@ import ThemeProvider from "../components/providers/ThemeProvider";
 import Footer from "../components/layout/Footer";
 import { ResponsiveNavigation } from "../components/nav/ResponsiveNavigation";
 import Script from "next/script";
-import { UmamiAnalytics } from "@/components/analytics/UmamiAnalytics";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const space = Space_Grotesk({ subsets: ['latin'], variable: '--font-space' });
@@ -109,12 +108,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
 
         {/* 
-          2. Umami Analytics
-        */}
-        <UmamiAnalytics /> 
-        
-        {/* 
-          3. JSON-LD Schema
+          2. JSON-LD Schema
         */}
         <Script
             id="schema-website"
