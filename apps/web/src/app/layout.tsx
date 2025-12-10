@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Analytics } from "@vercel/analytics/next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { getDictionary, negotiateLocale } from "../lib/i18n/i18n";
 import SessionProviderWrapper from "../components/providers/SessionProviderWrapper";
@@ -12,6 +11,7 @@ import ThemeProvider from "../components/providers/ThemeProvider";
 import Footer from "../components/layout/Footer";
 import { ResponsiveNavigation } from "../components/nav/ResponsiveNavigation";
 import Script from "next/script";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const space = Space_Grotesk({ subsets: ['latin'], variable: '--font-space' });
@@ -168,7 +168,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </ThemeProvider>
           </I18nProvider>
         </SessionProviderWrapper>
-        <Analytics />
+        <GoogleAnalytics />
       </body>
     </html >
   );

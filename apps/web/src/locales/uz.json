@@ -71,51 +71,27 @@
     "analyticsSeo": {
       "title": "Tashriflar analitikasi",
       "subtitle": "Trafik, sahifalar, qurilmalar, yo'naltiruvchilar va boshqalar",
-      "visitors": "Tashrifchilar",
-      "pageviews": "Sahifa ko'rishlar",
-      "topPages": "Eng ko'p ko'rilgan sahifalar",
-      "referrers": "Yo'naltiruvchilar",
-      "devices": "Qurilmalar",
-      "countries": "Mamlakatlar",
-      "vercelAnalyticsActive": "Vercel Analytics saytingizni kuzatmoqda",
-      "openDashboard": "Vercel boshqaruv panelini ochish",
-      "vercelAnalytics": {
-        "title": "Vercel Analytics",
-        "subtitle": "Saytingiz Vercel Analytics orqali tashrifchilar ma'lumotlarini ko'rish uchun ishlatilmoqda. Analyticslar avtomatik ravishda to'langan va Vercel Dashboardida ko'rish mumkin.",
-        "openVercelDashboard": "Vercel Dashboardni ochish",
-        "viewDocumentation": "Documentationni ko'rish"
-      },
       "features": {
         "visitors": {
           "title": "Tashrifchilar",
-          "description": "Site boylab unikal tashrifchilar va sahifa ko'rishlarini ko'rish"
+          "description": "Sayt bo'ylab noyob tashrifchilar va sahifa ko'rishlarni kuzating"
         },
         "geography": {
           "title": "Geografiya",
-          "description": "Saytingizni tashrifchilarini dunyo boylab qayerdan kelmoqda ko'rish"
+          "description": "Tashrifchilaringiz dunyoning qayeridan kelishini ko'ring"
         },
         "topPages": {
           "title": "Eng ko'p ko'rilgan sahifalar",
-          "description": "Site boylab unikal tashrifchilar va sahifa ko'rishlarini ko'rish"
+          "description": "Eng ko'p trafik oladigan sahifalarni ko'ring"
         },
         "referrers": {
           "title": "Yo'naltiruvchilar",
-          "description": "Saytingizni tashrifchilarini dunyo boylab qayerdan kelmoqda ko'rish"
+          "description": "Tashrifchilar saytingizni qanday topishini bilib oling"
         },
         "devices": {
           "title": "Qurilmalar",
-          "description": "Audience qurilmalarini tushuntirish"
-        },
-        "webVitals": {
-          "title": "Web Vital",
-          "description": "Saytingiz performansi va foydalanuvchi tajribasini o'zgartirish"
+          "description": "Auditoriyangiz qanday qurilmalardan foydalanishini tushuning"
         }
-      },
-      "setupInfo": {
-        "title": "Vercel Analytics faolligini aktiv qilish",
-        "description": "Vercel Analytics saytingizni avtomatik ravishda tashrifchilar va sahifa ko'rishlarini ko'rish uchun ishlatilmoqda. No additional configuration is needed. Visit the Vercel Dashboard to view your analytics data.",
-        "openVercelDashboard": "Vercel Dashboardni ochish",
-        "viewDocumentation": "Documentationni ko'rish"
       }
     },
     "auth": {

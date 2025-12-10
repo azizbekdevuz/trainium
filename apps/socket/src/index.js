@@ -7,9 +7,35 @@ import { Server as SocketIOServer } from "socket.io";
 // ---- ENV ----
 const DEV = process.env.NODE_ENV !== "production";
 const PORT = process.env.PORT || 4000;
-const ORIGINS = DEV
-  ? ["http://localhost:3000", "http://127.0.0.1:3000"]
-  : [process.env.NEXTAUTH_URL].filter(Boolean); // keep your prod rule
+
+// CORS origins - allow both Docker and Vercel deployments
+const getOrigins = () => {
+  if (DEV) {
+    return ["http://localhost:3000", "http://127.0.0.1:3000"];
+  }
+
+  // In production, allow NEXTAUTH_URL and any additional origins
+  const origins = [];
+  if (process.env.NEXTAUTH_URL) origins.push(process.env.NEXTAUTH_URL);
+  if (process.env.AUTH_URL) origins.push(process.env.AUTH_URL);
+
+  // Always allow trainium.shop and its subdomains
+  origins.push("https://trainium.shop");
+  origins.push("https://www.trainium.shop");
+
+  // Allow Vercel deployment domain if different
+  if (process.env.VERCEL_URL) origins.push(`https://${process.env.VERCEL_URL}`);
+
+  // Additional allowed origins from env
+  if (process.env.SOCKET_ALLOWED_ORIGINS) {
+    origins.push(...process.env.SOCKET_ALLOWED_ORIGINS.split(",").map(o => o.trim()));
+  }
+
+  return [...new Set(origins.filter(Boolean))];
+};
+
+const ORIGINS = getOrigins();
+console.log("Socket.IO CORS origins:", ORIGINS);
 
 const prodPath = process.env.NEXTAUTH_URL || "https://trainium.shop";
 

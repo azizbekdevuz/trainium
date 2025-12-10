@@ -1,27 +1,27 @@
 {
-    "buildCommand": "pnpm install --include=dev --ignore-scripts && pnpm rebuild @prisma/client @prisma/engines && pnpm --filter @apps/web prisma:generate && pnpm --filter @apps/web build",
-    "outputDirectory": ".next",
-    "installCommand": "pnpm install --include=dev --ignore-scripts && pnpm rebuild @prisma/client @prisma/engines",
-    "framework": "nextjs",
-    "rootDirectory": "apps/web",
-    "crons": [
-      {
-        "path": "/api/admin/notifications/cleanup",
-        "schedule": "0 2 * * *"
-      }
-    ],
-    "functions": {
-      "apps/web/src/app/**/*.ts": {
-        "maxDuration": 60
-      },
-      "apps/web/src/app/**/*.tsx": {
-        "maxDuration": 60
-      },
-      "apps/web/src/app/admin/analytics/**": {
-        "maxDuration": 60
-      },
-      "apps/web/src/app/admin/analytics-seo/**": {
-        "maxDuration": 60
-      }
+  "buildCommand": "pnpm --filter @apps/web prisma:generate && pnpm --filter @apps/web build",
+  "outputDirectory": ".next",
+  "installCommand": "pnpm install",
+  "framework": "nextjs",
+  "rootDirectory": "apps/web",
+  "crons": [
+    {
+      "path": "/api/admin/notifications/cleanup",
+      "schedule": "0 2 * * *"
+    }
+  ],
+  "functions": {
+    "apps/web/src/app/**/*.ts": {
+      "maxDuration": 60
+    },
+    "apps/web/src/app/**/*.tsx": {
+      "maxDuration": 60
+    },
+    "apps/web/src/app/admin/analytics/**": {
+      "maxDuration": 60
+    },
+    "apps/web/src/app/admin/analytics-seo/**": {
+      "maxDuration": 60
     }
   }
+}

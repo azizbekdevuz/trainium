@@ -71,20 +71,6 @@
     "analyticsSeo": {
       "title": "Visitor Analytics",
       "subtitle": "Traffic, pages, devices, referrers and more.",
-      "visitors": "Visitors",
-      "pageviews": "Pageviews",
-      "topPages": "Top pages",
-      "referrers": "Referrers",
-      "devices": "Devices",
-      "countries": "Countries",
-      "vercelAnalyticsActive": "Vercel Analytics is tracking your site",
-      "openDashboard": "Open Vercel Dashboard",
-      "vercelAnalytics": {
-        "title": "Vercel Analytics",
-        "subtitle": "Your site is using Vercel Analytics for tracking visitor data. Analytics are automatically collected and can be viewed in your Vercel Dashboard.",
-        "openVercelDashboard": "Open Vercel Dashboard",
-        "viewDocumentation": "View Documentation"
-      },
       "features": {
         "visitors": {
           "title": "Visitors",
@@ -95,8 +81,8 @@
           "description": "See where your visitors are coming from around the world"
         },
         "topPages": {
-          "title": "Top pages",
-          "description": "Track unique visitors and page views across your site"
+          "title": "Top Pages",
+          "description": "See which pages get the most traffic"
         },
         "referrers": {
           "title": "Referrers",
@@ -105,17 +91,7 @@
         "devices": {
           "title": "Devices",
           "description": "Understand which devices your audience uses"
-        },
-        "webVitals": {
-          "title": "Web Vitals",
-          "description": "Measure your site's performance and user experience"
         }
-      },
-      "setupInfo": {
-        "title": "Analytics Active",
-        "description": "Vercel Analytics is automatically tracking page views and visitor data on trainium.shop. No additional configuration is needed. Visit the Vercel Dashboard to view your analytics data.",
-        "openVercelDashboard": "Open Vercel Dashboard",
-        "viewDocumentation": "View Documentation"
       }
     },
     "auth": {
