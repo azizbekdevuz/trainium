@@ -30,8 +30,5 @@
     "prisma-erd-generator": "^2.1.0",
     "turbo": "^2.5.8",
     "typescript-eslint": "^8"
-  },
-  "dependencies": {
-    "@vercel/analytics": "^1.6.1"
   }
 }

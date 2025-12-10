@@ -71,19 +71,52 @@
     "analyticsSeo": {
       "title": "방문자 분석",
       "subtitle": "트래픽, 페이지, 기기, 유입경로 등",
-      "range": "기간",
       "visitors": "방문자",
       "pageviews": "페이지 조회수",
-      "bounce": "이탈률",
-      "time": "총 체류시간",
       "topPages": "인기 페이지",
       "referrers": "유입 경로",
       "devices": "기기",
-      "browsers": "브라우저",
-      "oses": "운영체제",
       "countries": "국가",
-      "notConfiguredTitle": "Umami가 구성되지 않았습니다",
-      "notConfiguredBody": "UMAMI_API_URL, UMAMI_WEBSITE_ID, UMAMI_API_TOKEN 환경 변수를 설정하고 배포하세요."
+      "vercelAnalyticsActive": "Vercel Analytics가 사이트를 추적 중입니다",
+      "openDashboard": "Vercel 대시보드 열기",
+      "vercelAnalytics": {
+        "title": "Vercel Analytics",
+        "subtitle": "사이트의 방문자 데이터를 추적하는 Vercel Analytics를 사용 중입니다. Analytics는 자동으로 수집되고 Vercel 대시보드에서 확인할 수 있습니다.",
+        "openVercelDashboard": "Vercel 대시보드 열기",
+        "viewDocumentation": "문서보기"
+      },
+      "features": {
+        "visitors": {
+          "title": "방문자",
+          "description": "사이트 내에서 고유한 방문자와 페이지 조회수를 추적합니다"
+        },
+        "geography": {
+          "title": "지리",
+          "description": "사이트의 방문자들이 세계 어디에서 왔는지 확인할 수 있습니다"
+        },
+        "topPages": {
+          "title": "인기 페이지",
+          "description": "사이트 내에서 고유한 방문자와 페이지 조회수를 추적합니다"
+        },
+        "referrers": {
+          "title": "유입 경로",
+          "description": "사이트를 찾는 방법을 확인할 수 있습니다"
+        },
+        "devices": {
+          "title": "기기",
+          "description": "사이트의 방문자들이 사용하는 기기를 확인할 수 있습니다"
+        },
+        "webVitals": {
+          "title": "Web Vitals",
+          "description": "사이트의 성과와 사용자 경험을 측정할 수 있습니다"
+        }
+      },
+      "setupInfo": {
+        "title": "분석 활성화",
+        "description": "Vercel Analytics가 trainium.shop에서 페이지 조회수와 방문자 데이터를 자동으로 추적합니다. 추가 구성이 필요하지 않습니다. Vercel 대시보드를 방문하여 분석 데이터를 확인할 수 있습니다.",
+        "openVercelDashboard": "Vercel 대시보드 열기",
+        "viewDocumentation": "문서보기"
+      }
     },
     "auth": {
       "create": "관리자 생성",
