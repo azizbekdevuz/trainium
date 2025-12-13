@@ -1,5 +1,4 @@
 import { prisma } from '../../lib/database/db';
-import { Prisma } from '@prisma/client';
 import { ProductWithRelations } from '../../types/prisma';
 import { sortCategories } from '../../lib/product/category-utils';
 import type { Dictionary } from '../../lib/i18n/i18n';
@@ -70,17 +69,34 @@ export async function getProductInteractionData(
     };
   }
 
+  // Build IN clause with proper parameterization
+  const productIdsPlaceholders = productIds.map((_, i) => `$${i + 1}`).join(', ');
   const [favCounts, likeCounts] = await Promise.all([
-    prisma.$queryRaw<{ productId: string; count: number }[]>`SELECT "productId", COUNT(*)::int AS count FROM "Favorite" WHERE "productId" IN (${Prisma.join(productIds)}) GROUP BY "productId"`,
-    prisma.$queryRaw<{ productId: string; count: number }[]>`SELECT "productId", COUNT(*)::int AS count FROM "ProductLike" WHERE "productId" IN (${Prisma.join(productIds)}) GROUP BY "productId"`,
+    prisma.$queryRawUnsafe(
+      `SELECT "productId", COUNT(*)::int AS count FROM "Favorite" WHERE "productId" IN (${productIdsPlaceholders}) GROUP BY "productId"`,
+      ...productIds
+    ) as Promise<Array<{ productId: string; count: number }>>,
+    prisma.$queryRawUnsafe(
+      `SELECT "productId", COUNT(*)::int AS count FROM "ProductLike" WHERE "productId" IN (${productIdsPlaceholders}) GROUP BY "productId"`,
+      ...productIds
+    ) as Promise<Array<{ productId: string; count: number }>>,
   ]);
 
   let userFavs: { productId: string }[] = [];
   let userLikes: { productId: string }[] = [];
   if (userId) {
+    const userPlaceholders = productIds.map((_, i) => `$${i + 2}`).join(', ');
     [userFavs, userLikes] = await Promise.all([
-      prisma.$queryRaw<{ productId: string }[]>`SELECT "productId" FROM "Favorite" WHERE "userId" = ${userId} AND "productId" IN (${Prisma.join(productIds)})`,
-      prisma.$queryRaw<{ productId: string }[]>`SELECT "productId" FROM "ProductLike" WHERE "userId" = ${userId} AND "productId" IN (${Prisma.join(productIds)})`,
+      prisma.$queryRawUnsafe(
+        `SELECT "productId" FROM "Favorite" WHERE "userId" = $1 AND "productId" IN (${userPlaceholders})`,
+        userId,
+        ...productIds
+      ) as Promise<Array<{ productId: string }>>,
+      prisma.$queryRawUnsafe(
+        `SELECT "productId" FROM "ProductLike" WHERE "userId" = $1 AND "productId" IN (${userPlaceholders})`,
+        userId,
+        ...productIds
+      ) as Promise<Array<{ productId: string }>>,
     ]);
   }
 

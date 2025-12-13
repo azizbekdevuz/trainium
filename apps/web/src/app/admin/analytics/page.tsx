@@ -53,23 +53,23 @@ async function getAnalytics(params?: { range?: string; sort?: 'revenue' | 'units
       _count: { _all: true },
       where: { createdAt: { gte: start } },
     }),
-    prisma.$queryRawUnsafe<any[]>(
+    prisma.$queryRawUnsafe(
       `select date_trunc('day', o."createdAt") as day, count(*)::int as orders
        from "Order" o
        where o."createdAt" >= $1
        group by 1
        order by 1 asc`,
       start,
-    ),
-    prisma.$queryRawUnsafe<any[]>(
+    ) as Promise<Array<{ day: Date; orders: number }>>,
+    prisma.$queryRawUnsafe(
       `select date_trunc('day', p."createdAt") as day, sum(p."amountCents")::int as revenue
        from "Payment" p
        where p."createdAt" >= $1 and p.status = 'SUCCEEDED' ${provider !== 'ALL' ? `and p.provider = '${provider}'` : ''}
        group by 1
        order by 1 asc`,
       start,
-    ),
-    prisma.$queryRawUnsafe<any[]>(
+    ) as Promise<Array<{ day: Date; revenue: number }>>,
+    prisma.$queryRawUnsafe(
       `select 
          oi."productId" as id, 
          max(oi.name) as name, 
@@ -83,7 +83,7 @@ async function getAnalytics(params?: { range?: string; sort?: 'revenue' | 'units
        order by ${sortMetric === 'units' ? 'units' : 'revenue'} desc
        limit 10`,
       start,
-    ),
+    ) as Promise<Array<{ id: string; name: string; units: number; revenue: number }>>,
     prisma.order.groupBy({
       by: ['status'],
       _count: { _all: true },

@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
   if (currencies.size !== 1) {
     return NextResponse.json({ error: "Cart has mixed currencies" }, { status: 400 });
   }
-  const currency = [...currencies][0];
+  const currency = [...currencies][0] as string;
 
   // IMPORTANT: Treat priceCents as "minor units" across all currencies.
   // KRW, JPY, VND are zero-decimal; our DB already stores the correct minor unit numbers.
