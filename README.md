@@ -107,6 +107,21 @@ Required environment variables:
 - `NEXTAUTH_URL`: Application URL
 - `SOCKET_ADMIN_SECRET`: Socket server admin secret
 
+### Docker Deployment
+
+**Important Security Note**: Environment variables are handled securely:
+- `.env` files are NOT copied into Docker images
+- Build-time variables (`NEXT_PUBLIC_*`) are passed via build args
+- Runtime variables are loaded via `env_file` in docker-compose
+
+**Building with Docker Compose:**
+
+1. Ensure your `.env` file exists in the project root with all required variables
+2. Build and start services:
+   ```bash
+   docker-compose up -d --build
+   ```
+
 4. Set up the database:
 ```bash
 # Generate Prisma client

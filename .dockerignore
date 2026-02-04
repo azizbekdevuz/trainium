@@ -23,8 +23,10 @@ out
 logs
 
 # Local env and editor
-.env*
-!.env.example
+.env
+.env.*
+**/.env
+**/.env.*
 .vscode
 .idea
 .DS_Store

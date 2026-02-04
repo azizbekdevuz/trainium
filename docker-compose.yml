@@ -3,6 +3,13 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+      args:
+        # Build-time variables (NEXT_PUBLIC_* only - these are public keys, safe to embed)
+        NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+        NEXT_PUBLIC_SOCKET_URL: ${NEXT_PUBLIC_SOCKET_URL}
+        NEXT_PUBLIC_GA_MEASUREMENT_ID: ${NEXT_PUBLIC_GA_MEASUREMENT_ID}
+        # DATABASE_URL needed for static page generation during build
+        DATABASE_URL: ${DATABASE_URL}
     env_file:
       - .env
     environment:

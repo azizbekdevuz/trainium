@@ -19,12 +19,61 @@ COPY prisma ./prisma
 # rest of the repo
 COPY . ./
 
-# (optional) source scan
-RUN echo "=== SCAN: looking for next/document or <Html> in /repo (source) ===" && \
-    grep -R --line-number --color "next/document" /repo \
-      --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist || true && \
-    grep -R --line-number --color "<Html>" /repo \
-      --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist || true
+# Build arguments for NEXT_PUBLIC_* variables (build-time only)
+ARG NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+ARG NEXT_PUBLIC_SOCKET_URL
+ARG NEXT_PUBLIC_GA_MEASUREMENT_ID
+
+# Build argument for DATABASE_URL (needed for static generation during build)
+ARG DATABASE_URL
+
+# Set as environment variables for Next.js build
+ENV NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+ENV NEXT_PUBLIC_SOCKET_URL=${NEXT_PUBLIC_SOCKET_URL}
+ENV NEXT_PUBLIC_GA_MEASUREMENT_ID=${NEXT_PUBLIC_GA_MEASUREMENT_ID}
+ENV DATABASE_URL=${DATABASE_URL}
+
+# syntax=docker/dockerfile:1.7
+
+FROM node:20-bullseye-slim AS base
+ENV NODE_ENV=development
+WORKDIR /repo
+RUN corepack enable
+
+FROM base AS builder
+ENV NODE_ENV=development
+WORKDIR /repo
+
+# workspace root
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json turbo.json ./
+# app manifests
+COPY apps/web/package.json apps/web/package.json
+COPY apps/socket/package.json apps/socket/package.json
+# prisma schema
+COPY prisma ./prisma
+# rest of the repo
+COPY . ./
+
+# Build arguments for NEXT_PUBLIC_* variables (build-time only)
+ARG NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+ARG NEXT_PUBLIC_SOCKET_URL
+ARG NEXT_PUBLIC_GA_MEASUREMENT_ID
+
+# Build argument for DATABASE_URL (needed for static generation during build)
+ARG DATABASE_URL
+
+# Set as environment variables for Next.js build
+ENV NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+ENV NEXT_PUBLIC_SOCKET_URL=${NEXT_PUBLIC_SOCKET_URL}
+ENV NEXT_PUBLIC_GA_MEASUREMENT_ID=${NEXT_PUBLIC_GA_MEASUREMENT_ID}
+ENV DATABASE_URL=${DATABASE_URL}
+
+# (optional) source scan - uncomment if needed
+#RUN echo "=== SCAN: looking for next/document or <Html> in /repo (source) ===" && \
+#    grep -R --line-number --color "next/document" /repo \
+#      --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist || true && \
+#    grep -R --line-number --color "<Html>" /repo \
+#      --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist || true
 
 # install deps
 RUN pnpm install --frozen-lockfile --prod=false
