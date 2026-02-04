@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@9.0.6",
+  "pnpm": {
+    "overrides": {
+      "tar": "^7.5.3"
+    }
+  },
   "scripts": {
     "dev": "turbo run dev --parallel",
     "dev:web": "pnpm --filter @apps/web dev",
