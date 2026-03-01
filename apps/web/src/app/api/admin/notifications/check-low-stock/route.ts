@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../../auth";
+import { requireAdminSession } from "../../../../../auth/require-admin";
 import { checkLowStockProducts, checkOutOfStockProducts } from "../../../../../lib/product/product-notifications";
 
 export const runtime = "nodejs";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function POST(req: NextRequest) {
+export async function POST(_req: NextRequest) {
   const session = await auth();
-  if (!session?.user || (session.user as any).role !== 'ADMIN') {
+  if (!requireAdminSession(session)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

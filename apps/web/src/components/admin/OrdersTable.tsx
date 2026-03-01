@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { formatCurrency } from '@/lib/utils/format';
-import { formatDate } from '@/lib/utils/date-utils';
+import { LocalTime } from '../ui/LocalTime';
 import { useResponsive } from '../../hooks/useResponsive';
 import { Icon } from '../ui/media/Icon';
 
@@ -140,7 +140,7 @@ export function OrdersTable({ orders, dict, lang }: OrdersTableProps) {
                   <div>
                     <span className="text-slate-500 dark:text-slate-400">{dict.admin?.orders?.dateLabel || 'Date'}:</span>
                     <span className="ml-1 font-medium text-slate-900 dark:text-slate-100">
-                      {formatDate(order.createdAt)}
+                      <LocalTime date={order.createdAt} />
                     </span>
                   </div>
                 </div>
@@ -232,7 +232,7 @@ export function OrdersTable({ orders, dict, lang }: OrdersTableProps) {
                   {itemCount} {itemCount !== 1 ? (dict.admin?.orders?.itemsPlural ?? 'items') : (dict.admin?.orders?.items ?? 'item')}
                 </td>
                 <td className="px-3 sm:px-4 py-3 text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
-                  {formatDate(order.createdAt)}
+                  <LocalTime date={order.createdAt} />
                 </td>
                 <td className="px-3 sm:px-4 py-3">
                   <span className={`text-xs px-2 py-1 rounded ${getPaymentStatusColor(paymentStatus)}`}>

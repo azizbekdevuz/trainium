@@ -1,6 +1,7 @@
 import type { OrderStatus } from '@prisma/client';
 import type { StatusOption } from './types';
 import type { Dictionary } from '../../../lib/i18n/i18n';
+import { LocalTime } from '../../ui/LocalTime';
 
 interface StatusSectionProps {
   currentStatus: OrderStatus;
@@ -33,7 +34,7 @@ export function StatusSection({
           {currentStatusConfig?.label}
         </span>
         <span className="text-sm text-gray-500">
-          {(dict.admin?.orders?.detail?.updated ?? 'Updated')} {new Date(updatedAt).toLocaleString()}
+          {(dict.admin?.orders?.detail?.updated ?? 'Updated')} <LocalTime date={updatedAt} />
         </span>
       </div>
       

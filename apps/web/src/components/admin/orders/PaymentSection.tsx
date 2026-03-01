@@ -1,4 +1,5 @@
 import { formatCurrency } from '../../../lib/utils/format';
+import { LocalTime } from '@/components/ui/LocalTime';
 import type { OrderData } from './types';
 import type { Dictionary } from '../../../lib/i18n/i18n';
 
@@ -35,7 +36,7 @@ export function PaymentSection({ payments, dict }: PaymentSectionProps) {
                 </div>
               )}
               <div className="text-xs text-gray-500">
-                {new Date(payment.createdAt).toLocaleString()}
+                <LocalTime date={payment.createdAt} />
               </div>
             </div>
           ))}

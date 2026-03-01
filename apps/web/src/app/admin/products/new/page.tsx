@@ -1,3 +1,4 @@
+import { auth } from '../../../../auth';
 import { prisma } from '../../../../lib/database/db';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -24,6 +25,10 @@ function currencyMinorUnits(currency: string): number {
 
 async function createProduct(formData: FormData) {
   'use server';
+  const session = await auth();
+  if (!session?.user || (session.user as { role?: string }).role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
   const lang = await negotiateLocale();
   const dict = await getDictionary(lang);
   const name = String(formData.get('name') ?? '').trim();
@@ -90,6 +95,11 @@ async function createProduct(formData: FormData) {
 }
 
 export default async function NewProductPage() {
+  const session = await auth();
+  if (!session?.user || (session.user as { role?: string }).role !== 'ADMIN') {
+    redirect('/auth/signin');
+  }
+
   const lang = await negotiateLocale();
   const dict = await getDictionary(lang);
   const rawCategories = await prisma.category.findMany({

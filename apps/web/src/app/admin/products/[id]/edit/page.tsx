@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { auth } from '../../../../../auth';
+import { redirect } from 'next/navigation';
 import { negotiateLocale, getDictionary } from '../../../../../lib/i18n/i18n';
 import ToastOnQuery from '../../../../../components/ui/feedback/ToastOnQuery';
 import { getProductEditData } from './data';
@@ -11,6 +13,11 @@ import { VariantsSection } from '../../../../../components/admin/product-edit/Va
 type Params = Promise<{ id: string }>;
 
 export default async function EditProductPage({ params }: { params: Params }) {
+  const session = await auth();
+  if (!session?.user || (session.user as { role?: string }).role !== 'ADMIN') {
+    redirect('/auth/signin');
+  }
+
   const lang = await negotiateLocale();
   const dict = await getDictionary(lang);
   const { id } = await params;

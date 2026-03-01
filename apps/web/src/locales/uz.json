@@ -95,6 +95,7 @@
       }
     },
     "auth": {
+      "bootstrapClosed": "Admin ro'yxatdan o'tish yopilgan. Admin hisobi allaqachon mavjud.",
       "create": "Admin yaratish",
       "email": "Email",
       "name": "Ism",
@@ -863,7 +864,7 @@
     "pageTitle": "Bildirishnomalar",
     "prev": "Oldingi",
     "realtimeConnected": "Real vaqt bildirishnomalari ulandi",
-    "realtimeOffline": "Real vaqt bildirishnomalari o'chirilgan",
+    "realtimeOffline": "Real vaqt bildirishnomalari o'chirilgan. Yangi bildirishnomalar ko'rish uchun sahifani tez-tez yangilang.",
     "retry": "Qayta urinish",
     "thirtyDayLimit": "Ro'yxatdan o'tgan kuningiz yoki oxirgi 30 kun ichidagi bildirishnomalar ko'rsatiladi.",
     "unread": "o'qilmagan bildirishnoma",

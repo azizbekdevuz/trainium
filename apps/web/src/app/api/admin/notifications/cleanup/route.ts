@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../../auth";
+import { requireAdminSession } from "../../../../../auth/require-admin";
 import { prisma } from "../../../../../lib/database/db";
 import { getCleanupService } from "../../../../../lib/notification-cleanup";
 import { removeDuplicateNotifications } from "../../../../../lib/notifications";
@@ -8,7 +9,7 @@ export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   const session = await auth();
-  if (!session?.user || (session.user as any).role !== 'ADMIN') {
+  if (!requireAdminSession(session)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest) {
 // GET endpoint to check cleanup stats
 export async function GET() {
   const session = await auth();
-  if (!session?.user || (session.user as any).role !== 'ADMIN') {
+  if (!requireAdminSession(session)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

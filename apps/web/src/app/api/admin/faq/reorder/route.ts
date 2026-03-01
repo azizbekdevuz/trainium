@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
+import { requireAdminSession } from '@/auth/require-admin';
 import { reorderFaqs, reorderFaqCategories } from '@/lib/services/faq';
 
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();
-    if (!session?.user?.id || session.user.role !== 'ADMIN') {
+    if (!requireAdminSession(session)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

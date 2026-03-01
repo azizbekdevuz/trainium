@@ -1,5 +1,6 @@
 import type { OrderData } from './types';
 import type { Dictionary } from '../../../lib/i18n/i18n';
+import { LocalTime } from '@/components/ui/LocalTime';
 
 interface CustomerSectionProps {
   user: OrderData['user'];
@@ -22,7 +23,7 @@ export function CustomerSection({ user, dict }: CustomerSectionProps) {
           </div>
           <div>
             <span className="text-sm font-medium text-gray-700">{dict.admin?.orders?.detail?.customerSince ?? 'Customer Since'}:</span>
-            <div className="text-sm">{new Date(user.createdAt).toLocaleDateString()}</div>
+            <div className="text-sm"><LocalTime date={user.createdAt} /></div>
           </div>
         </div>
       ) : (

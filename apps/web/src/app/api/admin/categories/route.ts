@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../auth";
+import { requireAdminSession } from "../../../../auth/require-admin";
 import { prisma } from "../../../../lib/database/db";
 import { addCategoryTranslation } from "../../../../lib/product/category-translations";
 import { validateCategoryRequest } from "../../../../lib/utils/validation";
@@ -13,15 +14,12 @@ export const runtime = "nodejs";
  * Returns all categories ordered by name
  */
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function GET(request: NextRequest): Promise<NextResponse<GetCategoriesResponse | ApiErrorResponse>> {
+export async function GET(_request: NextRequest): Promise<NextResponse<GetCategoriesResponse | ApiErrorResponse>> {
   try {
     const session = await auth();
-    
-    // Enhanced authorization check with proper typing
-    if (!session?.user?.id || session.user.role !== 'ADMIN') {
+    if (!requireAdminSession(session)) {
       return NextResponse.json(
-        { error: ERROR_MESSAGES.UNAUTHORIZED }, 
+        { error: ERROR_MESSAGES.UNAUTHORIZED },
         { status: 401 }
       );
     }
@@ -60,11 +58,9 @@ export async function GET(request: NextRequest): Promise<NextResponse<GetCategor
 export async function POST(request: NextRequest): Promise<NextResponse<CreateCategoryResponse | ApiErrorResponse>> {
   try {
     const session = await auth();
-    
-    // Enhanced authorization check with proper typing
-    if (!session?.user?.id || session.user.role !== 'ADMIN') {
+    if (!requireAdminSession(session)) {
       return NextResponse.json(
-        { error: ERROR_MESSAGES.UNAUTHORIZED }, 
+        { error: ERROR_MESSAGES.UNAUTHORIZED },
         { status: 401 }
       );
     }

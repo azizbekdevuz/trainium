@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../../../auth";
+import { requireAdminSession } from "../../../../../../auth/require-admin";
 import { prisma } from "../../../../../../lib/database/db";
 import { ORDER_STATUS } from "../../../../../../lib/order/order-status";
 import { revalidatePath } from "next/cache";
@@ -13,7 +14,7 @@ type Params = { params: Promise<{ id: string }> };
 
 export async function PATCH(req: NextRequest, { params }: Params) {
   const session = await auth();
-  if (!session?.user || (session.user as any).role !== 'ADMIN') {
+  if (!requireAdminSession(session)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -85,11 +86,11 @@ export async function PATCH(req: NextRequest, { params }: Params) {
           notificationTemplate.data
         );
 
-        // Send real-time Socket.IO notification
+        // Send real-time Socket.IO notification (best-effort; do not fail order update)
         const _tracking: string | null | undefined = updatedOrder.shipping?.trackingNo;
         const trackingNumber: string | undefined = _tracking === null ? undefined : _tracking;
 
-        sendSocketOrderUpdate(
+        const socketResult = await sendSocketOrderUpdate(
           updatedOrder.user.id,
           updatedOrder.id,
           {
@@ -99,6 +100,9 @@ export async function PATCH(req: NextRequest, { params }: Params) {
             message: notificationTemplate.message,
           }
         );
+        if (!socketResult.ok) {
+          console.warn('[order-status] Socket notification failed:', socketResult.error);
+        }
 
         // Send email notification to customer
         if (updatedOrder.user.email && updatedOrder.user.name) {

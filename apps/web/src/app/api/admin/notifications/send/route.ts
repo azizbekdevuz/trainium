@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../../auth";
+import { requireAdminSession } from "../../../../../auth/require-admin";
 import { createSystemNotification } from "../../../../../lib/notifications";
 import { sendSocketSystemNotification } from "../../../../../lib/socket/socket-server";
 
@@ -7,7 +8,7 @@ export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
-  if (!session?.user || (session.user as any).role !== 'ADMIN') {
+  if (!requireAdminSession(session)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -29,8 +30,8 @@ export async function POST(req: NextRequest) {
     // Create database notification
     await createSystemNotification(type, title, message, data);
 
-    // Send real-time Socket.IO notification
-    sendSocketSystemNotification({
+    // Send real-time Socket.IO notification (best-effort)
+    const socketResult = await sendSocketSystemNotification({
       type,
       title,
       message,
@@ -39,7 +40,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ 
       success: true,
-      message: "System notification sent successfully"
+      message: "System notification sent successfully",
+      socketSent: socketResult.ok,
+      ...(socketResult.error && { socketError: socketResult.error }),
     });
 
   } catch (error) {

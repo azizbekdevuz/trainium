@@ -95,6 +95,7 @@
       }
     },
     "auth": {
+      "bootstrapClosed": "Admin signup is closed. An admin account already exists.",
       "create": "Create Admin",
       "email": "Email",
       "name": "Name",
@@ -1253,7 +1254,7 @@
     "pageTitle": "Notifications",
     "prev": "Previous",
     "realtimeConnected": "Real-time notifications connected",
-    "realtimeOffline": "Real-time notifications offline",
+    "realtimeOffline": "Real-time notifications offline. Please try to refresh the page frequently to see new notifications until the connection is restored.",
     "retry": "Retry",
     "thirtyDayLimit": "Showing notifications from the last 30 days or since you signed up, whichever is more recent.",
     "unread": "unread notifications",

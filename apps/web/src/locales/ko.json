@@ -95,6 +95,7 @@
       }
     },
     "auth": {
+      "bootstrapClosed": "관리자 회원가입이 종료되었습니다. 이미 관리자 계정이 존재합니다.",
       "create": "관리자 생성",
       "email": "이메일",
       "name": "이름",
@@ -857,7 +858,7 @@
     "pageTitle": "알림",
     "prev": "이전",
     "realtimeConnected": "실시간 알림 연결됨",
-    "realtimeOffline": "실시간 알림 오프라인",
+    "realtimeOffline": "실시간 알림 오프라인. 연결이 복구될 때까지 페이지를 자주 새로고침하여 새로운 알림을 확인하세요.",
     "retry": "다시 시도",
     "unread": "개의 읽지 않은 알림",
     "viewAll": "전체 보기",

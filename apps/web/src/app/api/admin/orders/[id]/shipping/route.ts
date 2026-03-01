@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../../../auth";
+import { requireAdminSession } from "../../../../../../auth/require-admin";
 import { prisma } from "../../../../../../lib/database/db";
 import { revalidatePath } from "next/cache";
 import { sendSocketOrderUpdate } from "../../../../../../lib/socket/socket-server";
@@ -11,7 +12,7 @@ type Params = { params: Promise<{ id: string }> };
 
 export async function PATCH(req: NextRequest, { params }: Params) {
   const session = await auth();
-  if (!session?.user || (session.user as any).role !== 'ADMIN') {
+  if (!requireAdminSession(session)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -107,8 +108,8 @@ export async function PATCH(req: NextRequest, { params }: Params) {
           notificationTemplate.data
         );
 
-        // Send real-time Socket.IO notification
-        sendSocketOrderUpdate(
+        // Send real-time Socket.IO notification (best-effort; do not fail shipping update)
+        const socketResult = await sendSocketOrderUpdate(
           order.userId,
           id,
           {
@@ -118,6 +119,9 @@ export async function PATCH(req: NextRequest, { params }: Params) {
             message: notificationTemplate.message,
           }
         );
+        if (!socketResult.ok) {
+          console.warn('[order-shipping] Socket notification failed:', socketResult.error);
+        }
       } catch (error) {
         console.error('Failed to send shipping update notification:', error);
         // Don't fail the shipping update if notification fails

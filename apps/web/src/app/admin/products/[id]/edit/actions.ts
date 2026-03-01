@@ -1,5 +1,6 @@
 'use server';
 
+import { auth } from '../../../../../auth';
 import { prisma } from '../../../../../lib/database/db';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -8,10 +9,18 @@ import { priceToMinorUnits } from '../../../../../lib/product/product-utils';
 import fs from 'fs/promises';
 import path from 'path';
 
+async function requireAdmin() {
+  const session = await auth();
+  if (!session?.user || (session.user as { role?: string }).role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+}
+
 /**
  * Update core product information
  */
 export async function updateCore(formData: FormData) {
+  await requireAdmin();
   const lang = await negotiateLocale();
   const dict = await getDictionary(lang);
   const id = String(formData.get('id'));
@@ -67,6 +76,7 @@ export async function updateCore(formData: FormData) {
  * Upload and update product image
  */
 export async function uploadImage(formData: FormData) {
+  await requireAdmin();
   const lang = await negotiateLocale();
   const dict = await getDictionary(lang);
   const id = String(formData.get('id'));
@@ -107,6 +117,7 @@ export async function uploadImage(formData: FormData) {
  * Update product inventory
  */
 export async function updateInventory(formData: FormData) {
+  await requireAdmin();
   const lang = await negotiateLocale();
   const dict = await getDictionary(lang);
   const id = String(formData.get('id'));
@@ -128,6 +139,7 @@ export async function updateInventory(formData: FormData) {
  * Add a new product variant
  */
 export async function addVariant(formData: FormData) {
+  await requireAdmin();
   const lang = await negotiateLocale();
   const dict = await getDictionary(lang);
   const id = String(formData.get('id'));
@@ -150,6 +162,7 @@ export async function addVariant(formData: FormData) {
  * Save/update a product variant
  */
 export async function saveVariant(formData: FormData) {
+  await requireAdmin();
   const lang = await negotiateLocale();
   const dict = await getDictionary(lang);
   const id = String(formData.get('id')); // product id
@@ -173,6 +186,7 @@ export async function saveVariant(formData: FormData) {
  * Remove a product variant
  */
 export async function removeVariant(formData: FormData) {
+  await requireAdmin();
   const lang = await negotiateLocale();
   const dict = await getDictionary(lang);
   const variantId = String(formData.get('variantId'));

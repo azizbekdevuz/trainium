@@ -21,7 +21,11 @@ export default function CustomerRoleEditor({ userId, initialRole }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role }),
       });
-      if (!res.ok) throw new Error('Failed to update role');
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setMessage((data.error as string) || 'Failed to update role');
+        return;
+      }
       setMessage('Role updated');
     } catch {
       setMessage('Failed to update role');

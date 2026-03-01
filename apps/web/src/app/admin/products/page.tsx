@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { auth } from '../../../auth';
+import { redirect } from 'next/navigation';
 import { prisma } from '../../../lib/database/db';
 import { getDictionary, negotiateLocale } from '../../../lib/i18n/i18n';
 import ProductsTable from '../../../components/admin/ProductsTable';
@@ -24,6 +26,11 @@ async function getData(q: string) {
 }
 
 export default async function AdminProductsPage({ searchParams }: { searchParams?: Promise<{ q?: string }> }) {
+  const session = await auth();
+  if (!session?.user || (session.user as { role?: string }).role !== 'ADMIN') {
+    redirect('/auth/signin');
+  }
+
   const params = await searchParams;
   const q = (params?.q ?? '').trim();
   const products = await getData(q);

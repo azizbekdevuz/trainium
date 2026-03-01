@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { formatCurrency } from '@/lib/utils/format';
-import { formatDate, formatTime } from '@/lib/utils/date-utils';
+import { LocalTime } from '../ui/LocalTime';
 import { useResponsive } from '../../hooks/useResponsive';
 import { Icon } from '../ui/media/Icon';
 
@@ -140,7 +140,7 @@ export function RecentOrdersPreview({ orders, dict, lang }: RecentOrdersPreviewP
                   
                   {/* Date */}
                   <div className="text-xs text-slate-500 dark:text-slate-500">
-                    {formatDate(order.createdAt)} {formatTime(order.createdAt)}
+                    <LocalTime date={order.createdAt} />
                   </div>
                 </div>
               </div>
@@ -217,7 +217,7 @@ export function RecentOrdersPreview({ orders, dict, lang }: RecentOrdersPreviewP
                   {formatCurrency(order.totalCents, order.currency)}
                 </p>
                 <p className="text-xs text-slate-500 dark:text-slate-500">
-                  {formatDate(order.createdAt)} {formatTime(order.createdAt)}
+                  <LocalTime date={order.createdAt} />
                 </p>
               </div>
             </div>

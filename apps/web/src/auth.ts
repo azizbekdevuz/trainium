@@ -69,14 +69,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
-                // attach user role to JWT
                 token.role = user.role ?? "CUSTOMER";
+                token.sub = user.id; // ensure sub is set for Credentials provider
             }
             return token;
         },
         async session({ session, token }) {
             if (session.user) {
-                (session.user as { id?: string; role?: string }).id = token.sub;
+                (session.user as { id?: string; role?: string }).id = token.sub ?? (token as { id?: string }).id;
                 (session.user as { id?: string; role?: string }).role = (token as { role?: string }).role ?? "CUSTOMER";
             }
             return session;

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { formatDate } from '@/lib/utils/date-utils';
+import { LocalTime } from '../ui/LocalTime';
 import { useResponsive } from '../../hooks/useResponsive';
 import { UserAvatar } from './UserAvatar';
 import { Icon } from '../ui/media/Icon';
@@ -76,7 +76,7 @@ export function CustomersTable({ customers, dict, lang }: CustomersTableProps) {
                 <div>
                   <span className="text-slate-500 dark:text-slate-400">{dict.admin?.customers?.joinedLabel || 'Joined'}:</span>
                   <span className="ml-1 font-medium text-slate-900 dark:text-slate-100">
-                    {formatDate(customer.createdAt)}
+                    <LocalTime date={customer.createdAt} />
                   </span>
                 </div>
               </div>
@@ -123,7 +123,7 @@ export function CustomersTable({ customers, dict, lang }: CustomersTableProps) {
                 <span className={`rounded-full px-2 py-0.5 text-xs ${getRoleColor(customer.role)}`}>{customer.role}</span>
               </td>
               <td className="px-3 sm:px-4 py-3 text-slate-900 dark:text-slate-100 text-xs sm:text-sm">{customer._count.orders}</td>
-              <td className="px-3 sm:px-4 py-3 text-slate-600 dark:text-slate-400 text-xs sm:text-sm">{formatDate(customer.createdAt)}</td>
+              <td className="px-3 sm:px-4 py-3 text-slate-600 dark:text-slate-400 text-xs sm:text-sm"><LocalTime date={customer.createdAt} /></td>
               <td className="px-3 sm:px-4 py-3 text-right">
                 <Link 
                   href={`/${lang}/admin/customers/${customer.id}`}
