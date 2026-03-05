@@ -1,15 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { join } from 'path'
+import { resolve, relative } from 'path'
 import { readFile } from 'fs/promises'
+import { sanitizeFilename } from '@/lib/utils/path-safety'
 
 export const runtime = 'nodejs'
 
 export async function GET(_: NextRequest, { params }: { params: Promise<{ filename: string }> }) {
   const { filename } = await params
+  const safe = sanitizeFilename(filename)
+  if (!safe) return NextResponse.json({ ok: false }, { status: 400 })
+
+  const uploadsDir = resolve(process.cwd(), 'storage', 'uploads')
+  const filePath = resolve(uploadsDir, safe)
+  const rel = relative(uploadsDir, filePath)
+  if (rel.startsWith('..')) return NextResponse.json({ ok: false }, { status: 400 })
+
   try {
-    const filePath = join(process.cwd(), 'storage', 'uploads', filename)
     const data = await readFile(filePath)
-    const ext = filename.split('.').pop()?.toLowerCase()
+    const ext = safe.split('.').pop()?.toLowerCase()
     const type = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg'
       : ext === 'png' ? 'image/png'
       : ext === 'webp' ? 'image/webp'
