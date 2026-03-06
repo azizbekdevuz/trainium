@@ -188,7 +188,7 @@ export async function POST(req: NextRequest) {
           notificationTemplate.data as NotificationData
         );
 
-        await sendSocketOrderUpdate(
+        const socketResult = await sendSocketOrderUpdate(
           session.user.id,
           order.id,
           {
@@ -198,6 +198,9 @@ export async function POST(req: NextRequest) {
             message: notificationTemplate.message,
           }
         );
+        if (!socketResult.ok) {
+          console.warn('[checkout] Socket order update failed:', socketResult.error);
+        }
       }
     } catch (error) {
       console.error('Failed to create/send order notification:', error);

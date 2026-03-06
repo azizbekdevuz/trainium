@@ -30,7 +30,8 @@ const EnvSchema = z.object({
   // ISR Revalidate shared secret
   REVALIDATE_SECRET: z.string().optional(),
 
-  // Socket settings
+  // Socket settings (SOCKET_SERVER_URL = server-side HTTP calls; NEXT_PUBLIC_SOCKET_URL = client WebSocket)
+  SOCKET_SERVER_URL: z.string().optional(),
   NEXT_PUBLIC_SOCKET_URL: z.string().optional(),
   SOCKET_ADMIN_SECRET: z.string().optional(),
 });

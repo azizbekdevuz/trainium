@@ -300,7 +300,7 @@ class SocketClient {
       try {
         const n = {
           id: String(raw?.id ?? (globalThis.crypto?.randomUUID?.() ?? Date.now().toString())),
-          type: 'SYSTEM_ALERT' as const,
+          type: String(raw?.type ?? 'SYSTEM_ALERT') as 'ORDER_UPDATE' | 'PRODUCT_ALERT' | 'SYSTEM_ALERT',
           title: String(raw?.title ?? ''),
           message: String(raw?.message ?? ''),
           data: raw?.data,

@@ -90,8 +90,8 @@ const Api = {
   sendOrderUpdate(userId, orderId, update) {
     const payload = { orderId, ...update, timestamp: new Date().toISOString() };
     io.to(`user:${userId}`).emit("order_update", payload);
-    io.to(`order:${orderId}`).emit("order_update", payload);
-    console.log(`Order update → order:${orderId}, user:${userId}`);
+    // Do NOT emit to order:orderId - user is already in user:userId, would receive duplicate
+    console.log(`Order update → user:${userId}`);
   },
 
   sendProductAlert(userId, productId, alert) {
