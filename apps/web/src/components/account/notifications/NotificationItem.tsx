@@ -1,16 +1,16 @@
 import { Check } from 'lucide-react';
-import { formatDateTime } from '../../../lib/utils/date-utils';
+import { LocalTime } from '../../ui/LocalTime';
 import { getNotificationIcon, getNotificationColor, getNotificationActions, translateNotification } from './utils';
-import type { Notification } from './types';
+import type { Notification } from '@/lib/notifications/types';
 import type { Dictionary } from '../../../lib/i18n/i18n';
 
 interface NotificationItemProps {
-  notification: Notification;
+  notification: Notification & { _dedupIds?: string[] };
   lang: string;
   dict: Dictionary;
   userEmail?: string | null;
   loading: boolean;
-  onMarkAsRead: (id: string) => void;
+  onMarkAsRead: (ids: string[]) => void;
 }
 
 export function NotificationItem({
@@ -47,7 +47,7 @@ export function NotificationItem({
                 {tr(notification.message)}
               </p>
               <p className={`text-xs sm:text-sm mt-2 ${notification.read ? 'text-gray-500 dark:text-slate-500' : 'text-gray-500 dark:text-slate-300'}`}>
-                {formatDateTime(notification.createdAt)}
+                <LocalTime date={notification.createdAt} />
               </p>
               
               {/* Action Buttons */}
@@ -58,7 +58,7 @@ export function NotificationItem({
             
             {!notification.read && (
               <button
-                onClick={() => onMarkAsRead(notification.id)}
+                onClick={() => onMarkAsRead(notification._dedupIds ?? [notification.id])}
                 disabled={loading}
                 className="ml-2 sm:ml-3 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 disabled:opacity-50"
                 title={dict.notifications?.markAsRead ?? 'Mark as read'}

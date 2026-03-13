@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { prisma } from '../lib/database/db';
+import { formatDateAndTime } from '@/lib/utils/date-utils';
 
 const DOMAIN = 'https://trainium.shop';
 const LOCALES = ['en', 'ko', 'uz'] as const;
@@ -20,7 +21,7 @@ function alternatesFor(path: string) {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const now = new Date();
+  const now = formatDateAndTime(new Date());
 
   const staticPaths = [
     '/', // home

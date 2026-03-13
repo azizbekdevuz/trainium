@@ -3,7 +3,7 @@
 import { OrderStatus } from '@prisma/client';
 import { getTimelineEventsForStatus } from '../../lib/order/order-status';
 import { useI18n } from '../providers/I18nProvider';
-import { formatDateTime } from '../../lib/utils/date-utils';
+import { LocalTime } from '../ui/LocalTime';
 import { Icon } from '../ui/media/Icon';
 
 // Icon mapping using Lucide icons
@@ -125,7 +125,7 @@ export function OrderTimeline({ orderStatus, trackingNo, createdAt }: OrderTimel
                 <p className="text-sm text-gray-600 mt-1">{description}</p>
                 {event.completed && (
                   <p className="text-xs text-gray-500 mt-1">
-                    {event.status === 'PENDING' ? formatDateTime(createdAt) : (dict.timeline?.completed ?? 'Completed')}
+                    {event.status === 'PENDING' ? <LocalTime date={createdAt} /> : (dict.timeline?.completed ?? 'Completed')}
                   </p>
                 )}
               </div>

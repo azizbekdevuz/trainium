@@ -3,11 +3,11 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { Bell, Wifi, WifiOff } from 'lucide-react';
-import { useSocket } from '../../hooks/useSocket';
+import { useSocketNotifications } from '../providers/SocketNotificationsProvider';
 import { useI18n } from '../providers/I18nProvider';
-import { useDbNotifications } from './notifications/hooks/useDbNotifications';
+import { useDbNotifications } from '@/lib/notifications/hooks/useDbNotifications';
 import { NotificationPanel } from './notifications/NotificationPanel';
-import { deduplicateNotifications } from './notifications/utils';
+import { deduplicateNotifications } from '@/lib/notifications/deduplicate';
 
 export function NotificationBell() {
   const { data: session } = useSession();
@@ -17,18 +17,16 @@ export function NotificationBell() {
   const {
     isConnected,
     notifications: socketNotifications,
-    unreadCount,
     markNotificationAsRead,
     markAllNotificationsAsRead,
-  } = useSocket();
+  } = useSocketNotifications();
 
   const {
     dbNotifications,
-    dbUnreadCount,
     markDbAsRead,
     markAllDbAsRead,
     fetchDbNotifications,
-  } = useDbNotifications(session?.user?.id);
+  } = useDbNotifications({ userId: session?.user?.id });
 
   // Refresh DB notifications when socket reconnects
   useEffect(() => {
@@ -64,7 +62,11 @@ export function NotificationBell() {
     return deduplicateNotifications(socketNotifications, dbNotifications);
   }, [socketNotifications, dbNotifications]);
 
-  const totalUnreadCount = unreadCount + dbUnreadCount;
+  // Derive unread count from deduplicated list so badge matches visible notifications
+  const totalUnreadCount = useMemo(
+    () => allNotifications.filter(n => !n.read).length,
+    [allNotifications]
+  );
 
   if (!session?.user?.id) {
     return null;

@@ -1,8 +1,8 @@
 import { X, Wifi, WifiOff } from 'lucide-react';
 import Link from 'next/link';
-import { formatDateTime } from '../../../lib/utils/date-utils';
+import { LocalTime } from '../../ui/LocalTime';
 import { translateNotification, getNotificationActions } from './utils';
-import type { Notification } from './types';
+import type { Notification } from '@/lib/notifications/types';
 import type { Dictionary } from '../../../lib/i18n/i18n';
 
 interface NotificationPanelProps {
@@ -87,7 +87,8 @@ export function NotificationPanel({
                   className={`p-4 hover:bg-gray-50 dark:hover:bg-slate-800 cursor-pointer ${!notification.read ? 'bg-blue-50 dark:bg-slate-800/80 dark:border-l-2 dark:border-cyan-700' : ''}`}
                   onClick={() => {
                     if (!notification.read) {
-                      onMarkAsRead([notification.id]);
+                      const ids = (notification as { id: string; _dedupIds?: string[] })._dedupIds ?? [notification.id];
+                      onMarkAsRead(ids);
                     }
                   }}
                 >
@@ -101,7 +102,7 @@ export function NotificationPanel({
                         {tr(notification.message)}
                       </p>
                       <p className={`text-xs mt-1 ${notification.read ? 'text-gray-400 dark:text-slate-500' : 'text-gray-500 dark:text-slate-300'}`}>
-                        {formatDateTime(notification.createdAt)}
+                        <LocalTime date={notification.createdAt} />
                       </p>
 
                       {/* Action Buttons */}

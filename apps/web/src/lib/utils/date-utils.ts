@@ -1,38 +1,37 @@
 /**
- * Standardized date formatting utilities to prevent hydration mismatches
+ * Deterministic UTC formatting for SSR/hydration consistency.
+ * Use for non-user-facing output (e.g. sitemap, logs).
  */
-
-export const formatDateTime = (date: Date | string): string => {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
-  return dateObj.toLocaleString('en-US', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  });
+export const formatDateAndTimeUTC = (date: Date | string): string => {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const y = d.getUTCFullYear();
+  const m = pad(d.getUTCMonth() + 1);
+  const day = pad(d.getUTCDate());
+  const h = pad(d.getUTCHours());
+  const min = pad(d.getUTCMinutes());
+  const s = pad(d.getUTCSeconds());
+  return `${m}/${day}/${y}, ${h}:${min}:${s}`;
 };
 
-export const formatDate = (date: Date | string): string => {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
-  return dateObj.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  });
+/**
+ * User-facing local time formatting. Server and client may differ (timezone).
+ * Use with <LocalTime> component which applies suppressHydrationWarning.
+ */
+export const formatDateAndTimeLocal = (date: Date | string): string => {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const y = d.getFullYear();
+  const m = pad(d.getMonth() + 1);
+  const day = pad(d.getDate());
+  const h = pad(d.getHours());
+  const min = pad(d.getMinutes());
+  const s = pad(d.getSeconds());
+  return `${m}/${day}/${y}, ${h}:${min}:${s}`;
 };
 
-export const formatTime = (date: Date | string): string => {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
-  return dateObj.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  });
-};
+/** @deprecated Use formatDateAndTimeUTC or formatDateAndTimeLocal + LocalTime */
+export const formatDateAndTime = formatDateAndTimeUTC;
 
 export const formatRelativeTime = (date: Date | string): string => {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
@@ -51,6 +50,6 @@ export const formatRelativeTime = (date: Date | string): string => {
     const days = Math.floor(diffInSeconds / 86400);
     return `${days} day${days !== 1 ? 's' : ''} ago`;
   } else {
-    return formatDate(dateObj);
+    return formatDateAndTimeLocal(dateObj);
   }
 };

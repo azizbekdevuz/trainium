@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { getDictionary, negotiateLocale } from "../lib/i18n/i18n";
 import SessionProviderWrapper from "../components/providers/SessionProviderWrapper";
+import { SocketNotificationsProvider } from "../components/providers/SocketNotificationsProvider";
 import { auth } from "../auth";
 import InteractiveBackground from "../components/background/InteractiveBackground";
 import "./globals.css";
@@ -151,22 +152,24 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
 
         <SessionProviderWrapper initialSession={session}>
-          <I18nProvider lang={lang} dict={dict}>
-            <ThemeProvider>
-              <InteractiveBackground />
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-600/10 via-transparent to-cyan-600/10 animate-pulse" />
-              <header className="site-header inset-x-0 top-0 z-30 border-b glass">
-                <ResponsiveNavigation lang={lang} dict={dict} />
-              </header>
+          <SocketNotificationsProvider>
+            <I18nProvider lang={lang} dict={dict}>
+              <ThemeProvider>
+                <InteractiveBackground />
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-600/10 via-transparent to-cyan-600/10 animate-pulse" />
+                <header className="site-header inset-x-0 top-0 z-30 border-b glass">
+                  <ResponsiveNavigation lang={lang} dict={dict} />
+                </header>
 
-              <main className="flex-1 relative z-10">
-                {children}
-              </main>
-              <ToastContainer />
+                <main className="flex-1 relative z-10">
+                  {children}
+                </main>
+                <ToastContainer />
 
-              <Footer year={new Date().getFullYear()} brand={dict.brand.name} tagline={dict.footer.tagline} devDict={dict.pages?.about?.dev} />
-            </ThemeProvider>
-          </I18nProvider>
+                <Footer year={new Date().getFullYear()} brand={dict.brand.name} tagline={dict.footer.tagline} devDict={dict.pages?.about?.dev} />
+              </ThemeProvider>
+            </I18nProvider>
+          </SocketNotificationsProvider>
         </SessionProviderWrapper>
         <GoogleAnalytics />
       </body>

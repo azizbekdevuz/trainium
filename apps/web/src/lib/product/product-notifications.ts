@@ -46,18 +46,18 @@ export async function checkLowStockProducts() {
 
     for (const product of lowStockProducts) {
       if (product.inventory) {
+        const templ = NotificationTemplates.LOW_STOCK_ALERT(product.name, product.slug, product.id);
         const alertData: ProductAlertData = {
           productId: product.id,
           productName: product.name,
           alertType: 'LOW_STOCK',
-          message: `i18n.product.lowStock|${product.name}|${product.inventory.inStock}`,
+          message: templ.message,
           currentStock: product.inventory.inStock,
           lowStockAt: product.inventory.lowStockAt || undefined,
         };
 
-        // Send to all users (real-time) and persist a system-wide DB notification
+        // Send to all users (real-time) and persist a system-wide DB notification (same message = dedup works)
         sendSocketProductAlertToAll(product.id, alertData);
-        const templ = NotificationTemplates.LOW_STOCK_ALERT(product.name, product.slug);
         await createSystemNotification(templ.type, templ.title, templ.message, templ.data);
       }
     }
@@ -86,17 +86,17 @@ export async function checkOutOfStockProducts() {
     });
 
     for (const product of outOfStockProducts) {
+      const templ = NotificationTemplates.LOW_STOCK_ALERT(product.name, product.slug, product.id);
       const alertData: ProductAlertData = {
         productId: product.id,
         productName: product.name,
         alertType: 'OUT_OF_STOCK',
-        message: `i18n.product.outOfStock|${product.name}`,
+        message: templ.message,
         currentStock: 0,
       };
 
-      // Send to all users (real-time) and persist
+      // Send to all users (real-time) and persist (same message = dedup works)
       sendSocketProductAlertToAll(product.id, alertData);
-      const templ = NotificationTemplates.LOW_STOCK_ALERT(product.name, product.slug);
       await createSystemNotification(templ.type, templ.title, templ.message, templ.data);
     }
 
@@ -122,18 +122,18 @@ export async function checkAndNotifyLowStockForProduct(productId: string) {
     const { inStock, lowStockAt } = product.inventory;
     if (lowStockAt == null) return false;
     if (inStock <= lowStockAt && inStock > 0) {
+      const templ = NotificationTemplates.LOW_STOCK_ALERT(product.name, product.slug, product.id);
       const alertData: ProductAlertData = {
         productId: product.id,
         productName: product.name,
         alertType: 'LOW_STOCK',
-      message: `i18n.product.lowStock|${product.name}|${inStock}`,
+        message: templ.message,
         currentStock: inStock,
         lowStockAt,
       };
 
-      // Real-time broadcast + persist as a system notification
+      // Real-time broadcast + persist (same message = dedup works)
       sendSocketProductAlertToAll(product.id, alertData);
-      const templ = NotificationTemplates.LOW_STOCK_ALERT(product.name, product.slug);
       await createSystemNotification(templ.type, templ.title, templ.message, templ.data);
       return true;
     }
@@ -163,16 +163,16 @@ export async function sendNewProductNotification(productId: string) {
 
     if (!product) return;
 
+    const templ = NotificationTemplates.NEW_PRODUCT(product.name, product.slug, product.id);
     const alertData: ProductAlertData = {
       productId: product.id,
       productName: product.name,
       alertType: 'NEW_PRODUCT',
-      message: `i18n.product.newProduct|${product.name}`,
+      message: templ.message,
     };
 
-    // Send to all users (real-time) and persist
+    // Send to all users (real-time) and persist (same message = dedup works)
     sendSocketProductAlertToAll(product.id, alertData);
-    const templ = NotificationTemplates.NEW_PRODUCT(product.name, product.slug);
     await createSystemNotification(templ.type, templ.title, templ.message, templ.data);
   } catch (error) {
     console.error('Error sending new product notification:', error);

@@ -3,14 +3,15 @@
 import { useState, useMemo } from 'react';
 import { useSession } from 'next-auth/react';
 import { Bell } from 'lucide-react';
-import { useSocket } from '../../hooks/useSocket';
+import { useSocketNotifications } from '../providers/SocketNotificationsProvider';
 import { Pagination, type PaginationParams } from '../ui/navigation/Pagination';
 import { useI18n } from '../providers/I18nProvider';
-import { useDbNotifications } from './notifications/hooks/useDbNotifications';
+import { useDbNotifications } from '@/lib/notifications/hooks/useDbNotifications';
 import { ConnectionStatus } from './notifications/ConnectionStatus';
 import { NotificationActionsBar } from './notifications/NotificationActionsBar';
 import { NotificationItem } from './notifications/NotificationItem';
-import type { Notification, PaginationData } from './notifications/types';
+import type { Notification, PaginationData } from '@/lib/notifications/types';
+import { deduplicateNotifications } from '@/lib/notifications/deduplicate';
 
 interface NotificationClientProps {
   initialNotifications: Notification[];
@@ -37,20 +38,22 @@ export function NotificationClient({
     isConnecting,
     connectionError,
     notifications: socketNotifications,
-    unreadCount: socketUnreadCount,
     markNotificationAsRead,
     markAllNotificationsAsRead,
-    connect,
-  } = useSocket();
+    reconnect,
+  } = useSocketNotifications();
   
   // Database notifications state
   const {
     dbNotifications,
-    dbUnreadCount,
     loading,
     markDbAsRead,
     markAllDbAsRead,
-  } = useDbNotifications(initialNotifications, initialUnreadCount);
+  } = useDbNotifications({
+    userId: session?.user?.id,
+    initialNotifications,
+    initialUnreadCount,
+  });
 
   // Combined notification management
   const handleMarkAsRead = (notificationIds: string[]) => {
@@ -79,65 +82,19 @@ export function NotificationClient({
     if (typeof window !== 'undefined') {
       await new Promise(r => setTimeout(r, 250));
     }
-    try { 
-      await connect(); 
-    } catch { 
-      // ignore connection errors 
+    try {
+      await reconnect();
+    } catch {
+      // ignore connection errors
     }
   };
 
-  // Combine Socket.IO and database notifications with deduplication
+  // Combine Socket.IO and database notifications with deduplication (shared logic with bell)
   const allNotifications = useMemo(() => {
-    const combined: Notification[] = [
-      ...socketNotifications.map(notif => ({
-        id: (notif as any).id,
-        type: (notif as any).type,
-        title: (notif as any).title,
-        message: (notif as any).message,
-        read: Boolean((notif as any).read),
-        createdAt: (notif as any).timestamp || new Date().toISOString(),
-        data: (notif as any).data as any,
-      })) as unknown as Notification[],
-      ...dbNotifications,
-    ];
-
-    // Group notifications by type, title, and timestamp (within 5 seconds)
-    // But for PRODUCT_ALERT, also include productId to avoid hiding different products
-    const grouped = new Map<string, typeof combined>();
-    
-    combined.forEach(notif => {
-      let key = `${notif.type}-${notif.title}-${Math.floor(new Date(notif.createdAt).getTime() / 5000)}`;
-      
-      // For product alerts, include productId to distinguish different products
-      if (notif.type === 'PRODUCT_ALERT' && notif.data?.productId) {
-        key += `-${notif.data.productId}`;
-      }
-      
-      if (!grouped.has(key)) {
-        grouped.set(key, []);
-      }
-      grouped.get(key)!.push(notif);
-    });
-
-    // For each group, prefer database notification (more action buttons) over socket
-    const deduplicated: typeof combined = [];
-    
-    grouped.forEach(group => {
-      if (group.length === 1) {
-        deduplicated.push(group[0]);
-      } else {
-        // Multiple notifications for same event - prefer database version
-        // Heuristic: DB notifications have more action buttons; since we normalized away the 'source' flag,
-        // prefer the one that contains richer data (has trackingNumber or orderId) else fallback to first.
-        const dbLike = group.find(n => Boolean(n.data && (n.data as any).trackingNumber || (n.data as any).orderId));
-        deduplicated.push(dbLike ?? group[0]);
-      }
-    });
-
-    return deduplicated.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    return deduplicateNotifications(socketNotifications, dbNotifications);
   }, [socketNotifications, dbNotifications]);
 
-  const totalUnreadCount = socketUnreadCount + dbUnreadCount;
+  const totalUnreadCount = allNotifications.filter(n => !n.read).length;
 
   // Filter notifications based on selected type
   const filteredNotifications = filter === 'all' 
@@ -185,7 +142,7 @@ export function NotificationClient({
               dict={dict}
               userEmail={session?.user?.email}
               loading={loading}
-              onMarkAsRead={(id) => handleMarkAsRead([id])}
+              onMarkAsRead={(ids) => handleMarkAsRead(ids)}
             />
           ))}
         </div>

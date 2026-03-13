@@ -14,7 +14,7 @@ export interface UseSocketReturn {
   // Connection management
   connect: () => Promise<void>;
   disconnect: () => void;
-  reconnect: () => void;
+  reconnect: () => Promise<void>;
   
   // Room management
   joinOrderRoom: (orderId: string) => void;
@@ -49,7 +49,6 @@ export function useSocket(): UseSocketReturn {
   const [unreadCount, setUnreadCount] = useState(0);
   const [lastPong, setLastPong] = useState<Date | null>(null);
   
-  const isInitialized = useRef(false);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Update connection state
@@ -61,7 +60,7 @@ export function useSocket(): UseSocketReturn {
   const connect = useCallback(async () => {
     if (!session?.user?.id) return;
     try {
-      await socketClient.connect(session.user.id, (session.user as any).role);
+      await socketClient.connect(session.user.id, session.user.role);
     } catch (error) {
       console.error('Failed to connect to Socket.IO:', error);
     }
@@ -77,13 +76,12 @@ export function useSocket(): UseSocketReturn {
     }
   }, [session?.user?.id]);
 
-  // Reconnect to Socket.IO
-  const reconnect = useCallback(() => {
-    disconnect();
-    setTimeout(() => {
-      connect();
-    }, 1000);
-  }, [connect, disconnect]);
+  // Force reconnect: disconnect then connect (for retry when stuck offline)
+  const reconnect = useCallback(async () => {
+    socketClient.disconnect();
+    await new Promise(r => setTimeout(r, 300));
+    await connect();
+  }, [connect]);
 
   // Room management
   const joinOrderRoom = useCallback((orderId: string) => {
@@ -127,73 +125,68 @@ export function useSocket(): UseSocketReturn {
     socketClient.ping();
   }, []);
 
-  // Setup event listeners
+  // Setup event listeners (store refs so we remove only our listeners on cleanup)
   useEffect(() => {
-    if (isInitialized.current) return;
-    isInitialized.current = true;
-
-    // Connection events
-    socketClient.on('connection:connected', () => {
+    const onConnected = () => {
       updateConnectionState({ isConnected: true, isConnecting: false, error: null });
-    });
-
-    socketClient.on('connection:disconnected', (reason: unknown) => {
+    };
+    const onDisconnected = (reason: unknown) => {
       updateConnectionState({ isConnected: false, isConnecting: false });
       console.log('Socket disconnected:', reason);
-    });
-
-    socketClient.on('connection:error', (error: { message?: string } | Error | unknown) => {
-      const message = (error as any)?.message ?? 'Connection error';
+    };
+    const onError = (error: { message?: string } | Error | unknown) => {
+      const message = error instanceof Error ? error.message : 'Connection error';
       updateConnectionState({ isConnecting: false, error: message });
-    });
-
-    socketClient.on('connection:reconnecting', (attemptNumber: number) => {
+    };
+    const onReconnecting = (attemptNumber: number) => {
       updateConnectionState({ reconnectAttempts: attemptNumber });
-    });
-
-    socketClient.on('connection:reconnected', (attemptNumber: number) => {
+    };
+    const onReconnected = (attemptNumber: number) => {
       updateConnectionState({ isConnected: true, reconnectAttempts: attemptNumber });
-    });
-
-    socketClient.on('connection:reconnect_error', (error: { message?: string } | Error | unknown) => {
-      const message = (error as any)?.message ?? 'Reconnect error';
+    };
+    const onReconnectError = (error: { message?: string } | Error | unknown) => {
+      const message = error instanceof Error ? error.message : 'Reconnect error';
       updateConnectionState({ error: message });
-    });
+    };
 
-    // Notification events
-    socketClient.on('notification:received', (notification: SocketNotification) => {
+    socketClient.on('connection:connected', onConnected);
+    socketClient.on('connection:disconnected', onDisconnected);
+    socketClient.on('connection:error', onError);
+    socketClient.on('connection:reconnecting', onReconnecting);
+    socketClient.on('connection:reconnected', onReconnected);
+    socketClient.on('connection:reconnect_error', onReconnectError);
+
+    // Sync state if already connected (e.g. bell connected before this page mounted)
+    if (socketClient.isConnected()) {
+      onConnected();
+    }
+
+    const onNotificationReceived = (notification: SocketNotification) => {
       setNotifications(prev => {
         if (prev.some(n => n.id === notification.id)) return prev;
         return [notification, ...prev];
       });
-      if (!notification.read) {
-        setUnreadCount(prev => prev + 1);
-      }
-    });
-
-    socketClient.on('notification:system', (notification: SocketNotification) => {
+      if (!notification.read) setUnreadCount(prev => prev + 1);
+    };
+    const onNotificationSystem = (notification: SocketNotification) => {
       setNotifications(prev => {
         if (prev.some(n => n.id === notification.id)) return prev;
         return [notification, ...prev];
       });
-      if (!notification.read) {
-        setUnreadCount(prev => prev + 1);
-      }
-    });
-
-    socketClient.on('notification:admin', (notification: SocketNotification) => {
+      if (!notification.read) setUnreadCount(prev => prev + 1);
+    };
+    const onNotificationAdmin = (notification: SocketNotification) => {
       setNotifications(prev => {
         if (prev.some(n => n.id === notification.id)) return prev;
         return [notification, ...prev];
       });
-      if (!notification.read) {
-        setUnreadCount(prev => prev + 1);
-      }
-    });
+      if (!notification.read) setUnreadCount(prev => prev + 1);
+    };
+    socketClient.on('notification:received', onNotificationReceived);
+    socketClient.on('notification:system', onNotificationSystem);
+    socketClient.on('notification:admin', onNotificationAdmin);
 
-    // Order events
-    socketClient.on('order:update', (update: any) => {
-      // Convert order update to notification format
+    const onOrderUpdate = (update: any) => {
       const orderId: string = update?.orderId ?? '';
       const short = typeof orderId === 'string' ? (orderId.includes('_') ? orderId.slice(0, 8).toUpperCase() : orderId.slice(0, 8).toUpperCase()) : '';
       const status: string = update?.status ?? '';
@@ -206,17 +199,13 @@ export function useSocket(): UseSocketReturn {
         timestamp: update?.timestamp,
         read: false,
       };
-      
       setNotifications(prev => {
         if (prev.some(n => n.id === notification.id)) return prev;
         return [notification, ...prev];
       });
-      setUnreadCount(prev => prev + 1);
-    });
-
-    // Product events
-    socketClient.on('product:alert', (alert: any) => {
-      // Convert product alert to notification format
+      setUnreadCount(c => c + 1);
+    };
+    const onProductAlert = (alert: any) => {
       const at: string = alert?.alertType ?? '';
       const titleKey = at === 'LOW_STOCK' ? 'i18n.notification.lowStock' : at === 'NEW_PRODUCT' ? 'i18n.notification.newProduct' : 'i18n.notification.systemNotice';
       const notification: SocketNotification = {
@@ -232,33 +221,31 @@ export function useSocket(): UseSocketReturn {
         timestamp: alert?.timestamp,
         read: false,
       };
-      
       setNotifications(prev => {
         if (prev.some(n => n.id === notification.id)) return prev;
         return [notification, ...prev];
       });
       setUnreadCount(prev => prev + 1);
-    });
+    };
+    const onPong = () => setLastPong(new Date());
+    socketClient.on('order:update', onOrderUpdate);
+    socketClient.on('product:alert', onProductAlert);
+    socketClient.on('connection:pong', onPong);
 
-    // Ping/pong events
-    socketClient.on('connection:pong', (_data: unknown) => {
-      setLastPong(new Date());
-    });
-
-    // Cleanup
+    // Cleanup: remove only our listeners (pass callbacks so other useSocket instances keep theirs)
     return () => {
-      socketClient.off('connection:connected');
-      socketClient.off('connection:disconnected');
-      socketClient.off('connection:error');
-      socketClient.off('connection:reconnecting');
-      socketClient.off('connection:reconnected');
-      socketClient.off('connection:reconnect_error');
-      socketClient.off('notification:received');
-      socketClient.off('notification:system');
-      socketClient.off('notification:admin');
-      socketClient.off('order:update');
-      socketClient.off('product:alert');
-      socketClient.off('connection:pong');
+      socketClient.off('connection:connected', onConnected);
+      socketClient.off('connection:disconnected', onDisconnected);
+      socketClient.off('connection:error', onError);
+      socketClient.off('connection:reconnecting', onReconnecting);
+      socketClient.off('connection:reconnected', onReconnected);
+      socketClient.off('connection:reconnect_error', onReconnectError);
+      socketClient.off('notification:received', onNotificationReceived);
+      socketClient.off('notification:system', onNotificationSystem);
+      socketClient.off('notification:admin', onNotificationAdmin);
+      socketClient.off('order:update', onOrderUpdate);
+      socketClient.off('product:alert', onProductAlert);
+      socketClient.off('connection:pong', onPong);
     };
   }, [updateConnectionState]);
 

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Package, ExternalLink, ShoppingCart } from 'lucide-react';
-import type { Notification } from './types';
+import type { Notification } from '@/lib/notifications/types';
 import type { Dictionary } from '../../../lib/i18n/i18n';
 
 export function getNotificationIcon(type: string): string {
@@ -36,7 +36,7 @@ export function getNotificationActions(
   userEmail?: string | null
 ): React.ReactNode[] {
   const actions: React.ReactNode[] = [];
-  const data = notification.data;
+  const data = notification.data ?? undefined;
 
   switch (notification.type) {
     case 'ORDER_UPDATE':
@@ -166,11 +166,12 @@ export function getNotificationActions(
 }
 
 export function translateNotification(raw: string, dict: Dictionary): string {
-  if (!raw || typeof raw !== 'string') return raw as any;
+  if (!raw || typeof raw !== 'string') return String(raw ?? '');
   if (!raw.startsWith('i18n.')) return raw;
   const [keyPath, ...params] = raw.split('|');
   const path = keyPath.replace(/^i18n\./, '');
-  const getByPath = (obj: any, p: string): unknown => p.split('.').reduce((a, k) => (a && typeof a === 'object' ? a[k] : undefined), obj);
+  const getByPath = (obj: Record<string, unknown>, p: string): unknown =>
+    p.split('.').reduce((a, k) => (a && typeof a === 'object' ? (a as Record<string, unknown>)[k] : undefined), obj);
   const tpl = getByPath(dict, path);
   if (typeof tpl !== 'string') return raw;
   let templateStr: string = tpl;

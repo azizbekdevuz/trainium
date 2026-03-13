@@ -2,7 +2,7 @@
 
 import { OrderStatus } from '@prisma/client';
 import { useI18n } from '../providers/I18nProvider';
-import { formatDateTime } from '../../lib/utils/date-utils';
+import { LocalTime } from '../ui/LocalTime';
 import { Icon } from '../ui/media/Icon';
 
 interface OrderTrackingTimelineProps {
@@ -150,7 +150,7 @@ export function OrderTrackingTimeline({
                   )}
                 </div>
                 <p className="text-sm text-gray-600 mt-1">{event.description}</p>
-                <p className="text-xs text-gray-500 mt-1">{formatDateTime(event.timestamp)}</p>
+                <p className="text-xs text-gray-500 mt-1"><LocalTime date={event.timestamp} /></p>
               </div>
             </div>
           );

@@ -10,7 +10,7 @@ import { createPortal } from "react-dom";
 import { formatCurrency } from "../../lib/utils/format";
 import { getStatusConfig } from "../../lib/order/order-status";
 import { useI18n } from "../../components/providers/I18nProvider";
-import { formatDateTime } from "../../lib/utils/date-utils";
+import { LocalTime } from "../../components/ui/LocalTime";
 import { Icon } from "../../components/ui/media/Icon";
 
 type OrderItemDTO = { id: string; name: string; sku: string | null; qty: number; priceCents: number; };
@@ -135,7 +135,7 @@ export default function AccountClient({ data }: { data: DataProps }) {
                             return `${t('account.order', 'Order')} ${short.toUpperCase()}`;
                           })()}
                         </div>
-                        <div className="text-xs sm:text-sm text-gray-400">{formatDateTime(o.createdAt)}</div>
+                        <div className="text-xs sm:text-sm text-gray-400"><LocalTime date={o.createdAt} /></div>
                       </div>
                       <div className="text-right ml-3">
                         <div className="text-sm sm:text-base font-semibold">

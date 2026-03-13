@@ -59,18 +59,18 @@ export const NotificationTemplates = {
     };
   },
 
-  LOW_STOCK_ALERT: (productName: string, productSlug: string) => ({
+  LOW_STOCK_ALERT: (productName: string, productSlug: string, productId?: string) => ({
     type: 'PRODUCT_ALERT' as NotificationType,
     title: 'i18n.notification.lowStock',
     message: `i18n.notification.lowStockMsg|${productName}`,
-    data: { productSlug, productName },
+    data: { productSlug, productName, productId },
   }),
 
-  NEW_PRODUCT: (productName: string, productSlug: string) => ({
+  NEW_PRODUCT: (productName: string, productSlug: string, productId?: string) => ({
     type: 'PRODUCT_ALERT' as NotificationType,
     title: 'i18n.notification.newProduct',
     message: `i18n.notification.newProductMsg|${productName}`,
-    data: { productSlug, productName },
+    data: { productSlug, productName, productId },
   }),
 
   SYSTEM_MAINTENANCE: (message: string) => ({

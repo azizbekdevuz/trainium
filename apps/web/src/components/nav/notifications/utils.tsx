@@ -1,14 +1,15 @@
 import Link from 'next/link';
 import { Package, ExternalLink, ShoppingCart } from 'lucide-react';
-import type { Notification } from './types';
+import type { Notification } from '@/lib/notifications/types';
 import type { Dictionary } from '../../../lib/i18n/i18n';
 
 export function translateNotification(raw: string, dict: Dictionary): string {
-  if (!raw || typeof raw !== 'string') return raw as any;
+  if (!raw || typeof raw !== 'string') return String(raw ?? '');
   if (!raw.startsWith('i18n.')) return raw;
   const [keyPath, ...params] = raw.split('|');
   const path = keyPath.replace(/^i18n\./, '');
-  const getByPath = (obj: any, p: string): unknown => p.split('.').reduce((a, k) => (a && typeof a === 'object' ? a[k] : undefined), obj);
+  const getByPath = (obj: Record<string, unknown>, p: string): unknown =>
+    p.split('.').reduce((a, k) => (a && typeof a === 'object' ? (a as Record<string, unknown>)[k] : undefined), obj);
   const tpl = getByPath(dict, path);
   if (typeof tpl !== 'string') return raw;
   let templateStr: string = tpl;
@@ -32,7 +33,7 @@ export function getNotificationActions(
   userEmail?: string | null
 ): React.ReactNode[] {
   const actions: React.ReactNode[] = [];
-  const data = notification.data;
+  const data = notification.data ?? undefined;
 
   switch (notification.type) {
     case 'ORDER_UPDATE':
@@ -146,51 +147,5 @@ export function getNotificationActions(
   }
 
   return actions;
-}
-
-export function deduplicateNotifications(
-  socketNotifications: any[],
-  dbNotifications: Notification[]
-): Notification[] {
-  const combined: Notification[] = [
-    ...socketNotifications.map(notif => ({
-      id: (notif as any).id,
-      type: (notif as any).type,
-      title: (notif as any).title,
-      message: (notif as any).message,
-      read: Boolean((notif as any).read),
-      createdAt: (notif as any).timestamp || new Date().toISOString(),
-      data: (notif as any).data as any,
-    })) as unknown as Notification[],
-    ...dbNotifications,
-  ];
-
-  const grouped = new Map<string, typeof combined>();
-  
-  combined.forEach(notif => {
-    let key = `${notif.type}-${notif.title}-${Math.floor(new Date(notif.createdAt).getTime() / 5000)}`;
-    
-    if (notif.type === 'PRODUCT_ALERT' && notif.data?.productId) {
-      key += `-${notif.data.productId}`;
-    }
-    
-    if (!grouped.has(key)) {
-      grouped.set(key, []);
-    }
-    grouped.get(key)!.push(notif);
-  });
-
-  const deduplicated: typeof combined = [];
-  
-  grouped.forEach(group => {
-    if (group.length === 1) {
-      deduplicated.push(group[0]);
-    } else {
-      const dbLike = group.find(n => Boolean(n.data && (n.data as any).trackingNumber || (n.data as any).orderId));
-      deduplicated.push(dbLike ?? group[0]);
-    }
-  });
-
-  return deduplicated.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 }
 
