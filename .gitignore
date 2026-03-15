@@ -64,3 +64,6 @@ next-env.d.ts
 # prisma ERD diagrams (generated files)
 prisma/ERDs/
 prisma/schema.prisma.backup
+
+# local upload artifacts (user-generated, not for version control)
+**/storage/uploads/*

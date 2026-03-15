@@ -100,11 +100,8 @@ trainium/
 ├── apps/
 │   ├── web/              # Next.js web application
 │   └── socket/            # Socket.IO server
-├── apps/packages/
-│   ├── shared/            # Shared utilities
-│   └── tsconfig/          # Shared TypeScript configs
 ├── prisma/                # Database schema and migrations
-├── scripts/                # Build and utility scripts
+├── scripts/               # Build and utility scripts
 └── [root config files]    # Turbo, ESLint, TypeScript configs
 ```
 
@@ -239,18 +236,18 @@ apps/socket/src/
 **Flow**:
 1. **Guest Users**: Cart stored in database with cookie ID reference
 2. **Authenticated Users**: Cart linked to user account
-3. **Cart Merge**: On login, cookie cart merged into user cart
+3. **Cart Merge**: On login, cookie cart merged into user cart with stock enforcement
 4. **Persistence**: All carts stored in database for consistency
 
 **Key Files**:
 - `apps/web/src/lib/cart/cart.ts`: Cart operations
-- `apps/web/src/lib/cart/cart-merge.ts`: Cart merging logic
+- `apps/web/src/lib/cart/cart-merge.ts`: Cart merging logic (enforces inventory limits)
 - `apps/web/src/lib/utils/cookies.ts`: Cookie management
 
 **Features**:
 - Guest cart support
 - User cart persistence
-- Automatic cart merging
+- Automatic cart merging with stock enforcement (qty clamped to available inventory)
 - Variant support (size, color, etc.)
 - Price snapshot at add-to-cart time
 
@@ -347,8 +344,14 @@ PENDING → PAID → FULFILLING → SHIPPED → DELIVERED
 
 **Components**:
 1. **Socket Server** (`apps/socket/`): Standalone Express + Socket.IO server
-2. **Socket Client** (`apps/web/src/lib/socket/`): Client-side Socket.IO wrapper
-3. **Notification Hook** (`apps/web/src/hooks/useSocket.ts`): React hook for notifications
+2. **Socket Client** (`apps/web/src/lib/socket/socket-client.ts`): Client-side Socket.IO wrapper (uses `NEXT_PUBLIC_SOCKET_URL`)
+3. **Socket Server Utils** (`apps/web/src/lib/socket/socket-server.ts`): Server-side HTTP calls to socket (uses `SOCKET_SERVER_URL`)
+4. **Notification Hook** (`apps/web/src/hooks/useSocket.ts`): React hook for notifications
+
+**Env Contract**:
+- `SOCKET_SERVER_URL`: Server-side HTTP calls to socket server (required in production)
+- `NEXT_PUBLIC_SOCKET_URL`: Client-side WebSocket URL (browser connections)
+- `SOCKET_ADMIN_SECRET`: X-Admin-Secret header for admin endpoints
 
 **Notification Types**:
 - `ORDER_UPDATE`: Order status changes
@@ -356,26 +359,28 @@ PENDING → PAID → FULFILLING → SHIPPED → DELIVERED
 - `SYSTEM_ALERT`: System-wide announcements
 
 **Flow**:
-1. Client connects to Socket.IO server
+1. Client connects to Socket.IO server via `NEXT_PUBLIC_SOCKET_URL`
 2. Client authenticates with user ID and role
 3. Server joins user to rooms: `user:{userId}`, `order:{orderId}`, `product:{productId}`
 4. Server emits notifications to appropriate rooms
-5. Client receives and displays notifications
-6. Notifications persisted in database
+5. Client receives and displays notifications (deduplicated with DB notifications)
+6. Notifications persisted in database; read sync between socket and DB
 
 **Key Files**:
 - `apps/socket/src/index.js`: Socket server
 - `apps/web/src/lib/socket/socket-client.ts`: Client wrapper
+- `apps/web/src/lib/socket/socket-server.ts`: Server-side HTTP API
+- `apps/web/src/lib/notifications/deduplicate.ts`: Deduplication logic
 - `apps/web/src/hooks/useSocket.ts`: React hook
-- `apps/web/src/components/account/NotificationClient.tsx`: UI component
 
 **Features**:
 - Real-time delivery
 - Room-based targeting
 - Database persistence
-- Read/unread tracking
+- Deduplication (DB + socket merged by key)
+- Read/unread tracking with sync
 - Admin broadcast capability
-- Automatic reconnection
+- Automatic reconnection and failure handling
 
 ### 7. Recommendation Engine
 
@@ -438,10 +443,16 @@ PENDING → PAID → FULFILLING → SHIPPED → DELIVERED
 - `apps/web/src/app/admin/`: Admin pages
 - `apps/web/src/components/admin/`: Admin components
 - `apps/web/src/app/api/admin/`: Admin API endpoints
+- `apps/web/src/auth/require-admin.ts`: `requireAdminSession()` for API and server actions
 
 **Access Control**:
-- Admin-only routes protected by layout-level checks
-- RBAC utilities for role validation
+- All admin API routes use `requireAdminSession(session)`; returns 401 if not admin
+- Layout-level checks for admin pages
+- Server actions validate admin session before mutations
+
+**Admin Bootstrap**:
+- First admin created via `/admin/auth/signup` when zero ADMIN users exist
+- Bootstrap gate enforced in server action; closed once an admin exists
 
 ---
 
@@ -729,6 +740,7 @@ PENDING → PAID → FULFILLING → SHIPPED → DELIVERED
 - Cookie persistence
 - Server-side rendering support
 - Email translation support
+- Hydration-safe time rendering: `LocalTime` component with `suppressHydrationWarning`; `formatRelativeTime` for client-only relative times
 
 ---
 
@@ -757,11 +769,17 @@ PENDING → PAID → FULFILLING → SHIPPED → DELIVERED
 - `TOSS_CLIENT_KEY` / `TOSS_SECRET_KEY`
 - `RESEND_API_KEY`: Email service
 - `NEXTAUTH_URL`: Application URL
-- `SOCKET_ADMIN_SECRET`: Socket server admin authentication
+- `SOCKET_SERVER_URL`: Socket server URL for server-side HTTP calls (required in production)
+- `NEXT_PUBLIC_SOCKET_URL`: Socket server URL for client WebSocket connections (browser)
+- `SOCKET_ADMIN_SECRET`: Socket server admin authentication (X-Admin-Secret header)
+
+### CI (GitHub Actions)
+
+Runs on push/PR to `main`: lint (web + socket), typecheck (web), test (web). No build step—sitemap generation requires a live DB.
 
 ### Build Process
 
-**Turbo Pipeline**:
+**Turbo Pipeline** (for deployment, not CI):
 1. Install dependencies (`pnpm install`)
 2. Generate Prisma client
 3. Build web app (`turbo run build`)
@@ -840,7 +858,7 @@ PENDING → PAID → FULFILLING → SHIPPED → DELIVERED
 - File type validation
 - Size limits
 - Secure file storage
-- Path traversal prevention
+- Path traversal prevention via `sanitizeFilename()` (`lib/utils/path-safety.ts`)
 
 ---
 
@@ -876,9 +894,10 @@ PENDING → PAID → FULFILLING → SHIPPED → DELIVERED
 3. **Analytics**: User behavior tracking
 4. **CDN**: Static asset delivery
 5. **Monitoring**: Application performance monitoring
-6. **Testing**: Comprehensive test suite
-7. **CI/CD**: Automated deployment pipeline
-8. **Microservices**: Further service decomposition
+6. **CD**: Automated deployment pipeline (CI already runs lint, typecheck, test)
+7. **Microservices**: Further service decomposition
+
+**Current Testing**: Vitest for path-safety, notification deduplicate, require-admin (19 tests). Run with `pnpm --filter @apps/web test`.
 
 ---
 

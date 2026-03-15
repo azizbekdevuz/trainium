@@ -2,51 +2,43 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-  build:
+  checks:
+    name: Lint, typecheck, test
     runs-on: ubuntu-latest
     env:
-      NEXT_TELEMETRY_DISABLED: '1'
-      TURBO_TELEMETRY_DISABLED: '1'
-      # May be overridden by the step below if secrets are present
-      DATABASE_URL: ''
+      NEXT_TELEMETRY_DISABLED: "1"
+      TURBO_TELEMETRY_DISABLED: "1"
     steps:
       - uses: actions/checkout@v4
 
-      # install pnpm – read the version from package.json
       - uses: pnpm/action-setup@v4
         with:
-          run_install: false  # manual installation preferred
+          run_install: false
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: pnpm
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
 
-      - name: Set CI env defaults from secrets
-        shell: bash
-        env:
-          DATABASE_URL_SECRET: ${{ secrets.DATABASE_URL }}
-        run: |
-          # Prefer repo/org secrets when present; otherwise provide safe CI defaults
-          : "${DATABASE_URL_SECRET:=}"
-          if [ -n "$DATABASE_URL_SECRET" ]; then
-            echo "DATABASE_URL=$DATABASE_URL_SECRET" >> "$GITHUB_ENV"
-          else
-            echo "DATABASE_URL=postgresql://user:pass@localhost:5432/ci_db" >> "$GITHUB_ENV"
-          fi
-
-      - name: Install deps
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Lint
-        run: pnpm run -s lint || true
-        continue-on-error: true
+      - name: Generate Prisma client
+        run: pnpm --filter @apps/web prisma:generate
 
-      - name: Build
-        run: pnpm run -s build
-        continue-on-error: true
+      - name: Lint (web)
+        run: pnpm --filter @apps/web lint
+
+      - name: Lint (socket)
+        run: pnpm --filter @apps/socket lint
+
+      - name: Typecheck
+        run: pnpm --filter @apps/web typecheck
+
+      - name: Test
+        run: pnpm --filter @apps/web test

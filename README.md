@@ -60,12 +60,9 @@ trainium/
 ├── apps/
 │   ├── web/              # Next.js web application
 │   └── socket/            # Socket.IO server
-├── apps/packages/
-│   ├── shared/            # Shared utilities
-│   └── tsconfig/          # Shared TypeScript configs
 ├── prisma/                # Database schema
-├── scripts/               # Build scripts
-└── architecture.md       # Architecture documentation
+├── scripts/               # Build and utility scripts
+└── architecture.md        # Architecture documentation
 ```
 
 ## 🚀 Getting Started
@@ -105,7 +102,9 @@ Required environment variables:
 - `TOSS_CLIENT_KEY` / `TOSS_SECRET_KEY`: Toss Payments credentials
 - `RESEND_API_KEY`: Resend email service key
 - `NEXTAUTH_URL`: Application URL
-- `SOCKET_ADMIN_SECRET`: Socket server admin secret
+- `SOCKET_SERVER_URL`: Socket server URL for server-side HTTP calls (required in production)
+- `NEXT_PUBLIC_SOCKET_URL`: Socket server URL for client WebSocket connections
+- `SOCKET_ADMIN_SECRET`: Socket server admin secret (X-Admin-Secret header)
 
 ### Docker Deployment
 
@@ -127,8 +126,11 @@ Required environment variables:
 # Generate Prisma client
 pnpm --filter @apps/web prisma:generate
 
-# Run migrations (or push schema)
+# Push schema (or run migrations)
 pnpm --filter @apps/web prisma:push
+
+# Optional: seed database
+pnpm --filter @apps/web seed
 ```
 
 5. Start development servers:
@@ -151,12 +153,13 @@ pnpm dev:socket   # Socket server on http://localhost:4000
 - `pnpm typecheck` - Type check all TypeScript code
 
 ### Web Application
-- `pnpm dev:web` - Start Next.js dev server
+- `pnpm dev:web` - Start Next.js dev server (port 3000)
 - `pnpm start:web` - Start Next.js production server
 - `pnpm --filter @apps/web prisma:studio` - Open Prisma Studio
+- `pnpm --filter @apps/web test` - Run Vitest tests
 
 ### Socket Server
-- `pnpm dev:socket` - Start Socket.IO server
+- `pnpm dev:socket` - Start Socket.IO server (port 4000)
 - `pnpm start:socket` - Start Socket.IO server in production
 
 ## 🐳 Docker Deployment
@@ -176,7 +179,8 @@ docker-compose down
 
 ## 📚 Documentation
 
-- **[Architecture Documentation](./architecture.md)** - Comprehensive system architecture, design patterns, and implementation details
+- **[Architecture Documentation](./architecture.md)** - System architecture, design patterns, implementation details
+- **[TypeScript and Lint](./docs/TYPESCRIPT_AND_LINT.md)** - TS/ESLint config and hardening status
 - **[Prisma Schema](./prisma/schema.prisma)** - Database schema and models
 
 ## 🔐 Authentication
@@ -186,7 +190,7 @@ The platform supports multiple authentication methods:
 - **Kakao OAuth**: Korean social login
 - **Email/Password**: Traditional credentials authentication
 
-All authentication is handled via NextAuth.js with JWT session strategy.
+All authentication is handled via NextAuth.js with JWT session strategy. Admin routes and API endpoints are protected via `requireAdminSession()`; the first admin account is created via `/admin/auth/signup` when no admin exists (bootstrap).
 
 ## 💳 Payment Processing
 
@@ -219,6 +223,7 @@ The platform includes a real-time notification system powered by Socket.IO:
 - Order update notifications
 - Product alerts
 - System-wide announcements
+- Deduplication and read sync between DB and socket events
 
 ## 🧪 Development
 
@@ -233,9 +238,13 @@ The platform includes a real-time notification system powered by Socket.IO:
 # Open Prisma Studio
 pnpm --filter @apps/web prisma:studio
 
-# Generate ERD diagram
-pnpm erd:generate
+# Generate ERD diagram (requires Mermaid CLI; use WSL on Windows)
+node scripts/generate-erd.js
 ```
+
+### CI (GitHub Actions)
+
+On push/PR to `main`, the workflow runs: lint (web + socket), typecheck (web), and tests (web). No build step (sitemap generation requires a live DB).
 
 ## 📄 License
 

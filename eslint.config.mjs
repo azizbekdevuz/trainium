@@ -25,6 +25,8 @@ export default [
       "*.config.js",
       "*.config.mjs",
       "*.config.ts",
+      "*.config.cjs",
+      "scripts/**",
       "prisma/**",
       "public/**",
       "*.d.ts",
@@ -56,7 +58,7 @@ export default [
       "no-var": "error",
 
       // relaxed toggles for current codebase
-      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-var-requires": "warn",
       "@typescript-eslint/no-empty-object-type": "off",
       "@typescript-eslint/triple-slash-reference": "off",
@@ -105,14 +107,23 @@ export default [
       "react/jsx-key": "error",
       
       // Override TypeScript rules that are too strict for this codebase
-      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-empty-object-type": "off",
       "@typescript-eslint/triple-slash-reference": "off",
       "@typescript-eslint/no-unsafe-function-type": "off",
     },
   },
 
-  // 6) NODE/SOCKET **ONLY** for apps/socket
+  // 6) Test files - allow any for mocks
+  {
+    files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+    },
+  },
+
+  // 7) NODE/SOCKET **ONLY** for apps/socket
   {
     files: ["apps/socket/**/*.js"],
     languageOptions: {
@@ -135,6 +146,8 @@ export default [
       "no-debugger": "error",
       "prefer-const": "error",
       "no-var": "error",
+      "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      "no-empty": "warn",
     },
   },
 ];
