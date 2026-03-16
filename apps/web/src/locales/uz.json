@@ -71,6 +71,13 @@
     "analyticsSeo": {
       "title": "Tashriflar analitikasi",
       "subtitle": "Trafik, sahifalar, qurilmalar, yo'naltiruvchilar va boshqalar",
+      "dataSource": "Ma'lumot manbai",
+      "gaConnected": "Google Analytics",
+      "gaNotConfigured": "Google Analytics sozlanmagan.",
+      "openGA": "GA ochish",
+      "openLooker": "Looker Studio",
+      "setupRequired": "Sozlash talab qilinadi",
+      "gaSetupHint": "Tashrifchilarni kuzatish uchun .env faylida NEXT_PUBLIC_GA_MEASUREMENT_ID qo'shing. Yuqoridagi panel GA xususiyatiga ulangan Looker Studio dan foydalanadi.",
       "features": {
         "visitors": {
           "title": "Tashrifchilar",
@@ -172,6 +179,8 @@
     },
     "nav": {
       "analytics": "Analitika",
+      "analyticsSeo": "Tashriflar analitikasi",
+      "dashboard": "Boshqaruv paneli",
       "customers": "Mijozlar",
       "faq": "FAQ",
       "notifications": "Bildirishnomalar",

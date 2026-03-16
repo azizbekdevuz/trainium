@@ -71,6 +71,13 @@
     "analyticsSeo": {
       "title": "방문자 분석",
       "subtitle": "트래픽, 페이지, 기기, 유입경로 등",
+      "dataSource": "데이터 소스",
+      "gaConnected": "Google Analytics",
+      "gaNotConfigured": "Google Analytics가 설정되지 않았습니다.",
+      "openGA": "GA 열기",
+      "openLooker": "Looker Studio",
+      "setupRequired": "설정 필요",
+      "gaSetupHint": "방문자 추적을 위해 .env에 NEXT_PUBLIC_GA_MEASUREMENT_ID를 추가하세요. 위 대시보드는 GA 속성에 연결된 Looker Studio를 사용합니다.",
       "features": {
         "visitors": {
           "title": "방문자",
@@ -172,7 +179,9 @@
     },
     "nav": {
       "analytics": "분석",
+      "analyticsSeo": "방문자 분석",
       "customers": "고객",
+      "dashboard": "대시보드",
       "faq": "FAQ",
       "notifications": "알림",
       "orders": "주문",
