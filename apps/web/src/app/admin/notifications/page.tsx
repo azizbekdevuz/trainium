@@ -1,8 +1,8 @@
 import { auth } from '../../../auth';
 import { redirect } from 'next/navigation';
+import { AdminNav } from '../../../components/admin/AdminNav';
 import { NotificationClient } from '../../../components/admin/NotificationClient';
 import { negotiateLocale, getDictionary } from '../../../lib/i18n/i18n';
-import Link from 'next/link';
 
 export const runtime = 'nodejs';
 
@@ -25,44 +25,7 @@ export default async function AdminNotificationsPage() {
           </div>
 
           {/* Admin Navigation */}
-          <div className="flex flex-wrap gap-2 sm:gap-3">
-            <Link
-              href={`/${lang}/admin/orders`}
-              className="px-3 sm:px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-xs sm:text-sm font-medium hover:bg-gray-200 transition-all duration-200 hover:scale-105"
-            >
-              {dict.admin?.nav?.orders ?? 'Orders'}
-            </Link>
-            <Link
-              href={`/${lang}/admin/products`}
-              className="px-3 sm:px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-xs sm:text-sm font-medium hover:bg-gray-200 transition-all duration-200 hover:scale-105"
-            >
-              {dict.admin?.nav?.products ?? 'Products'}
-            </Link>
-            <Link
-              href={`/${lang}/admin/customers`}
-              className="px-3 sm:px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-xs sm:text-sm font-medium hover:bg-gray-200 transition-all duration-200 hover:scale-105"
-            >
-              {dict.admin?.nav?.customers ?? 'Customers'}
-            </Link>
-            <Link
-              href={`/${lang}/admin/notifications`}
-              className="px-3 sm:px-4 py-2 bg-cyan-600 text-white rounded-lg text-xs sm:text-sm font-medium"
-            >
-              {dict.admin?.nav?.notifications ?? 'Notifications'}
-            </Link>
-            <Link
-              href={`/${lang}/admin/analytics`}
-              className="px-3 sm:px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-xs sm:text-sm font-medium hover:bg-gray-200 transition-all duration-200 hover:scale-105"
-            >
-              {dict.admin?.nav?.analytics ?? 'Analytics'}
-            </Link>
-            <Link
-              href={`/${lang}/admin/faq`}
-              className="px-3 sm:px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-xs sm:text-sm font-medium hover:bg-gray-200 transition-all duration-200 hover:scale-105"
-            >
-              {dict.admin?.nav?.faq ?? 'FAQ'}
-            </Link>
-          </div>
+          <AdminNav lang={lang} dict={dict} activeSegment="notifications" />
         </div>
 
         <NotificationClient />
