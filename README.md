@@ -180,8 +180,10 @@ docker-compose down
 ## 📚 Documentation
 
 - **[Architecture Documentation](./architecture.md)** - System architecture, design patterns, implementation details
-- **[TypeScript and Lint](./docs/TYPESCRIPT_AND_LINT.md)** - TS/ESLint config and hardening status
 - **[Prisma Schema](./prisma/schema.prisma)** - Database schema and models
+- **[Contributing](./CONTRIBUTING.md)** - How to contribute, development workflow, coding standards
+- **[Code of Conduct](./CODE_OF_CONDUCT.md)** - Community standards and expectations
+- **[Security Policy](./SECURITY.md)** - How to report security vulnerabilities
 
 ## 🔐 Authentication
 
@@ -248,12 +250,12 @@ On push/PR to `main`, the workflow runs: lint (web + socket), typecheck (web), a
 
 ## 📄 License
 
-MIT License
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
 
 ## 🤝 Contributing
 
-[I will update soon]
+Contributions are welcome! Please read our [Contributing Guidelines](./CONTRIBUTING.md) and [Code of Conduct](./CODE_OF_CONDUCT.md) before submitting a pull request. Use our [issue templates](.github/ISSUE_TEMPLATE/) and [pull request template](.github/PULL_REQUEST_TEMPLATE.md) when opening issues and PRs.
 
 ## 📞 Support
 
-[Refer to my GitHub profile links for contact and support]
+For questions and discussions, use [GitHub Discussions](https://github.com/azizbekdevuz/trainium/discussions). For security issues, see [SECURITY.md](./SECURITY.md).
