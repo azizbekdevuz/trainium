@@ -85,8 +85,8 @@ export function ResponsiveNavigation({ lang, dict }: ResponsiveNavigationProps) 
             {dict.nav.support}
           </Link>
           {isAdminUser && (
-            <Link href={`/${lang}/admin`} className={`${linkBaseAdmin} ${linkUnderline}`}>
-              {dict.nav.admin} <Icon name="shieldUser" className="w-5 h-5 inline ml-1.5" />
+            <Link href={`/${lang}/admin`} className={linkBaseAdmin}>
+              {dict.nav?.admin ?? 'Admin'} <Icon name="shieldUser" className="w-5 h-5 inline ml-1.5" />
             </Link>
           )}
 
