@@ -34,6 +34,10 @@ const EnvSchema = z.object({
   SOCKET_SERVER_URL: z.string().optional(),
   NEXT_PUBLIC_SOCKET_URL: z.string().optional(),
   SOCKET_ADMIN_SECRET: z.string().optional(),
+
+  // Looker Studio embed URLs (optional; fall back to defaults)
+  NEXT_PUBLIC_LOOKER_STUDIO_REPORT_URL_LIGHT: z.string().optional(),
+  NEXT_PUBLIC_LOOKER_STUDIO_REPORT_URL_DARK: z.string().optional(),
 });
 
 function getAuthSecret(env: Record<string, string | undefined>) {

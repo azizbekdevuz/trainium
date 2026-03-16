@@ -45,6 +45,16 @@ export function QuickActionsPanel({ dict, lang }: QuickActionsPanelProps) {
       delay: '200ms'
     },
     {
+      id: 'visitor-analytics',
+      title: dict.admin?.dashboard?.quickActions?.visitorAnalytics || 'Visitor Analytics',
+      description: dict.admin?.dashboard?.quickActions?.visitorAnalyticsDesc || 'Traffic, devices, referrers from GA',
+      icon: 'globe',
+      href: `/${lang}/admin/analytics-seo`,
+      color: 'text-cyan-600 dark:text-cyan-400',
+      bgColor: 'bg-cyan-50 dark:bg-cyan-900/20',
+      delay: '250ms'
+    },
+    {
       id: 'manage-faq',
       title: 'Manage FAQ',
       description: dict.admin?.dashboard?.quickActions?.manageFaqDesc || 'Update frequently asked questions',
