@@ -5,10 +5,8 @@ import { useI18n } from '../providers/I18nProvider';
 import { useState } from 'react';
 import Image from 'next/image';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import barbellKnurl from '../../../public/images/barbell_knurl.webp';
-import cableMachine from '../../../public/images/cable_machine.webp';
-import dumbbells from '../../../public/images/dumbbells.webp';
-import treadmill from '../../../public/images/treadmill.jpg';
+
+const FEATURE_IMAGES = ['/images/barbell_knurl.webp', '/images/treadmill.jpg', '/images/dumbbells.webp', '/images/cable_machine.webp'];
 
 export default function StickyFeatures() {
   const { t } = useI18n();
@@ -23,7 +21,6 @@ export default function StickyFeatures() {
     { top: '30%', left: '38%' },
     { top: '50%', left: '50%' }
   ];
-  const featureImages = [barbellKnurl, treadmill, dumbbells, cableMachine];
 
   return (
     <section className="mx-auto max-w-7xl px-6 py-16">
@@ -52,7 +49,7 @@ export default function StickyFeatures() {
                   transition={{ duration: 0.22, ease: 'easeOut' }}
                 >
                   <Image
-                    src={featureImages[active % featureImages.length]}
+                    src={FEATURE_IMAGES[active % FEATURE_IMAGES.length]}
                     alt=""
                     fill
                     className="object-contain"

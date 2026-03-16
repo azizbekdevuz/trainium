@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import logoBanner from '../../../public/images/logo-banner.png';
 import { motion, useReducedMotion } from 'framer-motion';
 import Spotlight from '../ui/animations/Spotlight';
 import MagneticButton from '../ui/animations/MagneticButton';
@@ -89,7 +88,7 @@ export function Hero({ title, sub }: { title?: string; sub?: string }) {
             <div className="relative w-[75%] aspect-[4/3] rounded-2xl bg-white/10 backdrop-blur-lg ring-1 ring-white/20 shadow-[0_8px_25px_rgba(0,0,0,0.25)]">
               {/* Logo itself */}
               <Image
-                src={logoBanner}
+                src="/images/logo-banner.png"
                 alt="Trainium logo banner"
                 fill
                 sizes="(min-width: 1024px) 32rem, 80vw"
