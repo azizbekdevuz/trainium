@@ -68,7 +68,7 @@ export function useMediaQuery(query: string): boolean {
 
   useEffect(() => {
     // Check if we're in a browser environment
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') return undefined;
     
     const media = window.matchMedia(query);
     if (media.matches !== matches) {

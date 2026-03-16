@@ -63,7 +63,7 @@ export async function addCategoryTranslation(categoryData: CategoryTranslation):
 /**
  * Gets category translation for a specific locale
  */
-export function getCategoryTranslation(slug: string, locale: string, dict: Dict): string {
+export function getCategoryTranslation(slug: string, _locale: string, dict: Dict): string {
   // First try to get from productCategories in dict
   if (dict.productCategories?.[slug]) {
     return dict.productCategories[slug];

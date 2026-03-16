@@ -21,7 +21,7 @@ export class RecommendationEngine {
    * Generate general recommendations for unauthenticated users
    */
   static async getGeneralRecommendations(
-    context: 'product' | 'home' | 'cart',
+    _context: 'product' | 'home' | 'cart',
     currentProductId?: string,
     limit: number = 5,
     offset: number = 0

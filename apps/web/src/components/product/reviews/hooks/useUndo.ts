@@ -3,7 +3,7 @@ import type { ReviewItem } from '../types';
 
 export function useUndo(
     productId: string,
-    items: ReviewItem[],
+    _items: ReviewItem[],
     setItems: (updater: (prev: ReviewItem[]) => ReviewItem[]) => void,
     loaded: boolean,
     t: (path: string, fallback?: string) => string

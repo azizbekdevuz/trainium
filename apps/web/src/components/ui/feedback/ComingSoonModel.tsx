@@ -30,7 +30,7 @@ const ComingSoonModal: React.FC<ComingSoonModalProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) return undefined;
 
     setParticles(generateParticles());
 

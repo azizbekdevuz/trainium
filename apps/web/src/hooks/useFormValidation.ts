@@ -53,6 +53,7 @@ export function useFormValidation({ requiredFields, formId }: FormValidationOpti
         form.removeEventListener('change', checkFormValidity);
       };
     }
+    return undefined;
   }, [requiredFields, formId]);
 
   return {

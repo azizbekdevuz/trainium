@@ -60,6 +60,7 @@ export default function CartQtyUpdate({ itemId, currentQty, available }: CartQty
       const timer = setTimeout(() => setToast(null), 2500);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [toast]);
 
   const toastNode = toast ? (

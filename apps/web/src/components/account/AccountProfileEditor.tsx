@@ -29,7 +29,7 @@ export default function AccountProfileEditor({ initialName, initialImage, initia
   const canDelete = !!accountEmail && confirmEmail.trim().toLowerCase() === accountEmail.toLowerCase();
 
   useEffect(() => {
-    if (!copied) return;
+    if (!copied) return undefined;
     const t = setTimeout(() => setCopied(false), 1500);
     return () => clearTimeout(t);
   }, [copied]);

@@ -32,7 +32,7 @@ export function MultiSelect({
 
   // Calculate dropdown position
   useEffect(() => {
-    if (!buttonRef) return;
+    if (!buttonRef) return undefined;
 
     const updatePosition = () => {
       const rect = buttonRef.getBoundingClientRect();

@@ -43,6 +43,7 @@ export function useFaqManagement() {
       }, 5000);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [success, error]);
 
   // Load categories on mount

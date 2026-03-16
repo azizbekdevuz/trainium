@@ -38,6 +38,7 @@ export function Form({ open, onClose, title, children, className = '', hasAction
         window.scrollTo(0, scrollY);
       };
     }
+    return undefined;
   }, [open]);
 
   if (!open) return null;

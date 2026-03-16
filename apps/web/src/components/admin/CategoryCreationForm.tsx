@@ -43,6 +43,7 @@ export function CategoryCreationForm({ onCategoryCreated, dict, disabled = false
         document.removeEventListener('submit', handleFormSubmit, true);
       };
     }
+    return undefined;
   }, [open]);
 
   const handleSubmit = async (e?: React.FormEvent) => {

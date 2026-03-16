@@ -9,7 +9,7 @@ export default function Spotlight({ className }: Props) {
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el) return undefined;
 
     let raf = 0;
     const onMove = (e: MouseEvent) => {
