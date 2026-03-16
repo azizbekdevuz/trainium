@@ -9,7 +9,7 @@ import {
   Check, ExternalLink, ShoppingCart, Wifi, WifiOff,
   Bell, Search, Filter, Plus, Loader2, ChevronLeft, 
   ChevronRight, AlertCircle, Send, Loader, Menu, Globe,
-  Github, Linkedin
+  Github, Linkedin, ShieldUser
 } from 'lucide-react';
 
 export const Icons = {
@@ -47,6 +47,7 @@ export const Icons = {
   arrowDownRight: ArrowDownRight,
   arrowUpLeft: ArrowUpLeft,
   arrowDownLeft: ArrowDownLeft,
+  shieldUser: ShieldUser,
   
   // Fitness Characters
   frown: Frown,

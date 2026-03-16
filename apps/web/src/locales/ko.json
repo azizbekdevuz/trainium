@@ -810,6 +810,7 @@
   },
   "nav": {
     "about": "회사 소개",
+    "admin": "관리자 패널",
     "account": "내 계정",
     "deals": "딜 & 도매",
     "language": "언어",

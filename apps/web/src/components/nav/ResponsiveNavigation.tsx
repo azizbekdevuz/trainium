@@ -11,6 +11,7 @@ import { NotificationBell } from './NotificationBell';
 import AuthLinks from './AuthLinks';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Icon } from '../ui/media/Icon';
+import { isAdmin } from '@/auth/rbac';
 
 interface ResponsiveNavigationProps {
   lang: 'en' | 'ko' | 'uz';
@@ -23,7 +24,10 @@ export function ResponsiveNavigation({ lang, dict }: ResponsiveNavigationProps) 
   const { data: session } = useSession();
 
   const linkBase = "relative hover:opacity-90 transition";
+  const linkBaseAdmin = "relative hover:opacity-90 transition bg-cyan-600 text-white px-3 py-2 rounded-lg";
   const linkUnderline = "after:absolute after:left-0 after:-bottom-0.5 after:h-[2px] after:w-0 after:bg-cyan-600 after:transition-all hover:after:w-full";
+
+  const isAdminUser = isAdmin((session?.user as { role?: string })?.role);
 
   return (
     <>
@@ -80,6 +84,11 @@ export function ResponsiveNavigation({ lang, dict }: ResponsiveNavigationProps) 
           <Link href={`/${lang}/contact`} className={`${linkBase} ${linkUnderline}`}>
             {dict.nav.support}
           </Link>
+          {isAdminUser && (
+            <Link href={`/${lang}/admin`} className={`${linkBaseAdmin} ${linkUnderline}`}>
+              {dict.nav.admin} <Icon name="shieldUser" className="w-5 h-5 inline ml-1.5" />
+            </Link>
+          )}
 
           <ThemeToggle />
           <MiniCart />

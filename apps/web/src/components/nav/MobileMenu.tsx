@@ -10,6 +10,7 @@ import ThemeToggle from './ThemeToggle';
 import LanguageSwitcher from './LanguageSwitcher';
 import AuthLinks from './AuthLinks';
 import InteractiveBackground from '../background/InteractiveBackground';
+import { isAdmin } from '@/auth/rbac';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -27,6 +28,8 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     { href: `/${lang}/about`, label: dict.nav.about },
     { href: `/${lang}/contact`, label: dict.nav.support },
   ];
+
+  const isAdminUser = isAdmin((session?.user as { role?: string })?.role);
 
   useEffect(() => {
     setMounted(true);
@@ -107,6 +110,15 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                     {item.label}
                   </Link>
                 ))}
+                {isAdminUser && (
+                  <Link
+                    href={`/${lang}/admin`}
+                    className="block py-3 sm:py-4 px-4 sm:px-6 text-base sm:text-lg font-semibold bg-cyan-600 text-white rounded-lg hover:opacity-90 transition-all duration-200"
+                    onClick={onClose}
+                  >
+                    {dict.nav?.admin ?? 'Admin'} <Icon name="shieldUser" className="w-5 h-5 inline ml-1.5" />
+                  </Link>
+                )}
               </nav>
 
               {/* Account Actions */}
