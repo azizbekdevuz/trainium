@@ -1,0 +1,248 @@
+@layer components {
+  /* BASE GLASS — ambient surface level */
+  .glass-surface {
+    @apply relative overflow-hidden;
+    background: var(--bg-glass);
+    backdrop-filter: var(--blur-md);
+    -webkit-backdrop-filter: var(--blur-md);
+    border: 1px solid var(--border-glass-side);
+    border-top-color: var(--border-glass-top);
+    box-shadow: var(--shadow-glass);
+  }
+
+  /* ELEVATED GLASS — hero panels, modals */
+  .glass-elevated {
+    @apply relative overflow-hidden;
+    background: linear-gradient(
+      150deg,
+      color-mix(in srgb, var(--bg-glass) 120%, white 15%) 0%,
+      var(--bg-glass) 100%
+    );
+    backdrop-filter: var(--blur-lg);
+    -webkit-backdrop-filter: var(--blur-lg);
+    border-top: 1px solid var(--border-glass-top);
+    border-left: 1px solid var(--border-default);
+    border-right: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow-lg), inset 0 0.5px 0 var(--border-glass-top);
+  }
+
+  /* GLASS SPECULAR HIGHLIGHT — ::before layer for light shimmer.
+     z-index: -1 keeps this BELOW content children within the stacking
+     context created by backdrop-filter on the parent. At z-index: 0
+     it painted OVER static-positioned text, washing out dark text
+     with the white gradient — especially visible in light mode. */
+  .glass-surface::before,
+  .glass-elevated::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.02) 55%,
+      transparent 100%
+    );
+    pointer-events: none;
+    z-index: -1;
+    border-radius: inherit;
+  }
+
+  .glass-elevated::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.02) 55%,
+      transparent 100%
+    );
+    pointer-events: none;
+    z-index: -1;
+    border-radius: inherit;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root:not(.dark) .glass-surface::before,
+    :root:not(.dark) .glass-elevated::before {
+      background: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.7) 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.05) 100%
+      );
+    }
+  }
+
+  html:not(.dark) .glass-surface::before,
+  html:not(.dark) .glass-elevated::before {
+    background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.7) 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+  }
+
+  /* ACCENT GLASS — cyan-tinted for highlights */
+  .glass-accent {
+    @apply relative overflow-hidden;
+    background: linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--accent) 14%, transparent) 0%,
+      color-mix(in srgb, var(--accent) 4%, transparent) 100%
+    );
+    backdrop-filter: var(--blur-md);
+    -webkit-backdrop-filter: var(--blur-md);
+    border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border-default));
+    border-top-color: color-mix(in srgb, var(--accent) 50%, var(--border-glass-top));
+    box-shadow: var(--shadow-accent), inset 0 0.5px 0 color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+
+  /* DARK SIDEBAR — admin navigation panel */
+  .glass-sidebar {
+    @apply relative;
+    background: rgba(4, 8, 20, 0.62);
+    backdrop-filter: var(--blur-lg);
+    -webkit-backdrop-filter: var(--blur-lg);
+    border-right: 1px solid var(--border-subtle);
+  }
+
+  html:not(.dark) .glass-sidebar {
+    background: rgba(248, 250, 253, 0.9);
+    border-right: 1px solid var(--border-default);
+  }
+
+  /* NAVIGATION BAR */
+  .glass-nav {
+    background: rgba(6, 10, 25, 0.8);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  html:not(.dark) .glass-nav {
+    background: rgba(248, 250, 253, 0.88);
+    border-bottom: 1px solid var(--border-default);
+  }
+
+  /* BENTO GRID CONTAINERS */
+  .bento-grid {
+    @apply grid gap-2.5;
+  }
+
+  .bento-hero {
+    @apply grid gap-2.5;
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+
+  @media (max-width: 1024px) {
+    .bento-hero {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* PRODUCT IMAGE WELL — dark atmospheric container */
+  .product-well {
+    @apply relative flex items-center justify-center overflow-hidden;
+  }
+
+  .dark .product-well {
+    background: linear-gradient(
+      160deg,
+      rgba(10, 15, 35, 0.95) 0%,
+      rgba(6, 10, 26, 0.99) 100%
+    );
+  }
+
+  html:not(.dark) .product-well {
+    background: linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--bg-inset) 85%, var(--accent) 5%) 0%,
+      color-mix(in srgb, var(--bg-base) 90%, var(--accent-hi) 4%) 100%
+    );
+  }
+
+  .product-well .product-image-overlay {
+    @apply pointer-events-none absolute inset-0 z-10;
+    background: transparent;
+    mix-blend-mode: overlay;
+  }
+
+  .dark .product-well .product-image-overlay {
+    background: linear-gradient(
+      145deg,
+      rgba(14, 165, 233, 0.08) 0%,
+      rgba(4, 8, 20, 0.3) 100%
+    );
+  }
+
+  html:not(.dark) .product-well .product-image-overlay {
+    background: linear-gradient(
+      145deg,
+      rgba(14, 165, 233, 0.05) 0%,
+      rgba(255, 255, 255, 0.15) 100%
+    );
+  }
+
+  /* ATMOSPHERIC ORB — animated radial glow in product wells */
+  .atm-orb {
+    @apply pointer-events-none absolute rounded-full;
+    filter: blur(32px);
+    animation: orbBreathe 4s ease-in-out infinite;
+  }
+
+  .product-card-accent-line {
+    @apply relative z-[4] w-full;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+
+  .product-card-orb-fill {
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+
+  .product-card-price-chip {
+    @apply absolute left-2 top-2 z-[4] rounded-[10px] px-2.5 py-1 sm:left-3 sm:top-3 sm:px-3 sm:py-1.5;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+    background: color-mix(in srgb, var(--text-primary) 18%, var(--bg-elevated) 82%);
+  }
+
+  .dark .product-card-price-chip {
+    background: color-mix(in srgb, var(--bg-base) 58%, black);
+    border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+  }
+
+  .product-card-price-text {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  @media (min-width: 640px) {
+    .product-card-price-text {
+      font-size: 14px;
+    }
+  }
+
+  .product-card-placeholder-emoji {
+    @apply relative z-[2] text-[40px] leading-none sm:text-[50px];
+    filter: drop-shadow(0 12px 20px color-mix(in srgb, var(--accent) 35%, transparent));
+  }
+}
+
+@keyframes orbBreathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+}

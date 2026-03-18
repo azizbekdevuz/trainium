@@ -1,0 +1,92 @@
+@layer components {
+  /* ADMIN NAVIGATION ITEM */
+  .admin-nav-item {
+    @apply mb-0.5 flex cursor-pointer items-center gap-2.5 rounded-xl text-[13px] font-medium transition-all duration-150;
+    padding: 9px 12px;
+    color: var(--text-muted);
+    border: 1px solid transparent;
+  }
+
+  .admin-nav-item:hover {
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+  }
+
+  .admin-nav-item.active {
+    background: rgba(14, 165, 233, 0.1);
+    border-color: rgba(14, 165, 233, 0.22);
+    color: var(--accent-hi);
+  }
+
+  html:not(.dark) .admin-nav-item.active {
+    background: rgba(14, 165, 233, 0.08);
+    color: var(--accent-lo);
+  }
+
+  /* ADMIN NAV ICON */
+  .admin-nav-icon {
+    @apply flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-lg text-[14px];
+    background: var(--bg-inset);
+    transition: background 0.14s;
+  }
+
+  .admin-nav-item.active .admin-nav-icon {
+    background: rgba(14, 165, 233, 0.15);
+  }
+
+  /* ADMIN SHELL LAYOUT */
+  .admin-shell {
+    @apply flex min-h-screen;
+  }
+
+  .admin-sidebar {
+    @apply flex w-[210px] flex-shrink-0 flex-col;
+    position: relative;
+    background: rgba(4, 8, 20, 0.62);
+    backdrop-filter: var(--blur-lg);
+    -webkit-backdrop-filter: var(--blur-lg);
+    border-right: 1px solid var(--border-subtle);
+  }
+
+  html:not(.dark) .admin-sidebar {
+    background: rgba(248, 250, 253, 0.9);
+    border-right: 1px solid var(--border-default);
+  }
+
+  .admin-content {
+    @apply flex-1 overflow-y-auto;
+    padding: 22px 24px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+
+  .admin-content::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  .admin-content::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 3px;
+  }
+
+  /* STAT CARD (admin tinted) */
+  .stat-card {
+    @apply relative cursor-pointer overflow-hidden rounded-[20px] p-5 transition-transform duration-200;
+  }
+
+  .stat-card::before {
+    content: "";
+    @apply pointer-events-none absolute inset-0;
+    border-radius: inherit;
+    background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.02) 55%,
+      transparent 100%
+    );
+  }
+
+  .stat-card:hover {
+    transform: translateY(-4px);
+  }
+}
