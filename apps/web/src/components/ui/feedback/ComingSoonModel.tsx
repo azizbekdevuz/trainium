@@ -60,7 +60,7 @@ const ComingSoonModal: React.FC<ComingSoonModalProps> = ({
   return (
     <>
       <div 
-        className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm animate-[fadeIn_0.3s_ease-out]"
+        className="fixed inset-0 z-50 modal-backdrop animate-[fadeIn_0.3s_ease-out]"
         onClick={handleBackdropClick}
       />
 
@@ -81,18 +81,20 @@ const ComingSoonModal: React.FC<ComingSoonModalProps> = ({
 
             <div className="absolute inset-0 overflow-hidden opacity-40 pointer-events-none">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 md:w-80 md:h-80 will-change-transform">
-                <div 
+                <div
                   className="absolute inset-0 rounded-full blur-3xl will-change-transform"
                   style={{
-                    background: 'radial-gradient(circle, #007FFF, transparent)',
-                    animation: 'morph 8s ease-in-out infinite, rotate 20s linear infinite, pulse 4s ease-in-out infinite'
+                    background: 'radial-gradient(circle, color-mix(in srgb, var(--accent) 90%, transparent), transparent)',
+                    animation:
+                      'morph 8s ease-in-out infinite, rotate 20s linear infinite, pulse 4s ease-in-out infinite',
                   }}
                 />
-                <div 
+                <div
                   className="absolute inset-0 rounded-full blur-2xl will-change-transform"
                   style={{
-                    background: 'radial-gradient(circle, #000080, transparent)',
-                    animation: 'pulse 4s ease-in-out infinite 1s'
+                    background:
+                      'radial-gradient(circle, color-mix(in srgb, var(--accent-lo) 75%, var(--text-primary)), transparent)',
+                    animation: 'pulse 4s ease-in-out infinite 1s',
                   }}
                 />
               </div>
@@ -126,26 +128,19 @@ const ComingSoonModal: React.FC<ComingSoonModalProps> = ({
 
               <div className="mb-3 md:mb-4">
                 <div className="inline-block relative">
-                  <h2 
-                    className="text-3xl md:text-5xl font-bold text-white"
-                    style={{
-                      textShadow: '0 0 20px rgba(0, 127, 255, 0.5)',
-                    }}
-                  >
+                  <h2 className="text-3xl font-bold text-white drop-shadow-[0_0_20px_color-mix(in_srgb,var(--accent)_50%,transparent)] md:text-5xl">
                     {dict.home?.comingSoon?.title ?? "Coming Soon"}
                   </h2>
                   {glitchActive && (
                     <>
-                      <h2 
-                        className="absolute inset-0 text-3xl md:text-5xl font-bold text-red-500 opacity-70 pointer-events-none"
-                        style={{ transform: 'translate(-2px, -2px)' }}
+                      <h2
+                        className="pointer-events-none absolute inset-0 -translate-x-0.5 -translate-y-0.5 text-3xl font-bold text-red-500 opacity-70 md:text-5xl"
                         aria-hidden="true"
                       >
                         {dict.home?.comingSoon?.title ?? "Coming Soon"}
                       </h2>
-                      <h2 
-                        className="absolute inset-0 text-3xl md:text-5xl font-bold text-cyan-500 opacity-70 pointer-events-none"
-                        style={{ transform: 'translate(2px, 2px)' }}
+                      <h2
+                        className="pointer-events-none absolute inset-0 translate-x-0.5 translate-y-0.5 text-3xl font-bold text-cyan-500 opacity-70 md:text-5xl"
                         aria-hidden="true"
                       >
                         {dict.home?.comingSoon?.title ?? "Coming Soon"}
@@ -159,7 +154,7 @@ const ComingSoonModal: React.FC<ComingSoonModalProps> = ({
                 {dict.home?.comingSoon?.subtitle ?? "Newsletter Subscription"}
               </p>
 
-              <p className="text-sm md:text-base text-gray-300 mb-8 md:mb-10 max-w-md mx-auto leading-relaxed">
+              <p className="text-sm md:text-base text-ui-faint mb-8 md:mb-10 max-w-md mx-auto leading-relaxed">
                 {dict.home?.comingSoon?.message ?? "We're working hard to bring you this feature. Stay tuned!"}
               </p>
 

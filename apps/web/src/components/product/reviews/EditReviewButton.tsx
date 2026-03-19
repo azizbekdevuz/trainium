@@ -1,4 +1,5 @@
 import { useState, useTransition } from 'react';
+import { createPortal } from 'react-dom';
 import { useI18n } from '../../providers/I18nProvider';
 import { showToast } from '../../../lib/ui/toast';
 import type { ReviewItem } from './types';
@@ -19,32 +20,37 @@ export function EditReviewButton({ review, onUpdated }: EditReviewButtonProps) {
 
   return (
     <>
-      <button className="text-xs rounded-lg border px-2 h-7 hover:bg-gray-50" onClick={() => setOpen(true)}>
+      <button className="text-xs rounded-lg border px-2 h-7 hover:bg-ui-inset" onClick={() => setOpen(true)}>
         {t('common.edit', 'Edit')}
       </button>
-      {open && (
-        <div className="fixed inset-0 z-[80]">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setOpen(false)} />
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md rounded-2xl bg-white shadow-2xl border p-4">
-            <h4 className="font-medium mb-2">{t('common.edit', 'Edit')}</h4>
-            <label className="block text-sm text-gray-700 mb-2">
+      {open && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
+          <div className="modal-backdrop absolute inset-0" onClick={() => setOpen(false)} aria-hidden />
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="modal-surface relative z-[1] w-full max-w-md max-h-[min(90dvh,640px)] overflow-y-auto rounded-2xl p-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h4 className="font-medium mb-2 text-ui-primary">{t('common.edit', 'Edit')}</h4>
+            <label className="block text-sm text-ui-secondary mb-2">
               {t('reviews.titleLabel', 'Title (optional)')}
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="mt-1 h-10 w-full rounded-xl border px-3"
+                className="input-field mt-1 h-10 w-full rounded-xl border px-3"
               />
             </label>
-            <label className="block text-sm text-gray-700 mb-2">
+            <label className="block text-sm text-ui-secondary mb-2">
               {t('reviews.bodyLabel', 'Your review')}
               <textarea
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
-                className="mt-1 min-h-28 w-full rounded-xl border p-3"
+                className="input-field mt-1 min-h-28 w-full rounded-xl border p-3"
               />
             </label>
             <div className="mb-3">
-              <div className="text-xs text-gray-600 mb-1">
+              <div className="text-xs text-ui-muted mb-1">
                 {t('reviews.rating', 'Rating')} ({t('reviews.ratingChangeInfo', 'Can change after 7 days')})
               </div>
               <div className="inline-flex gap-1 opacity-100">
@@ -54,7 +60,7 @@ export function EditReviewButton({ review, onUpdated }: EditReviewButtonProps) {
                     type="button"
                     disabled={!canChangeRating}
                     className={`h-8 w-8 rounded-full border ${
-                      r <= (rating ?? 0) ? 'bg-yellow-100 border-yellow-300' : 'hover:bg-gray-50'
+                      r <= (rating ?? 0) ? 'bg-yellow-100 border-yellow-300' : 'hover:bg-ui-inset'
                     } ${!canChangeRating ? 'opacity-50 cursor-not-allowed' : ''}`}
                     onClick={() => canChangeRating && setRating(r)}
                     aria-label={`${r}`}
@@ -65,11 +71,11 @@ export function EditReviewButton({ review, onUpdated }: EditReviewButtonProps) {
               </div>
             </div>
             <div className="flex justify-end gap-2">
-              <button className="rounded-lg border px-3 h-9 hover:bg-gray-50" onClick={() => setOpen(false)}>
+              <button className="rounded-lg border px-3 h-9 hover:bg-ui-inset" onClick={() => setOpen(false)}>
                 {t('common.cancel', 'Cancel')}
               </button>
               <button
-                className="rounded-lg bg-cyan-600 text-white px-4 h-9 hover:bg-cyan-700 disabled:opacity-50"
+                className="btn-primary rounded-lg px-4 h-9 disabled:opacity-50"
                 disabled={isPending}
                 onClick={() => {
                   startTransition(async () => {
@@ -95,7 +101,8 @@ export function EditReviewButton({ review, onUpdated }: EditReviewButtonProps) {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

@@ -12,7 +12,7 @@ interface FormProps {
   hasActionButtons?: boolean;
 }
 
-export function Form({ open, onClose, title, children, className = '', hasActionButtons = false }: FormProps) {
+export function Form({ open, onClose, title, children, className = '', hasActionButtons: _hasActionButtons = false }: FormProps) {
   // Handle scroll behavior when form is open
   useEffect(() => {
     if (open) {
@@ -44,19 +44,21 @@ export function Form({ open, onClose, title, children, className = '', hasAction
   if (!open) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[80]">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-6">
-        <div className={`w-full max-w-md max-h-[95vh] rounded-2xl bg-white dark:bg-slate-900 border shadow-2xl flex flex-col ${className}`}>
-          {/* Fixed Header */}
-          <div className="flex-shrink-0 px-5 pt-5 pb-3 border-b border-gray-200 dark:border-slate-700">
-            <h3 className="font-display text-xl text-gray-900 dark:text-slate-100">{title}</h3>
-          </div>
-          
-          {/* Scrollable Content */}
-          <div className={`flex-1 overflow-y-auto px-5 ${hasActionButtons ? 'py-4' : 'py-4'}`}>
-            {children}
-          </div>
+    <div
+      className="fixed inset-0 flex items-center justify-center p-4 sm:p-6"
+      style={{ zIndex: 80 }}
+      onClick={onClose}
+    >
+      <div className="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm" style={{ zIndex: -1 }} aria-hidden />
+      <div className={`w-full max-w-md max-h-[min(90dvh,720px)] rounded-2xl modal-surface flex flex-col ${className}`} onClick={(e) => e.stopPropagation()}>
+        {/* Fixed Header */}
+        <div className="flex-shrink-0 px-5 pt-5 pb-3 border-b border-ui-default dark:border-ui-subtle">
+          <h3 className="font-display text-xl text-ui-primary">{title}</h3>
+        </div>
+        
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto px-5 py-4">
+          {children}
         </div>
       </div>
     </div>,
