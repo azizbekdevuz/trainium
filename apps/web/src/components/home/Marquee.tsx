@@ -8,7 +8,7 @@ export default function Marquee({ text }: { text?: string }) {
   const reduce = useReducedMotion();
   return (
     <div className="mx-auto max-w-7xl px-6 py-6">
-      <div className="overflow-hidden rounded-2xl border bg-white">
+      <div className="glass-surface overflow-hidden rounded-2xl border border-[var(--border-default)]">
         <div
           className="flex gap-12 whitespace-nowrap py-4 px-6"
           style={
@@ -21,10 +21,10 @@ export default function Marquee({ text }: { text?: string }) {
         >
           {text
             ? new Array(8).fill(0).map((_, i) => (
-                <span key={i} className="text-sm text-gray-600">{text}</span>
+                <span key={i} className="text-sm text-ui-muted">{text}</span>
               ))
             : [...defaults, ...defaults].map((l, i) => (
-                <span key={i} className="text-sm text-gray-600">{l}</span>
+                <span key={i} className="text-sm text-ui-muted">{l}</span>
               ))}
         </div>
       </div>

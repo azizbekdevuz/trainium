@@ -16,7 +16,7 @@ export function OrderSummary({ cart }: OrderSummaryProps) {
   const currency = cart.items[0]?.currency ?? "KRW";
 
   return (
-    <section className="rounded-2xl border bg-white dark:bg-slate-900 p-4 sm:p-5">
+    <section className="rounded-2xl border glass-surface p-4 sm:p-5">
       <h2 className="font-semibold mb-3 text-sm sm:text-base">{t('checkout.summary', 'Order summary')}</h2>
       <ul className="text-sm space-y-2">
         {cart.items.map(it => (

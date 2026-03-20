@@ -193,13 +193,13 @@ export default function FileUpload({
 
   return (
     <div className={`space-y-2 ${className}`}>
-      <label className="block text-xs font-medium text-gray-600">{label}</label>
+      <label className="block text-xs font-medium text-ui-muted">{label}</label>
       
       <div
         className={`relative border-2 border-dashed rounded-xl transition-colors ${
           dragActive 
             ? 'border-cyan-400 bg-cyan-50' 
-            : 'border-gray-300 hover:border-gray-400'
+            : 'border-ui-default hover:border-ui-strong'
         }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -255,7 +255,7 @@ export default function FileUpload({
             <div className="space-y-3">
               {previewUrl ? (
                 <div className="space-y-3">
-                  <div className="relative mx-auto w-32 h-32 rounded-lg overflow-hidden border-2 border-gray-200">
+                  <div className="relative mx-auto w-32 h-32 rounded-lg overflow-hidden border-2 border-ui-default">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img 
                       src={previewUrl} 
@@ -264,10 +264,10 @@ export default function FileUpload({
                     />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-ui-primary">
                       {processedFile?.name || selectedFile.name}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-ui-faint">
                       {(selectedFile.size / 1024 / 1024).toFixed(2)} MB • {selectedFile.type.split('/')[1].toUpperCase()}
                     </p>
                     {processedFile && processedFile.name !== selectedFile.name && (
@@ -285,10 +285,10 @@ export default function FileUpload({
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-ui-primary">
                       {processedFile?.name || selectedFile.name}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-ui-faint">
                       {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                     </p>
                     {processedFile && processedFile.name !== selectedFile.name && (
@@ -309,13 +309,13 @@ export default function FileUpload({
             </div>
           ) : (
             <div className="space-y-3">
-              <div className="flex items-center justify-center w-12 h-12 mx-auto bg-gray-100 rounded-full">
-                <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex items-center justify-center w-12 h-12 mx-auto bg-ui-inset rounded-full">
+                <svg className="w-6 h-6 text-ui-faint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-ui-primary">
                   Drop your file here, or{' '}
                   <button
                     type="button"
@@ -325,7 +325,7 @@ export default function FileUpload({
                     browse
                   </button>
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-ui-faint">
                   Supports: {allowedFormats.map(f => f.split('/')[1].toUpperCase()).join(', ')} (max {maxSize}MB)
                 </p>
               </div>

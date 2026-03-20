@@ -25,7 +25,7 @@ export function ProductFilters({
     <form className="glass rounded-2xl p-4 lg:sticky lg:top-16 lg:z-20">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-8 gap-3">
         <label className="block">
-          <span className="mb-1 block text-xs font-medium text-gray-600">{dict.pages.products.searchLabel ?? 'Search'}</span>
+          <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.pages.products.searchLabel ?? 'Search'}</span>
           <input
             aria-label={dict.pages.products.searchAria ?? 'Search products'}
             name="q"
@@ -33,7 +33,7 @@ export function ProductFilters({
             placeholder={dict.pages.products.searchPh ?? 'e.g. dumbbell, bike'}
             className="h-11 w-full rounded-xl border px-3"
           />
-          <span className="mt-1 block text-[11px] text-gray-500">{dict.pages.products.searchInEnglish ?? ''}</span>
+          <span className="mt-1 block text-[11px] text-ui-faint">{dict.pages.products.searchInEnglish ?? ''}</span>
         </label>
 
         <div className="lg:col-span-2">
@@ -58,7 +58,7 @@ export function ProductFilters({
 
         {currencyOptions.length > 0 && (
           <label className="block">
-            <span className="mb-1 block text-xs font-medium text-gray-600">{dict.pages.products.currency ?? 'Currency'}</span>
+            <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.pages.products.currency ?? 'Currency'}</span>
             <select
               aria-label={dict.pages.products.currencyAria ?? 'Currency filter'}
               name="currency"
@@ -74,7 +74,7 @@ export function ProductFilters({
         )}
 
         <label className="block">
-          <span className="mb-1 block text-xs font-medium text-gray-600">{dict.pages.products.availability ?? 'Availability'}</span>
+          <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.pages.products.availability ?? 'Availability'}</span>
           <select
             aria-label={dict.pages.products.availabilityAria ?? 'Availability filter'}
             name="inStock"
@@ -87,7 +87,7 @@ export function ProductFilters({
         </label>
 
         <label className="block">
-          <span className="mb-1 block text-xs font-medium text-gray-600">{dict.pages.products.variants ?? 'Variants'}</span>
+          <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.pages.products.variants ?? 'Variants'}</span>
           <select
             aria-label={dict.pages.products.variantsAria ?? 'With variants'}
             name="withVar"
@@ -100,7 +100,7 @@ export function ProductFilters({
         </label>
 
         <label className="block">
-          <span className="mb-1 block text-xs font-medium text-gray-600">{dict.pages.products.minPrice ?? 'Min price (₩)'}</span>
+          <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.pages.products.minPrice ?? 'Min price (₩)'}</span>
           <input
             aria-label={dict.pages.products.minPriceAria ?? 'Minimum price'}
             name="min"
@@ -113,7 +113,7 @@ export function ProductFilters({
         </label>
 
         <label className="block">
-          <span className="mb-1 block text-xs font-medium text-gray-600">{dict.pages.products.maxPrice ?? 'Max price (₩)'}</span>
+          <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.pages.products.maxPrice ?? 'Max price (₩)'}</span>
           <input
             aria-label={dict.pages.products.maxPriceAria ?? 'Maximum price'}
             name="max"
@@ -126,7 +126,7 @@ export function ProductFilters({
         </label>
 
         <label className="block">
-          <span className="mb-1 block text-xs font-medium text-gray-600">{dict.pages.products.sortBy ?? 'Sort by'}</span>
+          <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.pages.products.sortBy ?? 'Sort by'}</span>
           <select
             aria-label={dict.pages.products.sortAria ?? 'Sort order'}
             name="sort"
@@ -148,7 +148,7 @@ export function ProductFilters({
         </button>
         <a
           href={`/${lang}/products?q=&category=&inStock=1&min=0&max=50000000&sort=new`}
-          className="h-11 rounded-2xl px-4 border hover:bg-gray-50 transition inline-flex items-center"
+          className="h-11 rounded-2xl px-4 border hover:bg-ui-inset transition inline-flex items-center"
         >
           {dict.pages.products.clear}
         </a>

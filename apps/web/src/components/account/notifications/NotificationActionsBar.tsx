@@ -19,7 +19,7 @@ export function NotificationActionsBar({
   dict,
 }: NotificationActionsBarProps) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 bg-gray-50 dark:bg-slate-800 border border-gray-200 rounded-lg">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 bg-ui-inset dark:bg-ui-elevated border border-ui-default rounded-lg">
       <div className="flex items-center gap-3 sm:gap-4">
         <div className="flex items-center gap-2">
           <Bell className="h-5 w-5 text-blue-600" />
@@ -34,7 +34,7 @@ export function NotificationActionsBar({
         <select
           value={filter}
           onChange={(e) => onFilterChange(e.target.value)}
-          className="text-xs sm:text-sm border border-gray-300 rounded px-2 sm:px-3 py-1 bg-white dark:bg-slate-900 dark:text-slate-100"
+          className="text-xs sm:text-sm border border-ui-default rounded px-2 sm:px-3 py-1 glass-surface dark:text-slate-100"
         >
           <option value="all">{dict.notifications?.filters?.all ?? 'All Notifications'}</option>
           <option value="ORDER_UPDATE">{dict.notifications?.filters?.order ?? 'Order Updates'}</option>

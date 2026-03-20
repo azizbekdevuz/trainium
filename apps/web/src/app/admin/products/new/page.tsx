@@ -120,35 +120,35 @@ export default async function NewProductPage() {
       <form id="product-form" action={createProduct} className="mt-8 space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <label className="block">
-            <span className="mb-1 block text-xs font-medium text-gray-600">{dict.admin?.products?.thName ?? 'Name'}</span>
+            <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.admin?.products?.thName ?? 'Name'}</span>
             <input name="name" className="h-11 w-full rounded-xl border px-3" required />
           </label>
           <label className="block">
-            <span className="mb-1 block text-xs font-medium text-gray-600">{dict.admin?.products?.thSlug ?? 'Slug'}</span>
+            <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.admin?.products?.thSlug ?? 'Slug'}</span>
             <input name="slug" className="h-11 w-full rounded-xl border px-3" required />
           </label>
         </div>
 
         <label className="block">
-          <span className="mb-1 block text-xs font-medium text-gray-600">{dict.admin?.products?.summary ?? 'Summary'}</span>
+          <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.admin?.products?.summary ?? 'Summary'}</span>
           <input name="summary" className="h-11 w-full rounded-xl border px-3" />
         </label>
         <label className="block">
-          <span className="mb-1 block text-xs font-medium text-gray-600">{dict.admin?.products?.description ?? 'Description'}</span>
+          <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.admin?.products?.description ?? 'Description'}</span>
           <textarea name="description" className="w-full min-h-28 rounded-xl border px-3 py-2" />
         </label>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <label className="block">
-            <span className="mb-1 block text-xs font-medium text-gray-600">{dict.admin?.products?.brand ?? 'Brand'}</span>
+            <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.admin?.products?.brand ?? 'Brand'}</span>
             <input name="brand" className="h-11 w-full rounded-xl border px-3" />
           </label>
           <label className="block">
-            <span className="mb-1 block text-xs font-medium text-gray-600">{dict.admin?.products?.thPrice ?? 'Price'}</span>
+            <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.admin?.products?.thPrice ?? 'Price'}</span>
             <input name="price" type="number" step="0.01" defaultValue={0} min={0} className="h-11 w-full rounded-xl border px-3" placeholder="2200.00" />
           </label>
           <label className="block">
-            <span className="mb-1 block text-xs font-medium text-gray-600">{dict.admin?.products?.currency ?? 'Currency'}</span>
+            <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.admin?.products?.currency ?? 'Currency'}</span>
             <select name="currency" defaultValue="USD" className="h-11 w-full rounded-xl border px-3">
               <option value="USD">USD</option>
               <option value="KRW">KRW</option>
@@ -159,11 +159,11 @@ export default async function NewProductPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <label className="block">
-            <span className="mb-1 block text-xs font-medium text-gray-600">{dict.admin?.products?.initialStock ?? 'Initial stock'}</span>
+            <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.admin?.products?.initialStock ?? 'Initial stock'}</span>
             <input name="inStock" type="number" defaultValue={0} min={0} className="h-11 w-full rounded-xl border px-3" />
           </label>
           <label className="block">
-            <span className="mb-1 block text-xs font-medium text-gray-600">{dict.admin?.products?.lowStockAt ?? 'Low stock alert at'}</span>
+            <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.admin?.products?.lowStockAt ?? 'Low stock alert at'}</span>
             <input name="lowStockAt" type="number" defaultValue={0} min={0} className="h-11 w-full rounded-xl border px-3" placeholder={dict.admin?.products?.lowStockPh ?? 'Alert when stock ≤ this number'} />
           </label>
         </div>
@@ -177,9 +177,9 @@ export default async function NewProductPage() {
             type="checkbox" 
             name="active" 
             defaultChecked
-            className="rounded border-gray-300 text-cyan-600 focus:ring-cyan-500"
+            className="rounded border-ui-default text-cyan-600 focus:ring-cyan-500"
           />
-          <label className="text-sm font-medium text-gray-700">{dict.admin?.products?.active ?? 'Active (visible to customers)'}</label>
+          <label className="text-sm font-medium text-ui-secondary">{dict.admin?.products?.active ?? 'Active (visible to customers)'}</label>
         </div>
 
         <FileUpload 

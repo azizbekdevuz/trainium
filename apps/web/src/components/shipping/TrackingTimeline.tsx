@@ -51,11 +51,11 @@ export function TrackingTimeline({ trackingNumber, carrier, events: initialEvent
 
   if (loading) {
     return (
-      <div className="rounded-2xl border bg-white p-5">
+      <div className="glass-surface rounded-2xl border border-[var(--border-default)] p-5">
         <h2 className="font-medium mb-4">Package Tracking</h2>
         <div className="flex items-center justify-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-          <span className="ml-3 text-gray-600">Loading tracking information...</span>
+          <span className="ml-3 text-ui-muted">Loading tracking information...</span>
         </div>
       </div>
     );
@@ -63,7 +63,7 @@ export function TrackingTimeline({ trackingNumber, carrier, events: initialEvent
 
   if (error) {
     return (
-      <div className="rounded-2xl border bg-white p-5">
+      <div className="glass-surface rounded-2xl border border-[var(--border-default)] p-5">
         <h2 className="font-medium mb-4">Package Tracking</h2>
         <div className="text-center py-8">
           <div className="text-red-500 mb-2">⚠️ {error}</div>
@@ -80,9 +80,9 @@ export function TrackingTimeline({ trackingNumber, carrier, events: initialEvent
 
   if (events.length === 0) {
     return (
-      <div className="rounded-2xl border bg-white p-5">
+      <div className="glass-surface rounded-2xl border border-[var(--border-default)] p-5">
         <h2 className="font-medium mb-4">Package Tracking</h2>
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-ui-faint">
           No tracking information available yet.
         </div>
       </div>
@@ -90,10 +90,10 @@ export function TrackingTimeline({ trackingNumber, carrier, events: initialEvent
   }
 
   return (
-    <div className="rounded-2xl border bg-white p-5">
+    <div className="glass-surface rounded-2xl border border-[var(--border-default)] p-5">
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-medium">Package Tracking</h2>
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-ui-faint">
           {trackingNumber}
         </div>
       </div>
@@ -118,7 +118,7 @@ export function TrackingTimeline({ trackingNumber, carrier, events: initialEvent
                     ? 'bg-green-500 border-green-500 text-white' 
                     : isLatest 
                       ? 'bg-blue-500 border-blue-500 text-white animate-pulse' 
-                      : 'bg-gray-100 border-gray-300 text-gray-400'
+                      : 'bg-ui-inset border-ui-default text-ui-faint'
                   }
                 `}>
                   <span className="text-sm">{statusInfo.icon}</span>
@@ -135,7 +135,7 @@ export function TrackingTimeline({ trackingNumber, carrier, events: initialEvent
                 <div className="flex items-center space-x-2">
                   <h3 className={`
                     font-medium text-sm
-                    ${isCompleted || isLatest ? 'text-gray-900' : 'text-gray-500'}
+                    ${isCompleted || isLatest ? 'text-ui-primary' : 'text-ui-faint'}
                   `}>
                     {statusInfo.label}
                   </h3>
@@ -145,11 +145,11 @@ export function TrackingTimeline({ trackingNumber, carrier, events: initialEvent
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-gray-600 mt-1">{event.description}</p>
+                <p className="text-sm text-ui-muted mt-1">{event.description}</p>
                 {event.location && (
-                  <p className="text-xs text-gray-500 mt-1">📍 {event.location}</p>
+                  <p className="text-xs text-ui-faint mt-1">📍 {event.location}</p>
                 )}
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-ui-faint mt-1">
                   {event.timestamp.toLocaleString('en-US', {
                     year: 'numeric',
                     month: '2-digit',
@@ -168,7 +168,7 @@ export function TrackingTimeline({ trackingNumber, carrier, events: initialEvent
       
       <div className="mt-6 pt-4 border-t">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-600">Carrier: {carrier || 'Unknown'}</span>
+          <span className="text-ui-muted">Carrier: {carrier || 'Unknown'}</span>
           <a
             target="_blank"
             rel="noopener noreferrer"

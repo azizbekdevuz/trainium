@@ -1,5 +1,5 @@
 import ScrollProgress from "../components/home/ScrollProgress";
-import { Hero } from "../components/home/Hero";
+import HomeHeroSection from "../components/home/HomeHeroSection";
 import { Badges } from "../components/home/Badges";
 import Marquee from "../components/home/Marquee";
 import { CategoryTiles } from "../components/home/CategoryTiles";
@@ -55,14 +55,14 @@ export default async function Home() {
       <HomeHeaderActivator />
       <HomeHeaderSpacer />
       <ScrollProgress />
-      <Hero />
+      <HomeHeroSection />
       <Badges />
       <Marquee />
       <CategoryTiles />
       <StatsBand />
       <StickyFeatures />
       <ParallaxGallery />
-      <BestSellers />
+      <BestSellers variant="rail" />
       <RecommendedProducts
         context="home"
         initialLimit={5}

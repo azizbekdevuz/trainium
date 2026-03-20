@@ -20,13 +20,13 @@ export function TossPaymentWidget({ cartId, address, paymentData, canPay }: Toss
   if (!paymentData || !paymentData.tossConfig || !paymentData.amount || !paymentData.orderId) {
     console.error('TossPaymentWidget: Invalid paymentData:', paymentData);
     return (
-      <div className="rounded-2xl border bg-white p-5 space-y-4">
+      <div className="glass-surface rounded-2xl border border-[var(--border-default)] p-5 space-y-4">
         <div className="text-center py-8">
           <div className="mb-4 flex justify-center">
             <Icon name="error" className="w-12 h-12 text-red-500" />
           </div>
           <h3 className="font-semibold text-lg mb-2">{t('checkout.invalidData', 'Invalid payment data')}</h3>
-          <p className="text-gray-600 text-sm">{t('checkout.refresh', "Unable to retrieve payment information. Please refresh the page.")}</p>
+          <p className="text-ui-muted text-sm">{t('checkout.refresh', "Unable to retrieve payment information. Please refresh the page.")}</p>
         </div>
       </div>
     );
@@ -60,39 +60,39 @@ export function TossPaymentWidget({ cartId, address, paymentData, canPay }: Toss
   };
 
   return (
-    <div className="rounded-2xl border bg-white p-5 space-y-4">
+    <div className="glass-surface rounded-2xl border border-[var(--border-default)] p-5 space-y-4">
       <div className="text-center py-4">
         <h3 className="font-semibold text-lg mb-2">🇰🇷 TossPayments</h3>
-        <p className="text-gray-600 text-sm mb-4">{t('checkout.tossDesc', 'Secure and convenient Korean local payment service')}</p>
+        <p className="text-ui-muted text-sm mb-4">{t('checkout.tossDesc', 'Secure and convenient Korean local payment service')}</p>
         {paymentData && (
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-ui-muted">
             {t('checkout.amount', 'Payment amount')}: <span className="font-semibold">₩{paymentData.amount?.toLocaleString('en-US')}</span>
           </div>
         )}
       </div>
 
       <div className="space-y-4">
-        <h4 className="font-medium text-gray-900">{t('checkout.selectMethod', 'Select a payment method')}</h4>
+        <h4 className="font-medium text-ui-primary">{t('checkout.selectMethod', 'Select a payment method')}</h4>
         <div className="grid grid-cols-2 gap-3">
-          <button onClick={() => handleDirectPayment('카드')} disabled={submitting || !canPay} className="p-4 border-2 border-gray-200 rounded-xl hover:border-blue-500 transition text-center disabled:opacity-50">
+          <button onClick={() => handleDirectPayment('카드')} disabled={submitting || !canPay} className="p-4 border-2 border-ui-default rounded-xl hover:border-blue-500 transition text-center disabled:opacity-50">
             <div className="mb-2 flex justify-center">
               <Icon name="payment" className="w-8 h-8" />
             </div>
             <div className="font-medium text-sm">{t('checkout.card', 'Credit/Debit Card')}</div>
           </button>
-          <button onClick={() => handleDirectPayment('계좌이체')} disabled={submitting || !canPay} className="p-4 border-2 border-gray-200 rounded-xl hover:border-blue-500 transition text-center disabled:opacity-50">
+          <button onClick={() => handleDirectPayment('계좌이체')} disabled={submitting || !canPay} className="p-4 border-2 border-ui-default rounded-xl hover:border-blue-500 transition text-center disabled:opacity-50">
             <div className="mb-2 flex justify-center">
               <Icon name="home" className="w-8 h-8" />
             </div>
             <div className="font-medium text-sm">{t('checkout.bank', 'Real-time bank transfer')}</div>
           </button>
-          <button onClick={() => handleDirectPayment('가상계좌')} disabled={submitting || !canPay} className="p-4 border-2 border-gray-200 rounded-xl hover:border-blue-500 transition text-center disabled:opacity-50">
+          <button onClick={() => handleDirectPayment('가상계좌')} disabled={submitting || !canPay} className="p-4 border-2 border-ui-default rounded-xl hover:border-blue-500 transition text-center disabled:opacity-50">
             <div className="mb-2 flex justify-center">
               <Icon name="home" className="w-8 h-8" />
             </div>
             <div className="font-medium text-sm">{t('checkout.vbank', 'Virtual bank account')}</div>
           </button>
-          <button onClick={() => handleDirectPayment('휴대폰')} disabled={submitting || !canPay} className="p-4 border-2 border-gray-200 rounded-xl hover:border-blue-500 transition text-center disabled:opacity-50">
+          <button onClick={() => handleDirectPayment('휴대폰')} disabled={submitting || !canPay} className="p-4 border-2 border-ui-default rounded-xl hover:border-blue-500 transition text-center disabled:opacity-50">
             <div className="mb-2 flex justify-center">
               <Icon name="phone" className="w-8 h-8" />
             </div>
@@ -100,27 +100,27 @@ export function TossPaymentWidget({ cartId, address, paymentData, canPay }: Toss
           </button>
         </div>
         <div className="border-t pt-4">
-          <h5 className="font-medium text-gray-900 mb-3">{t('checkout.wallets', 'Popular E-Wallets')}</h5>
+          <h5 className="font-medium text-ui-primary mb-3">{t('checkout.wallets', 'Popular E-Wallets')}</h5>
           <div className="grid grid-cols-2 gap-3">
-            <button onClick={() => handleDirectPayment('카카오페이')} disabled={submitting || !canPay} className="p-3 border-2 border-gray-200 rounded-xl hover:border-yellow-500 transition text-center disabled:opacity-50">
+            <button onClick={() => handleDirectPayment('카카오페이')} disabled={submitting || !canPay} className="p-3 border-2 border-ui-default rounded-xl hover:border-yellow-500 transition text-center disabled:opacity-50">
               <div className="mb-1 flex justify-center">
                 <Icon name="star" className="w-6 h-6 text-yellow-500" />
               </div>
               <div className="font-medium text-sm">{t('checkout.kakao', 'KakaoPay')}</div>
             </button>
-            <button onClick={() => handleDirectPayment('네이버페이')} disabled={submitting || !canPay} className="p-3 border-2 border-gray-200 rounded-xl hover:border-green-500 transition text-center disabled:opacity-50">
+            <button onClick={() => handleDirectPayment('네이버페이')} disabled={submitting || !canPay} className="p-3 border-2 border-ui-default rounded-xl hover:border-green-500 transition text-center disabled:opacity-50">
               <div className="mb-1 flex justify-center">
                 <Icon name="star" className="w-6 h-6 text-green-500" />
               </div>
               <div className="font-medium text-sm">{t('checkout.naver', 'NaverPay')}</div>
             </button>
-            <button onClick={() => handleDirectPayment('페이코')} disabled={submitting || !canPay} className="p-3 border-2 border-gray-200 rounded-xl hover:border-red-500 transition text-center disabled:opacity-50">
+            <button onClick={() => handleDirectPayment('페이코')} disabled={submitting || !canPay} className="p-3 border-2 border-ui-default rounded-xl hover:border-red-500 transition text-center disabled:opacity-50">
               <div className="mb-1 flex justify-center">
                 <Icon name="parking" className="w-6 h-6" />
               </div>
               <div className="font-medium text-sm">{t('checkout.payco', 'Payco')}</div>
             </button>
-            <button onClick={() => handleDirectPayment('삼성페이')} disabled={submitting || !canPay} className="p-3 border-2 border-gray-200 rounded-xl hover:border-blue-500 transition text-center disabled:opacity-50">
+            <button onClick={() => handleDirectPayment('삼성페이')} disabled={submitting || !canPay} className="p-3 border-2 border-ui-default rounded-xl hover:border-blue-500 transition text-center disabled:opacity-50">
               <div className="mb-1 flex justify-center">
                 <Icon name="phone" className="w-6 h-6" />
               </div>
@@ -136,7 +136,7 @@ export function TossPaymentWidget({ cartId, address, paymentData, canPay }: Toss
           <div className="text-blue-600 text-sm">{t('checkout.redirecting', 'Redirecting to payment window...')}</div>
         </div>
       )}
-      <div className="text-xs text-gray-500 text-center flex items-center justify-center gap-1">
+      <div className="text-xs text-ui-faint text-center flex items-center justify-center gap-1">
         <Icon name="lock" className="w-3 h-3" /> {t('checkout.tossSecure', 'TossPayments secure payment system')}
       </div>
     </div>

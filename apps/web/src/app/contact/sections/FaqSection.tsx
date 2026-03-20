@@ -162,7 +162,7 @@ export function FaqSection({ items }: { items?: FaqItem[] }) {
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-center py-8">
-          <div className="text-sm text-gray-500">{dict.faq?.loading || 'Loading FAQs...'}</div>
+          <div className="text-sm text-ui-faint">{dict.faq?.loading || 'Loading FAQs...'}</div>
         </div>
       </div>
     );
@@ -173,19 +173,19 @@ export function FaqSection({ items }: { items?: FaqItem[] }) {
       <div className="space-y-4">
         <div className="text-center py-8">
           <div className="text-sm text-red-500 mb-2">{dict.faq?.error || 'Failed to load FAQs'}</div>
-          <div className="text-xs text-gray-500">Falling back to default FAQs</div>
+          <div className="text-xs text-ui-faint">Falling back to default FAQs</div>
         </div>
         {/* Show fallback FAQs */}
         <div className="space-y-4">
           <div className="overflow-x-auto">
-            <div className="inline-flex gap-2 rounded-xl border p-1 bg-gray-50">
+            <div className="inline-flex gap-2 rounded-xl border p-1 bg-ui-inset">
               {categories.map((cat) => {
                 const isActive = activeCategory === cat;
                 return (
                   <button
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
-                    className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-sm transition-colors ${isActive ? 'bg-white shadow-sm border text-gray-900' : 'text-gray-600 hover:text-gray-900'}`}
+                    className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-sm transition-colors ${isActive ? 'glass-surface border border-[var(--border-default)] text-ui-primary shadow-sm' : 'text-ui-muted hover:text-ui-primary'}`}
                     aria-pressed={isActive}
                   >
                     {cat}
@@ -212,11 +212,11 @@ export function FaqSection({ items }: { items?: FaqItem[] }) {
                   aria-expanded={openIdx === idx}
                 >
                   <span className="font-medium">{item.q}</span>
-                  <span className="text-gray-400">{openIdx === idx ? '−' : '+'}</span>
+                  <span className="text-ui-faint">{openIdx === idx ? '−' : '+'}</span>
                 </button>
                 {openIdx === idx && (
                   <div 
-                    className="mt-2 text-gray-700 text-sm"
+                    className="mt-2 text-ui-secondary text-sm"
                     dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.a) }}
                   />
                 )}
@@ -227,10 +227,10 @@ export function FaqSection({ items }: { items?: FaqItem[] }) {
                 <div className="mb-4">
                   <ThinkingEmoji size="lg" className="mx-auto" />
                 </div>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-ui-faint">
                   {dict.faq?.noResults || 'Nothing to see here yet'}
                 </div>
-                <div className="text-xs text-gray-400 mt-2">
+                <div className="text-xs text-ui-faint mt-2">
                   {dict.faq?.empty || 'FAQs will appear here when available'}
                 </div>
               </div>
@@ -244,14 +244,14 @@ export function FaqSection({ items }: { items?: FaqItem[] }) {
   return (
     <div className="space-y-3 sm:space-y-4">
       <div className="overflow-x-auto">
-        <div className="inline-flex gap-1 sm:gap-2 rounded-xl border p-1 bg-gray-50">
+        <div className="inline-flex gap-1 sm:gap-2 rounded-xl border p-1 bg-ui-inset">
           {categories.map((cat) => {
             const isActive = activeCategory === cat;
             return (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`whitespace-nowrap rounded-lg px-2 sm:px-3 py-1.5 text-xs sm:text-sm transition-colors ${isActive ? 'bg-white shadow-sm border text-gray-900' : 'text-gray-600 hover:text-gray-900'}`}
+                className={`whitespace-nowrap rounded-lg px-2 sm:px-3 py-1.5 text-xs sm:text-sm transition-colors ${isActive ? 'glass-surface border border-[var(--border-default)] text-ui-primary shadow-sm' : 'text-ui-muted hover:text-ui-primary'}`}
                 aria-pressed={isActive}
               >
                 {cat}
@@ -278,11 +278,11 @@ export function FaqSection({ items }: { items?: FaqItem[] }) {
               aria-expanded={openIdx === idx}
             >
               <span className="font-medium text-sm sm:text-base">{item.q}</span>
-              <span className="text-gray-400 text-lg">{openIdx === idx ? '−' : '+'}</span>
+              <span className="text-ui-faint text-lg">{openIdx === idx ? '−' : '+'}</span>
             </button>
             {openIdx === idx && (
               <div 
-                className="mt-2 text-gray-700 text-xs sm:text-sm"
+                className="mt-2 text-ui-secondary text-xs sm:text-sm"
                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.a) }}
               />
             )}
@@ -293,10 +293,10 @@ export function FaqSection({ items }: { items?: FaqItem[] }) {
             <div className="mb-4">
               <ThinkingEmoji size="lg" className="mx-auto" />
             </div>
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-ui-faint">
               {dict.faq?.noResults || 'Nothing to see here yet'}
             </div>
-            <div className="text-xs text-gray-400 mt-2">
+            <div className="text-xs text-ui-faint mt-2">
               {dict.faq?.empty || 'FAQs will appear here when available'}
             </div>
           </div>

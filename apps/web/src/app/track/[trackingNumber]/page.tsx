@@ -15,16 +15,16 @@ export default async function TrackingResultsPage({ params }: Params) {
     <div className="mx-auto max-w-4xl px-6 py-10">
       <div className="text-center mb-8">
         <h1 className="font-display text-3xl font-bold mb-4">{dict.track?.resultsTitle ?? 'Package Tracking'}</h1>
-        <p className="text-gray-600 dark:text-slate-400">
+        <p className="text-ui-muted dark:text-ui-faint">
           {dict.track?.resultsDesc ?? 'Real-time updates for tracking number'}: <span className="font-mono font-medium">{trackingNumber}</span>
         </p>
       </div>
 
       <Suspense fallback={
-        <div className="rounded-2xl border bg-white dark:bg-slate-900 p-8">
+        <div className="rounded-2xl border glass-surface p-8">
           <div className="flex items-center justify-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-            <span className="ml-3 text-gray-600 dark:text-slate-400">{dict.track?.loading ?? 'Loading tracking information...'}</span>
+            <span className="ml-3 text-ui-muted dark:text-ui-faint">{dict.track?.loading ?? 'Loading tracking information...'}</span>
           </div>
         </div>
       }>

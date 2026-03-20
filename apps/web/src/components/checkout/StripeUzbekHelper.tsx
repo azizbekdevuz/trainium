@@ -10,8 +10,8 @@ export function StripeUzbekHelper() {
   return (
     <div className={`text-sm space-y-1 p-3 rounded-lg ${
       theme === 'dark' 
-        ? 'bg-slate-800 text-slate-300' 
-        : 'bg-gray-50 text-gray-700'
+        ? 'bg-slate-800 text-ui-faint' 
+        : 'bg-ui-inset text-ui-secondary'
     }`} id="stripe-uz-labels">
       <div className="font-medium">{t('checkout.cardHelpTitle', "Kartangiz ma'lumotlarini kiriting")}</div>
       <div>• {t('checkout.cardHelpCardNumber', "Karta raqami")}</div>

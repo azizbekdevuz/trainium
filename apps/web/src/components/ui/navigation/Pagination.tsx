@@ -89,13 +89,13 @@ export function Pagination({
       {hasPrev ? (
         <Link
           href={buildUrl(currentPage - 1)}
-          className="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors"
+          className="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-ui-secondary bg-ui-elevated border border-ui-default rounded-lg hover:bg-ui-inset hover:text-ui-primary transition-colors"
         >
           <ChevronLeft className="h-4 w-4" />
           {prevLabel}
         </Link>
       ) : (
-        <span className="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
+        <span className="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-ui-faint bg-ui-inset border border-ui-default rounded-lg cursor-not-allowed">
           <ChevronLeft className="h-4 w-4" />
           {prevLabel}
         </span>
@@ -111,7 +111,7 @@ export function Pagination({
               className={`px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors ${
                 page === currentPage
                   ? 'bg-blue-600 text-white'
-                  : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-900'
+                  : 'text-ui-secondary bg-ui-elevated border border-ui-default hover:bg-ui-inset hover:text-ui-primary'
               }`}
             >
               {page}
@@ -124,13 +124,13 @@ export function Pagination({
       {hasNext ? (
         <Link
           href={buildUrl(currentPage + 1)}
-          className="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors"
+          className="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-ui-secondary bg-ui-elevated border border-ui-default rounded-lg hover:bg-ui-inset hover:text-ui-primary transition-colors"
         >
           {nextLabel}
           <ChevronRight className="h-4 w-4" />
         </Link>
       ) : (
-        <span className="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
+        <span className="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-ui-faint bg-ui-inset border border-ui-default rounded-lg cursor-not-allowed">
           {nextLabel}
           <ChevronRight className="h-4 w-4" />
         </span>

@@ -76,7 +76,7 @@ export function NotificationBell() {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-600 hover:text-gray-800 transition-colors"
+        className="relative p-2 text-ui-muted hover:text-ui-primary transition-colors"
       >
         <Bell className="h-5 w-5" />
         {totalUnreadCount > 0 && (

@@ -20,7 +20,7 @@ export function RepliesThread({ parentId, initialCount }: RepliesThreadProps) {
     <div className="mt-3">
       {!open ? (
         <button
-          className="text-xs rounded-lg border px-2 h-7 hover:bg-gray-50"
+          className="text-xs rounded-lg border px-2 h-7 hover:bg-ui-inset"
           onClick={() => {
             setOpen(true);
             startTransition(async () => {
@@ -39,18 +39,18 @@ export function RepliesThread({ parentId, initialCount }: RepliesThreadProps) {
         <div>
           <ul className="space-y-2">
             {replies.map((rp) => (
-              <li key={rp.id} className="rounded-lg border p-3 bg-gray-50 dark:bg-slate-800 text-sm">
-                <div className="text-gray-600 dark:text-slate-300">
+              <li key={rp.id} className="rounded-lg border p-3 bg-ui-inset dark:bg-ui-elevated text-sm">
+                <div className="text-ui-muted dark:text-ui-faint">
                   <span className="font-medium">{rp.user?.name ?? t('reviews.anonymous', 'Anonymous')}</span>
                 </div>
-                <p className="mt-1 text-gray-700 dark:text-slate-200">{rp.body}</p>
+                <p className="mt-1 text-ui-secondary">{rp.body}</p>
               </li>
             ))}
           </ul>
           <div className="mt-2 flex gap-2">
             {cursor && (
               <button
-                className="text-xs rounded-lg border px-2 h-7 hover:bg-gray-50 dark:hover:bg-slate-700 dark:text-slate-100"
+                className="text-xs rounded-lg border px-2 h-7 hover:bg-ui-inset dark:hover:bg-ui-inset dark:text-slate-100"
                 disabled={isPending}
                 onClick={() => {
                   startTransition(async () => {
@@ -67,7 +67,7 @@ export function RepliesThread({ parentId, initialCount }: RepliesThreadProps) {
               </button>
             )}
             <button
-              className="text-xs rounded-lg border px-2 h-7 hover:bg-gray-50 dark:hover:bg-slate-700 dark:text-slate-100"
+              className="text-xs rounded-lg border px-2 h-7 hover:bg-ui-inset dark:hover:bg-ui-inset dark:text-slate-100"
               onClick={() => {
                 setOpen(false);
                 setReplies([]);

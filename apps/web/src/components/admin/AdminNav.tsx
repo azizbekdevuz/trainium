@@ -19,7 +19,7 @@ interface AdminNavProps {
 const baseLinkClass =
   'px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 hover:scale-105';
 const inactiveClass =
-  'bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700';
+  'bg-ui-inset dark:bg-ui-elevated text-ui-secondary hover:bg-ui-inset dark:hover:bg-ui-inset';
 const activeClass = 'bg-cyan-600 text-white';
 
 export function AdminNav({ lang, dict, activeSegment }: AdminNavProps) {

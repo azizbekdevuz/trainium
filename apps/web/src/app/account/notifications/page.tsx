@@ -58,9 +58,9 @@ export default async function NotificationsPage({ searchParams }: Props) {
         <div className="flex gap-3">
           <Link
             href={`/${lang}/account`}
-            className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-ui-muted hover:text-ui-primary border glass-surface border-ui-default rounded-lg hover:bg-ui-inset transition-colors"
           >
-            {dict.notifications?.backToAccount ?? dict.nav?.account ?? 'Back to Account'}
+            {dict.userNotifications?.backToAccount ?? 'Back to Account'}
           </Link>
         </div>
       </div>

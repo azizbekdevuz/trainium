@@ -29,16 +29,16 @@ export default async function AdminAnalyticsSeoPage() {
     process.env.NEXT_PUBLIC_LOOKER_STUDIO_REPORT_URL_DARK || DEFAULT_LOOKER_DARK_URL;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="bg-ui-inset dark:bg-ui-base">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-10">
         {/* Header + Admin Nav */}
         <div className="flex flex-col gap-4 sm:gap-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="font-display text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">
+              <h1 className="font-display text-2xl sm:text-3xl font-bold text-ui-primary">
                 {dict.admin?.analyticsSeo?.title ?? 'Visitor Analytics'}
               </h1>
-              <p className="text-slate-600 dark:text-slate-400 mt-1 text-sm sm:text-base">
+              <p className="text-ui-muted dark:text-ui-faint mt-1 text-sm sm:text-base">
                 {dict.admin?.analyticsSeo?.subtitle ??
                   'Traffic, pages, devices, referrers and more.'}
               </p>
@@ -49,17 +49,17 @@ export default async function AdminAnalyticsSeoPage() {
         </div>
 
         {/* Compact GA + Looker info bar */}
-        <div className="mt-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 sm:p-5">
+        <div className="mt-6 rounded-2xl border border-ui-default dark:border-ui-subtle glass-surface p-4 sm:p-5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
                 <BarChart3 className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                <h2 className="text-base font-semibold text-ui-primary">
                   {dict.admin?.analyticsSeo?.dataSource ?? 'Data source'}
                 </h2>
-                <p className="mt-0.5 text-sm text-slate-600 dark:text-slate-400">
+                <p className="mt-0.5 text-sm text-ui-muted dark:text-ui-faint">
                   {gaId
                     ? `${dict.admin?.analyticsSeo?.gaConnected ?? 'Google Analytics'} (${gaId.substring(0, 12)}…)`
                     : dict.admin?.analyticsSeo?.gaNotConfigured ??
@@ -72,7 +72,7 @@ export default async function AdminAnalyticsSeoPage() {
                 href="https://analytics.google.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 font-medium text-sm hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-ui-default dark:border-ui-subtle text-ui-secondary font-medium text-sm hover:bg-ui-inset dark:hover:bg-ui-elevated transition"
               >
                 <ExternalLink className="w-4 h-4" />
                 {dict.admin?.analyticsSeo?.openGA ?? 'Open GA'}
@@ -81,7 +81,7 @@ export default async function AdminAnalyticsSeoPage() {
                 href="https://lookerstudio.google.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 font-medium text-sm hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-ui-default dark:border-ui-subtle text-ui-secondary font-medium text-sm hover:bg-ui-inset dark:hover:bg-ui-elevated transition"
               >
                 <ExternalLink className="w-4 h-4" />
                 {dict.admin?.analyticsSeo?.openLooker ?? 'Looker Studio'}

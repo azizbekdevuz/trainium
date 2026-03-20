@@ -135,12 +135,12 @@ export default async function AdminAnalyticsPage({
   const avgOrder = orders > 0 ? Math.round(revenue / orders) : 0;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="bg-ui-inset dark:bg-ui-base">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">{dict.admin?.analytics?.title ?? 'Analytics'}</h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-1 text-sm sm:text-base">{dict.admin?.analytics?.subtitle ?? 'Key business metrics at a glance.'}</p>
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-ui-primary">{dict.admin?.analytics?.title ?? 'Analytics'}</h1>
+            <p className="text-ui-muted dark:text-ui-faint mt-1 text-sm sm:text-base">{dict.admin?.analytics?.subtitle ?? 'Key business metrics at a glance.'}</p>
           </div>
         </div>
 
@@ -152,24 +152,24 @@ export default async function AdminAnalyticsPage({
         {/* Controls */}
         <form className="mt-4 sm:mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
           <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-            <label className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">{dict.admin?.analytics?.range ?? 'Range'}</label>
-            <select name="range" defaultValue={data.range} className="h-9 sm:h-10 rounded-xl border border-slate-300 dark:border-slate-600 px-3 text-xs sm:text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100">
+            <label className="text-xs sm:text-sm text-ui-muted dark:text-ui-faint">{dict.admin?.analytics?.range ?? 'Range'}</label>
+            <select name="range" defaultValue={data.range} className="h-9 sm:h-10 rounded-xl border border-ui-default dark:border-ui-subtle px-3 text-xs sm:text-sm glass-surface text-ui-primary">
               <option value="7d">{dict.admin?.analytics?.range7d ?? 'Last 7 days'}</option>
               <option value="30d">{dict.admin?.analytics?.range30d ?? 'Last 30 days'}</option>
               <option value="90d">{dict.admin?.analytics?.range90d ?? 'Last 90 days'}</option>
             </select>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-            <label className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">{dict.admin?.analytics?.provider ?? 'Provider'}</label>
-            <select name="provider" defaultValue={data.provider} className="h-9 sm:h-10 rounded-xl border border-slate-300 dark:border-slate-600 px-3 text-xs sm:text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100">
+            <label className="text-xs sm:text-sm text-ui-muted dark:text-ui-faint">{dict.admin?.analytics?.provider ?? 'Provider'}</label>
+            <select name="provider" defaultValue={data.provider} className="h-9 sm:h-10 rounded-xl border border-ui-default dark:border-ui-subtle px-3 text-xs sm:text-sm glass-surface text-ui-primary">
               <option value="ALL">{dict.admin?.analytics?.all ?? 'All'}</option>
               <option value="STRIPE">{dict.admin?.analytics?.stripe ?? 'Stripe'}</option>
               <option value="TOSS">{dict.admin?.analytics?.toss ?? 'Toss'}</option>
             </select>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-            <label className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">{dict.admin?.analytics?.topProducts ?? 'Top Products'}</label>
-            <select name="sort" defaultValue={data.sort} className="h-9 sm:h-10 rounded-xl border border-slate-300 dark:border-slate-600 px-3 text-xs sm:text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100">
+            <label className="text-xs sm:text-sm text-ui-muted dark:text-ui-faint">{dict.admin?.analytics?.topProducts ?? 'Top Products'}</label>
+            <select name="sort" defaultValue={data.sort} className="h-9 sm:h-10 rounded-xl border border-ui-default dark:border-ui-subtle px-3 text-xs sm:text-sm glass-surface text-ui-primary">
               <option value="revenue">{dict.admin?.analytics?.byRevenue ?? 'By Revenue'}</option>
               <option value="units">{dict.admin?.analytics?.byUnits ?? 'By Units'}</option>
             </select>
@@ -179,17 +179,17 @@ export default async function AdminAnalyticsPage({
 
         {/* KPI cards */}
         <div className="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-gradient-to-br from-cyan-50 to-white dark:from-slate-900 dark:to-slate-900 dark:bg-slate-900 p-4 sm:p-5 shadow-sm">
-            <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">{dict.admin?.analytics?.revenue ?? 'Revenue'}</div>
-            <div className="mt-2 text-lg sm:text-2xl font-semibold text-slate-900 dark:text-slate-100">{formatCurrency(revenue, 'KRW')}</div>
+          <div className="rounded-2xl border border-ui-default dark:border-ui-subtle bg-gradient-to-br from-cyan-50 to-white dark:from-slate-900 dark:to-slate-900 dark:bg-ui-surface p-4 sm:p-5 shadow-sm">
+            <div className="text-xs sm:text-sm text-ui-muted dark:text-ui-faint">{dict.admin?.analytics?.revenue ?? 'Revenue'}</div>
+            <div className="mt-2 text-lg sm:text-2xl font-semibold text-ui-primary">{formatCurrency(revenue, 'KRW')}</div>
           </div>
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-gradient-to-br from-emerald-50 to-white dark:from-slate-900 dark:to-slate-900 dark:bg-slate-900 p-4 sm:p-5 shadow-sm">
-            <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">{dict.admin?.analytics?.orders ?? 'Orders'}</div>
-            <div className="mt-2 text-lg sm:text-2xl font-semibold text-slate-900 dark:text-slate-100">{orders}</div>
+          <div className="rounded-2xl border border-ui-default dark:border-ui-subtle bg-gradient-to-br from-emerald-50 to-white dark:from-slate-900 dark:to-slate-900 dark:bg-ui-surface p-4 sm:p-5 shadow-sm">
+            <div className="text-xs sm:text-sm text-ui-muted dark:text-ui-faint">{dict.admin?.analytics?.orders ?? 'Orders'}</div>
+            <div className="mt-2 text-lg sm:text-2xl font-semibold text-ui-primary">{orders}</div>
           </div>
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-gradient-to-br from-indigo-50 to-white dark:from-slate-900 dark:to-slate-900 dark:bg-slate-900 p-4 sm:p-5 shadow-sm sm:col-span-2 lg:col-span-1">
-            <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">{dict.admin?.analytics?.aov ?? 'Avg. Order Value'}</div>
-            <div className="mt-2 text-lg sm:text-2xl font-semibold text-slate-900 dark:text-slate-100">{formatCurrency(avgOrder, 'KRW')}</div>
+          <div className="rounded-2xl border border-ui-default dark:border-ui-subtle bg-gradient-to-br from-indigo-50 to-white dark:from-slate-900 dark:to-slate-900 dark:bg-ui-surface p-4 sm:p-5 shadow-sm sm:col-span-2 lg:col-span-1">
+            <div className="text-xs sm:text-sm text-ui-muted dark:text-ui-faint">{dict.admin?.analytics?.aov ?? 'Avg. Order Value'}</div>
+            <div className="mt-2 text-lg sm:text-2xl font-semibold text-ui-primary">{formatCurrency(avgOrder, 'KRW')}</div>
           </div>
         </div>
 
@@ -202,29 +202,29 @@ export default async function AdminAnalyticsPage({
 
         {/* Status distribution */}
         <div className="mt-4 sm:mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 sm:p-5">
-            <div className="mb-3 font-medium text-slate-900 dark:text-slate-100 text-sm sm:text-base">{dict.admin?.analytics?.ordersByStatus ?? 'Orders by Status'}</div>
+          <div className="rounded-2xl border border-ui-default dark:border-ui-subtle glass-surface p-4 sm:p-5">
+            <div className="mb-3 font-medium text-ui-primary text-sm sm:text-base">{dict.admin?.analytics?.ordersByStatus ?? 'Orders by Status'}</div>
             <div className="grid grid-cols-2 gap-2">
               {data.byStatus.map((s) => (
-                <div key={s.status} className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-700 p-2 sm:p-3">
-                  <div className="text-xs sm:text-sm text-slate-700 dark:text-slate-300">{s.status}</div>
-                  <div className="font-semibold text-slate-900 dark:text-slate-100 text-xs sm:text-sm">{s._count._all}</div>
+                <div key={s.status} className="flex items-center justify-between rounded-lg border border-ui-default dark:border-ui-subtle p-2 sm:p-3">
+                  <div className="text-xs sm:text-sm text-ui-secondary">{s.status}</div>
+                  <div className="font-semibold text-ui-primary text-xs sm:text-sm">{s._count._all}</div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Top products */}
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 sm:p-5">
-            <div className="mb-3 font-medium text-slate-900 dark:text-slate-100 text-sm sm:text-base">{dict.admin?.analytics?.topProductsHeader ?? 'Top Products'} ({data.sort === 'units' ? (dict.admin?.analytics?.byUnits ?? 'by Units') : (dict.admin?.analytics?.byRevenue ?? 'by Revenue')})</div>
+          <div className="rounded-2xl border border-ui-default dark:border-ui-subtle glass-surface p-4 sm:p-5">
+            <div className="mb-3 font-medium text-ui-primary text-sm sm:text-base">{dict.admin?.analytics?.topProductsHeader ?? 'Top Products'} ({data.sort === 'units' ? (dict.admin?.analytics?.byUnits ?? 'by Units') : (dict.admin?.analytics?.byRevenue ?? 'by Revenue')})</div>
             <div className="divide-y divide-slate-200 dark:divide-slate-700">
               {data.topProducts.map((p, idx) => (
                 <div key={`${p.id}-${idx}`} className="py-2 sm:py-3 flex items-center justify-between">
                   <div className="min-w-0 flex-1">
-                    <div className="text-xs sm:text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{p.name}</div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400">{p.units} units</div>
+                    <div className="text-xs sm:text-sm font-medium text-ui-primary truncate">{p.name}</div>
+                    <div className="text-xs text-ui-faint dark:text-ui-faint">{p.units} units</div>
                   </div>
-                  <div className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-slate-100 ml-2">{formatCurrency(p.revenue, 'KRW')}</div>
+                  <div className="text-xs sm:text-sm font-semibold text-ui-primary ml-2">{formatCurrency(p.revenue, 'KRW')}</div>
                 </div>
               ))}
             </div>

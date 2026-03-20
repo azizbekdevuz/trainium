@@ -72,7 +72,7 @@ export default function AccountClient({ data }: { data: DataProps }) {
               {t('account.greeting', 'Hi, ')}{localUser.name || t('account.user', 'User')} <Icon name="smile" className="w-5 h-5 sm:w-6 sm:h-6 inline ml-1" />
             </h1>
             {/* ✅ tolerate missing email */}
-            <p className="text-gray-600 text-sm sm:text-base">{sessionUser.email ?? "—"}</p>
+            <p className="text-ui-muted text-sm sm:text-base">{sessionUser.email ?? "—"}</p>
           </div>
         </div>
         
@@ -80,7 +80,7 @@ export default function AccountClient({ data }: { data: DataProps }) {
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
           <button
             onClick={() => setEditorOpen(true)}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 border border-slate-300 text-slate-700 rounded-xl text-sm font-medium hover:bg-gray-50 transition dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+            className="inline-flex items-center glass-surface justify-center gap-2 px-4 py-2 border border-ui-default text-ui-secondary rounded-xl text-sm font-medium hover:bg-ui-inset transition dark:border-ui-subtle dark:text-slate-200 dark:hover:bg-ui-elevated"
           >
             <Icon name="user" className="w-4 h-4" /> {t('account.profile.edit', 'Edit profile')}
           </button>
@@ -99,7 +99,7 @@ export default function AccountClient({ data }: { data: DataProps }) {
           {/* Notifications Link */}
           <Link
             href={`/${lang}/account/notifications`}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200 transition dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-ui-inset text-ui-secondary rounded-xl text-sm font-medium hover:bg-ui-inset transition dark:bg-ui-elevated dark:text-slate-200 dark:hover:bg-ui-inset"
           >
             <Icon name="bell" className="w-4 h-4" /> {t('account.notifications', 'Notifications')}
           </Link>
@@ -116,7 +116,7 @@ export default function AccountClient({ data }: { data: DataProps }) {
 
       <div className="grid gap-6 sm:gap-8 grid-cols-1 lg:grid-cols-2">
         {/* orders */}
-        <section className="rounded-2xl border bg-white dark:bg-slate-900 p-4 sm:p-5">
+        <section className="rounded-2xl border glass-surface p-4 sm:p-5">
           <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">{t('account.orderHistory', 'Order History')}</h2>
           {orders.length ? (
             <ul className="divide-y">
@@ -124,24 +124,24 @@ export default function AccountClient({ data }: { data: DataProps }) {
                 return (
                   <li
                     key={o.id}
-                    className="py-3 px-2 rounded-lg hover:bg-gray-50 transition animate-fade-up"
+                    className="py-3 px-2 rounded-lg hover:bg-ui-inset transition animate-fade-up"
                     style={{ animationDelay: `${i * 60}ms` }} // subtle stagger
                   >
                     <Link href={`/${lang}/account/orders/${o.id}`} className="flex w-full items-center justify-between">
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm sm:text-base text-gray-500 truncate">
+                        <div className="text-sm sm:text-base text-ui-primary truncate dark:text-ui-primary">
                           {(() => {
                             const short = o.id.includes('_') ? o.id.slice(-6) : o.id.slice(0, 8);
                             return `${t('account.order', 'Order')} ${short.toUpperCase()}`;
-                          })()}
+                          })()}  
                         </div>
-                        <div className="text-xs sm:text-sm text-gray-400"><LocalTime date={o.createdAt} /></div>
+                        <div className="text-xs sm:text-sm text-ui-primary dark:text-ui-primary"><LocalTime date={o.createdAt} /></div>
                       </div>
                       <div className="text-right ml-3">
-                        <div className="text-sm sm:text-base font-semibold">
+                        <div className="text-sm sm:text-base font-semibold text-ui-primary dark:text-ui-primary">
                           {formatCurrency(o.totalCents, o.currency)}
                         </div>
-                        <div className={`text-xs px-2 py-1 rounded-full ${getStatusConfig(o.status as any).color} dark:border dark:border-slate-700`}>
+                        <div className={`text-xs px-2 py-1 rounded-full ${getStatusConfig(o.status as any).color} dark:border dark:border-ui-subtle`}>
                           {(() => {
                             const key = o.status.toLowerCase();
                             const ordersDict: unknown = t('admin.orders') as any;
@@ -155,12 +155,12 @@ export default function AccountClient({ data }: { data: DataProps }) {
               })}
             </ul>
           ) : (
-            <p className="text-sm sm:text-base text-gray-500">{t('account.noOrders', 'No orders yet.')}</p>
+            <p className="text-sm sm:text-base text-ui-secondary dark:text-ui-muted">{t('account.noOrders', 'No orders yet.')}</p>
           )}
         </section>
 
         {/* active cart */}
-        <section className="rounded-2xl border bg-white dark:bg-slate-900 p-4 sm:p-5">
+        <section className="rounded-2xl border glass-surface p-4 sm:p-5">
           <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">{t('account.activeCart', 'Active Cart')}</h2>
           {activeCart ? (
             <>
@@ -171,15 +171,15 @@ export default function AccountClient({ data }: { data: DataProps }) {
                     className="flex justify-between items-start animate-fade-up"
                     style={{ animationDelay: `${i * 40}ms` }}
                   >
-                    <span className="text-gray-800 flex-1 min-w-0 pr-2">
+                    <span className="text-ui-primary flex-1 min-w-0 pr-2">
                       {it.product.name}{it.variant ? ` (${it.variant.name})` : ""}
                     </span>
-                    <span className="text-gray-600 text-sm sm:text-base flex-shrink-0">x{it.qty}</span>
+                    <span className="text-ui-muted text-sm sm:text-base flex-shrink-0">x{it.qty}</span>
                   </li>
                 ))}
               </ul>
               <div className="mt-3 sm:mt-4 text-right text-sm sm:text-base">
-                <span className="text-gray-500">{t('account.total', 'Total')}: </span>
+                <span className="text-ui-faint">{t('account.total', 'Total')}: </span>
                 <span className="font-semibold">
                   {formatCurrency(activeCartTotal)}
                 </span>
@@ -192,7 +192,7 @@ export default function AccountClient({ data }: { data: DataProps }) {
               </Link>
             </>
           ) : (
-            <p className="text-sm sm:text-base text-gray-500">{t('account.emptyCart', 'Your cart is empty.')}</p>
+            <p className="text-sm sm:text-base text-ui-faint">{t('account.emptyCart', 'Your cart is empty.')}</p>
           )}
         </section>
       </div>
@@ -224,7 +224,7 @@ export default function AccountClient({ data }: { data: DataProps }) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <div className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-xl max-w-lg w-full p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
+                <div className="relative modal-surface rounded-2xl max-w-lg w-full p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
                   <Dialog.Title className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
                     {t('account.order', 'Order')} {selectedOrder.id.slice(0, 8).toUpperCase()}
                   </Dialog.Title>
@@ -232,7 +232,7 @@ export default function AccountClient({ data }: { data: DataProps }) {
                   {/* Order Items */}
                   <div className="mb-4 sm:mb-6">
                     <h3 className="font-medium mb-2 text-sm sm:text-base">{t('account.modal.items', 'Items')}</h3>
-                    <div className="space-y-2 text-xs sm:text-sm text-gray-700 dark:text-gray-300">
+                    <div className="space-y-2 text-xs sm:text-sm text-ui-secondary">
                       {selectedOrder.items.map((it) => (
                         <div key={it.id} className="flex justify-between items-start">
                           <span className="flex-1 min-w-0 pr-2">
@@ -246,9 +246,9 @@ export default function AccountClient({ data }: { data: DataProps }) {
 
                   {/* Shipping Details */}
                   {selectedOrder.shipping && (
-                    <div className="mb-4 sm:mb-6 p-3 bg-gray-50 dark:bg-slate-800 rounded-lg">
+                    <div className="mb-4 sm:mb-6 p-3 bg-ui-inset dark:bg-ui-elevated rounded-lg">
                       <h3 className="font-medium mb-2 text-sm sm:text-base">{t('account.modal.shippingDetails', 'Shipping Details')}</h3>
-                      <div className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 space-y-1">
+                      <div className="text-xs sm:text-sm text-ui-secondary space-y-1">
                         <div><span className="font-medium">{t('account.modal.name', 'Name')}:</span> {selectedOrder.shipping.fullName}</div>
                         <div><span className="font-medium">{t('account.modal.phone', 'Phone')}:</span> {selectedOrder.shipping.phone}</div>
                         <div><span className="font-medium">{t('account.modal.address', 'Address')}:</span> {selectedOrder.shipping.address1}</div>
@@ -304,12 +304,12 @@ export default function AccountClient({ data }: { data: DataProps }) {
             </Transition.Child>
             <div className="fixed inset-0 flex items-center justify-center p-4">
               <Transition.Child as={Fragment} enter="ease-out duration-200" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-150" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
-                <div className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-xl max-w-md w-full p-4 sm:p-6">
+                <div className="relative modal-surface rounded-2xl max-w-md w-full p-4 sm:p-6">
                   <Dialog.Title className="text-lg sm:text-xl font-semibold mb-2">{t('account.profile.deleteTitle', 'Delete account?')}</Dialog.Title>
-                  <p className="text-sm sm:text-base text-gray-600 dark:text-slate-300">{t('account.profile.deleteBody', 'This will permanently remove your profile data. Orders and legal records remain for compliance. This action cannot be undone.')}</p>
+                  <p className="text-sm sm:text-base text-ui-muted dark:text-ui-faint">{t('account.profile.deleteBody', 'This will permanently remove your profile data. Orders and legal records remain for compliance. This action cannot be undone.')}</p>
                   {deleteError && <div className="mt-3 text-sm text-red-600">{deleteError}</div>}
                   <div className="mt-4 flex flex-col sm:flex-row justify-end gap-2">
-                    <button onClick={() => setDeleteOpen(false)} disabled={deleting} className="h-10 px-3 rounded-xl border hover:bg-gray-50 dark:hover:bg-slate-800 text-sm sm:text-base">{t('common.cancel', 'Cancel')}</button>
+                    <button onClick={() => setDeleteOpen(false)} disabled={deleting} className="h-10 px-3 rounded-xl border hover:bg-ui-inset dark:hover:bg-ui-elevated text-sm sm:text-base">{t('common.cancel', 'Cancel')}</button>
                     <button onClick={async () => {
                       setDeleting(true); setDeleteError(null);
                       try {

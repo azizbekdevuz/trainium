@@ -88,14 +88,14 @@ export default async function AdminOrdersPage({
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="bg-ui-inset dark:bg-ui-base">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">{dict.admin?.orders?.title ?? 'Order Management'}</h1>
-            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-1">{dict.admin?.orders?.subtitle ?? 'Manage orders, update status, and track fulfillment.'}</p>
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-ui-primary">{dict.admin?.orders?.title ?? 'Order Management'}</h1>
+            <p className="text-sm sm:text-base text-ui-muted dark:text-ui-faint mt-1">{dict.admin?.orders?.subtitle ?? 'Manage orders, update status, and track fulfillment.'}</p>
           </div>
-          <div className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+          <div className="text-xs sm:text-sm text-ui-faint dark:text-ui-faint">
             {pagination.totalCount} {dict.admin?.orders?.total ?? 'total orders'}
           </div>
         </div>
@@ -112,14 +112,14 @@ export default async function AdminOrdersPage({
               name="q" 
               defaultValue={params?.q || ''} 
               placeholder={dict.admin?.orders?.searchPlaceholder ?? 'Search by order ID, customer email, name, or shipping name'} 
-              className="h-10 sm:h-11 w-full rounded-xl border border-slate-300 dark:border-slate-600 px-3 text-sm sm:text-base bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-transparent" 
+              className="h-10 sm:h-11 w-full rounded-xl border border-ui-default dark:border-ui-subtle px-3 text-sm sm:text-base glass-surface text-ui-primary placeholder:text-ui-faint dark:placeholder:text-ui-faint focus:ring-2 focus:ring-cyan-500 focus:border-transparent" 
             />
           </div>
           <div>
             <select 
               name="status" 
               defaultValue={params?.status || 'all'} 
-              className="h-10 sm:h-11 rounded-xl border border-slate-300 dark:border-slate-600 px-3 min-w-[120px] sm:min-w-[150px] text-sm sm:text-base bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              className="h-10 sm:h-11 rounded-xl border border-ui-default dark:border-ui-subtle px-3 min-w-[120px] sm:min-w-[150px] text-sm sm:text-base glass-surface text-ui-primary focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
             >
               {statusOptions.map(option => (
                 <option key={option.value} value={option.value}>
@@ -142,7 +142,7 @@ export default async function AdminOrdersPage({
         {/* Pagination */}
         {pagination.totalPages > 1 && (
           <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+            <div className="text-xs sm:text-sm text-ui-muted dark:text-ui-faint">
               {dict.admin?.orders?.showingPrefix ?? 'Showing'} {((pagination.page - 1) * pagination.pageSize) + 1} {dict.admin?.orders?.to ?? 'to'} {Math.min(pagination.page * pagination.pageSize, pagination.totalCount)} {dict.admin?.orders?.of ?? 'of'} {pagination.totalCount} {dict.admin?.orders?.orders ?? 'orders'}
             </div>
             <div className="flex gap-2">
@@ -152,7 +152,7 @@ export default async function AdminOrdersPage({
                     ...params,
                     page: String(pagination.page - 1)
                   })}`}
-                  className="px-3 py-2 text-xs sm:text-sm border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors"
+                  className="px-3 py-2 text-xs sm:text-sm border border-ui-default dark:border-ui-subtle rounded-lg hover:bg-ui-inset dark:hover:bg-ui-elevated text-ui-secondary transition-colors"
                 >
                   {dict.admin?.orders?.prev ?? 'Previous'}
                 </Link>
@@ -163,7 +163,7 @@ export default async function AdminOrdersPage({
                     ...params,
                     page: String(pagination.page + 1)
                   })}`}
-                  className="px-3 py-2 text-xs sm:text-sm border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors"
+                  className="px-3 py-2 text-xs sm:text-sm border border-ui-default dark:border-ui-subtle rounded-lg hover:bg-ui-inset dark:hover:bg-ui-elevated text-ui-secondary transition-colors"
                 >
                   {dict.admin?.orders?.next ?? 'Next'}
                 </Link>
@@ -174,7 +174,7 @@ export default async function AdminOrdersPage({
 
         {orders.length === 0 && (
           <div className="mt-6 sm:mt-8 text-center py-8 sm:py-12">
-            <div className="text-slate-500 dark:text-slate-400 text-sm sm:text-base">{dict.admin?.orders?.noResults ?? 'No orders found matching your criteria.'}</div>
+            <div className="text-ui-faint dark:text-ui-faint text-sm sm:text-base">{dict.admin?.orders?.noResults ?? 'No orders found matching your criteria.'}</div>
           </div>
         )}
       </div>

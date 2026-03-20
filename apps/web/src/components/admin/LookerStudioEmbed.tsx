@@ -28,7 +28,7 @@ export function LookerStudioEmbed({
 
   return (
     <div
-      className="relative w-full overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
+      className="relative w-full overflow-hidden rounded-2xl border border-ui-default dark:border-ui-subtle glass-surface"
       style={{ minHeight }}
     >
       <iframe

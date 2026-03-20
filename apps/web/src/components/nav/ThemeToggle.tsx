@@ -14,7 +14,7 @@ export default function ThemeToggle() {
       aria-label="Toggle theme"
       aria-pressed={pressed}
       onClick={() => { setPressed(p => !p); toggle(); }}
-      className="relative h-9 w-9 rounded-lg border text-sm flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/10 transition"
+      className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--border-default)] text-sm transition hover:bg-black/5 dark:hover:bg-ui-inset"
     >
       {/* Sun / Moon icon */}
       <SunIcon className="absolute transition-opacity text-amber-500 dark:opacity-0 w-4 h-4" />

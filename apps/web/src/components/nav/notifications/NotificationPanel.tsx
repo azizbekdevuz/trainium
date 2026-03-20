@@ -34,15 +34,15 @@ export function NotificationPanel({
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-[80]"
+        className="fixed inset-0 z-[80] bg-black/5 dark:bg-black/20"
         onClick={onClose}
       />
 
       {/* Notification Panel */}
-      <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-slate-900 border rounded-lg shadow-lg z-[90] max-h-96 overflow-hidden">
+      <div className="absolute right-0 top-full mt-2 w-80 frosted-panel rounded-xl z-[90] max-h-96 overflow-hidden">
         <div className="p-4 border-b flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-gray-900 dark:text-slate-100">{dict.notifications?.bellTitle ?? 'Notifications'}</h3>
+            <h3 className="font-semibold text-ui-primary">{dict.notifications?.bellTitle ?? 'Notifications'}</h3>
             {isConnected ? (
               <Wifi className="h-4 w-4 text-green-500" />
             ) : (
@@ -53,21 +53,21 @@ export function NotificationPanel({
             <Link
               href={`/${lang}/account/notifications`}
               onClick={onClose}
-              className="text-xs text-blue-600 hover:text-blue-800"
+              className="text-xs text-accent hover:opacity-80"
             >
               {dict.notifications?.viewAll ?? 'View all'}
             </Link>
             {totalUnreadCount > 0 && (
               <button
                 onClick={onMarkAllAsRead}
-                className="text-xs text-blue-600 hover:text-blue-800"
+                className="text-xs text-accent hover:opacity-80"
               >
                 {dict.notifications?.markAllRead ?? 'Mark all read'}
               </button>
             )}
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-ui-faint hover:text-ui-muted"
             >
               <X className="h-4 w-4" />
             </button>
@@ -76,7 +76,7 @@ export function NotificationPanel({
 
         <div className="max-h-80 overflow-y-auto">
           {notifications.length === 0 ? (
-            <div className="p-4 text-center text-gray-500 dark:text-slate-400 text-sm">
+            <div className="p-4 text-center text-ui-faint dark:text-ui-faint text-sm">
               {isConnected ? (dict.notifications?.none ?? 'No notifications yet') : (dict.notifications?.connecting ?? 'Connecting to real-time notifications...')}
             </div>
           ) : (
@@ -84,7 +84,7 @@ export function NotificationPanel({
               {notifications.slice(0, 10).map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-4 hover:bg-gray-50 dark:hover:bg-slate-800 cursor-pointer ${!notification.read ? 'bg-blue-50 dark:bg-slate-800/80 dark:border-l-2 dark:border-cyan-700' : ''}`}
+                  className={`p-4 hover:bg-ui-inset dark:hover:bg-ui-elevated cursor-pointer ${!notification.read ? 'bg-blue-100/60 dark:bg-blue-950/30 border-l-3 border-l-blue-500 dark:border-l-blue-400' : ''}`}
                   onClick={() => {
                     if (!notification.read) {
                       const ids = (notification as { id: string; _dedupIds?: string[] })._dedupIds ?? [notification.id];
@@ -93,15 +93,15 @@ export function NotificationPanel({
                   }}
                 >
                   <div className="flex items-start gap-3">
-                    <div className={`w-2 h-2 rounded-full mt-2 ${!notification.read ? 'bg-blue-500' : 'bg-gray-300'}`} />
+                    <div className={`w-2 h-2 rounded-full mt-2 ${!notification.read ? 'bg-blue-500 animate-pulse' : 'bg-gray-300 dark:bg-ui-inset'}`} />
                     <div className="flex-1 min-w-0">
-                      <h4 className={`text-sm font-medium truncate ${notification.read ? 'text-gray-900 dark:text-slate-500' : 'text-gray-900 dark:text-slate-100'}`}>
+                      <h4 className={`text-sm font-medium truncate ${notification.read ? 'text-ui-primary dark:text-ui-faint' : 'text-ui-primary'}`}>
                         {tr(notification.title)}
                       </h4>
-                      <p className={`text-sm mt-1 ${notification.read ? 'text-gray-600 dark:text-slate-500' : 'text-gray-700 dark:text-slate-100'}`}>
+                      <p className={`text-sm mt-1 ${notification.read ? 'text-ui-muted dark:text-ui-faint' : 'text-ui-secondary dark:text-slate-100'}`}>
                         {tr(notification.message)}
                       </p>
-                      <p className={`text-xs mt-1 ${notification.read ? 'text-gray-400 dark:text-slate-500' : 'text-gray-500 dark:text-slate-300'}`}>
+                      <p className={`text-xs mt-1 ${notification.read ? 'text-ui-faint dark:text-ui-faint' : 'text-ui-faint dark:text-ui-faint'}`}>
                         <LocalTime date={notification.createdAt} />
                       </p>
 
@@ -117,11 +117,11 @@ export function NotificationPanel({
           )}
         </div>
 
-        <div className="p-3 border-t bg-gray-50 dark:bg-slate-800">
+        <div className="p-3 border-t bg-ui-inset dark:bg-ui-elevated">
           <Link
             href={`/${lang}/account/notifications`}
             onClick={onClose}
-            className="block w-full text-sm text-blue-600 hover:text-blue-800 text-center"
+            className="block w-full text-sm text-accent hover:opacity-80 text-center"
           >
             {dict.notifications?.viewAllFooter ?? 'View all notifications'}
           </Link>

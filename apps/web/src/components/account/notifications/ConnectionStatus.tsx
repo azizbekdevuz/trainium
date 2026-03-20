@@ -17,7 +17,7 @@ export function ConnectionStatus({
   onRetry,
 }: ConnectionStatusProps) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 bg-gray-50 dark:bg-slate-800 border border-gray-200 rounded-lg">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 bg-ui-inset dark:bg-ui-elevated border border-ui-default rounded-lg">
       <div className="flex items-center gap-2">
         {isConnected ? (
           <>
@@ -36,7 +36,7 @@ export function ConnectionStatus({
       {!isConnected && (
         <button
           onClick={onRetry}
-          className="text-xs px-2 py-1 border border-gray-300 rounded hover:bg-gray-100 dark:hover:bg-slate-700 dark:text-slate-100 self-start sm:self-auto"
+          className="text-xs px-2 py-1 border border-ui-default rounded hover:bg-ui-inset dark:hover:bg-ui-inset dark:text-slate-100 self-start sm:self-auto"
         >
           {dict.notifications?.retry ?? 'Retry'}
         </button>

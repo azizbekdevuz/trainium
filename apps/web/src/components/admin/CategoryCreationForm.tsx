@@ -145,7 +145,7 @@ export function CategoryCreationForm({ onCategoryCreated, dict, disabled = false
         hasActionButtons={false}
       >
         <form id="category-creation-form" onSubmit={handleSubmit} className="space-y-3">
-          <label className="block text-sm text-gray-700 dark:text-slate-300">
+          <label className="block text-sm text-ui-secondary">
             {dict.admin?.products?.newCategoryName ?? 'Category Name'}
             <input 
               value={formData.name}
@@ -156,7 +156,7 @@ export function CategoryCreationForm({ onCategoryCreated, dict, disabled = false
             />
           </label>
           
-          <label className="block text-sm text-gray-700 dark:text-slate-300">
+          <label className="block text-sm text-ui-secondary">
             {dict.admin?.products?.newCategorySlug ?? 'Category Slug'}
             <input 
               value={formData.slug}
@@ -165,10 +165,10 @@ export function CategoryCreationForm({ onCategoryCreated, dict, disabled = false
               className="mt-1 h-10 w-full rounded-xl border px-3" 
               required
             />
-            <p className="mt-1 text-xs text-gray-500">{dict.admin?.products?.urlFriendlyIdentifier ?? "URL-friendly identifier (auto-generated from name)"}</p>
+            <p className="mt-1 text-xs text-ui-faint">{dict.admin?.products?.urlFriendlyIdentifier ?? "URL-friendly identifier (auto-generated from name)"}</p>
           </label>
           
-          <label className="block text-sm text-gray-700 dark:text-slate-300">
+          <label className="block text-sm text-ui-secondary">
             {dict.admin?.products?.newCategoryOrder ?? 'Display Order'}
             <input 
               type="number"
@@ -178,17 +178,17 @@ export function CategoryCreationForm({ onCategoryCreated, dict, disabled = false
               min="0"
               className="mt-1 h-10 w-full rounded-xl border px-3" 
             />
-            <p className="mt-1 text-xs text-gray-500">{dict.admin?.products?.lowerNumbersFirst ?? "Lower numbers appear first in lists"}</p>
+            <p className="mt-1 text-xs text-ui-faint">{dict.admin?.products?.lowerNumbersFirst ?? "Lower numbers appear first in lists"}</p>
           </label>
 
           {/* Translation Fields */}
-          <div className="pt-4 border-t border-gray-200 dark:border-slate-700">
-            <h4 className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-3">
+          <div className="pt-4 border-t border-ui-default dark:border-ui-subtle">
+            <h4 className="text-sm font-medium text-ui-secondary mb-3">
               {dict.admin?.products?.translations ?? 'Translations'}
             </h4>
             
             <div className="space-y-3">
-              <label className="block text-sm text-gray-700 dark:text-slate-300">
+              <label className="block text-sm text-ui-secondary">
                 {dict.admin?.products?.english ?? 'English'}
                 <input 
                   value={formData.translations.en}
@@ -198,7 +198,7 @@ export function CategoryCreationForm({ onCategoryCreated, dict, disabled = false
                 />
               </label>
               
-              <label className="block text-sm text-gray-700 dark:text-slate-300">
+              <label className="block text-sm text-ui-secondary">
                 {dict.admin?.products?.korean ?? '한국어 (Korean)'}
                 <input 
                   value={formData.translations.ko}
@@ -208,7 +208,7 @@ export function CategoryCreationForm({ onCategoryCreated, dict, disabled = false
                 />
               </label>
               
-              <label className="block text-sm text-gray-700 dark:text-slate-300">
+              <label className="block text-sm text-ui-secondary">
                 {dict.admin?.products?.uzbek ?? "O'zbek (Uzbek)"}
                 <input 
                   value={formData.translations.uz}
@@ -221,13 +221,13 @@ export function CategoryCreationForm({ onCategoryCreated, dict, disabled = false
           </div>
           
           {/* Action Buttons inside form */}
-          <div className="flex-shrink-0 px-5 py-4 border-t border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 rounded-b-2xl">
+          <div className="flex-shrink-0 px-5 py-4 border-t border-ui-default dark:border-ui-subtle bg-ui-inset dark:bg-ui-elevated/50 rounded-b-2xl">
             <div className="flex justify-end space-x-3">
               <button
                 type="button"
                 onClick={() => setOpen(false)}
                 disabled={loading}
-                className="px-6 py-2 rounded-xl border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
+                className="px-6 py-2 rounded-xl border border-ui-default dark:border-ui-subtle text-ui-secondary hover:bg-ui-inset dark:hover:bg-ui-elevated transition-colors disabled:opacity-50"
               >
                 {dict.admin?.products?.cancel ?? 'Cancel'}
               </button>

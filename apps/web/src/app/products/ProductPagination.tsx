@@ -38,7 +38,7 @@ export function ProductPagination({
       >
         {dict.pages.products.prev}
       </PageLinkCursor>
-      <span className="text-sm text-gray-600">
+      <span className="text-sm text-ui-muted">
         {productCount} {dict.pages.products.shown}
       </span>
       <PageLinkCursor
@@ -107,11 +107,11 @@ function PageLinkCursor({
   if (Array.isArray(brands)) brands.forEach((b) => params.append('brands', b));
 
   return disabled ? (
-    <span className="px-3 py-1 text-gray-400">{children}</span>
+    <span className="px-3 py-1 text-ui-faint">{children}</span>
   ) : (
     <Link
       href={`/${lang}/products?${params.toString()}`}
-      className="px-3 py-1 rounded-lg border hover:bg-gray-50"
+      className="px-3 py-1 rounded-lg border hover:bg-ui-inset"
     >
       {children}
     </Link>

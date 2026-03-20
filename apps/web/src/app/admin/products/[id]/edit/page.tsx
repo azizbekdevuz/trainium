@@ -26,7 +26,7 @@ export default async function EditProductPage({ params }: { params: Params }) {
   if (!product) {
     return (
       <div className="mx-auto max-w-3xl px-6 py-10">
-        <p className="text-gray-600">{dict.admin?.products?.notFound ?? 'Product not found.'}</p>
+        <p className="text-ui-muted">{dict.admin?.products?.notFound ?? 'Product not found.'}</p>
         <Link href={`/${lang}/admin/products`} className="text-cyan-700 hover:underline">
           {dict.common?.back ?? 'Back'}
         </Link>
@@ -35,22 +35,22 @@ export default async function EditProductPage({ params }: { params: Params }) {
   }
 
   return (
-    <div className="min-h-screen">
+    <div>
       <div className="mx-auto max-w-7xl px-6 py-8">
         <ToastOnQuery />
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+              <h1 className="text-3xl font-bold text-ui-primary">
                 {dict.admin?.products?.editTitle ?? 'Edit Product'}
               </h1>
-              <p className="text-slate-600 dark:text-slate-400 mt-2">
+              <p className="text-ui-muted dark:text-ui-faint mt-2">
                 {dict.admin?.products?.editDescription ?? 'Update product information and settings'}
               </p>
             </div>
             <Link 
               href={`/${lang}/admin/products`} 
-              className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+              className="px-4 py-2 bg-ui-inset dark:bg-ui-elevated text-ui-secondary rounded-lg text-sm font-medium hover:bg-ui-inset dark:hover:bg-ui-inset transition-colors"
             >
               {dict.common?.back ?? 'Back'}
             </Link>

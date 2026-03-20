@@ -55,14 +55,14 @@ export function FavouritesClient({ favProducts, likedProducts }: { favProducts: 
   return (
     <div className="pb-[calc(env(safe-area-inset-bottom)+6rem)] sm:pb-10">
       {/* Tabs with animated indicator */}
-      <div className="relative inline-grid grid-cols-2 rounded-full border border-gray-200 bg-white/60 backdrop-blur p-1 shadow-sm">
+      <div className="glass-surface relative inline-grid grid-cols-2 rounded-full border border-[var(--border-default)] p-1 shadow-sm">
         <div className={`absolute inset-y-1 left-1 w-1/2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 transition-transform duration-300 ease-out ${indicatorX}`} />
         {tabs.map((tab) => (
           <button
             key={tab.key}
             type="button"
             onClick={() => setActive(tab.key)}
-            className={`relative z-10 px-4 py-2 text-sm font-medium rounded-full transition-colors ${active === tab.key ? 'text-white' : 'text-gray-600 hover:text-gray-800'}`}
+            className={`relative z-10 px-4 py-2 text-sm font-medium rounded-full transition-colors ${active === tab.key ? 'text-white' : 'text-ui-muted hover:text-ui-primary'}`}
             aria-pressed={active === tab.key}
           >
             {tab.label}
@@ -74,7 +74,7 @@ export function FavouritesClient({ favProducts, likedProducts }: { favProducts: 
       <div className="mt-6 min-h-[120px]">
         {active === 'fav' ? (
           favs.length === 0 ? (
-            <div className="text-gray-600 text-sm">{t('favorites.none', 'No favorites yet.')}</div>
+            <div className="text-ui-muted text-sm">{t('favorites.none', 'No favorites yet.')}</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 items-stretch animate-[fadeIn_.35s_ease-out] mb-6 sm:mb-8">
               {favs.map((p) => (
@@ -105,14 +105,14 @@ export function FavouritesClient({ favProducts, likedProducts }: { favProducts: 
                         </button>
                         <Link
                           href={`/products/${p.slug}`}
-                          className="h-11 w-full sm:w-auto px-4 rounded-lg border text-sm font-medium inline-flex items-center justify-center hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                          className="h-11 w-full sm:w-auto px-4 rounded-lg border text-sm font-medium inline-flex items-center justify-center hover:bg-ui-inset focus:outline-none focus:ring-2 focus:ring-cyan-500"
                           onClick={(e) => e.stopPropagation()}
                         >
                           {t('nav.shop', 'Shop')}
                         </Link>
                         <Link
                           href={`/products/${p.slug}#reviews`}
-                          className="h-11 w-full sm:w-auto px-4 rounded-lg border text-sm font-medium inline-flex items-center justify-center hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                          className="h-11 w-full sm:w-auto px-4 rounded-lg border text-sm font-medium inline-flex items-center justify-center hover:bg-ui-inset focus:outline-none focus:ring-2 focus:ring-cyan-500"
                           onClick={(e) => e.stopPropagation()}
                         >
                           {t('reviews.title', 'Reviews')}
@@ -125,7 +125,7 @@ export function FavouritesClient({ favProducts, likedProducts }: { favProducts: 
             </div>
           )
         ) : likes.length === 0 ? (
-          <div className="text-gray-600 text-sm">{t('likes.none', 'No likes yet.')}</div>
+          <div className="text-ui-muted text-sm">{t('likes.none', 'No likes yet.')}</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 items-stretch animate-[fadeIn_.35s_ease-out] mb-6 sm:mb-8">
             {likes.map((p) => (
@@ -149,21 +149,21 @@ export function FavouritesClient({ favProducts, likedProducts }: { favProducts: 
                        <button
                          onClick={(e) => { e.preventDefault(); handleRemoveLike(p.id); }}
                          disabled={isPending}
-                         className="h-11 w-full sm:w-auto px-4 rounded-lg border text-sm font-medium inline-flex items-center justify-center hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-500 disabled:opacity-60"
+                         className="h-11 w-full sm:w-auto px-4 rounded-lg border text-sm font-medium inline-flex items-center justify-center hover:bg-ui-inset focus:outline-none focus:ring-2 focus:ring-cyan-500 disabled:opacity-60"
                          aria-label={t('likes.unlike', 'Unlike')}
                        >
                          {t('likes.unlike', 'Unlike')}
                        </button>
                        <Link
                          href={`/products/${p.slug}`}
-                         className="h-11 w-full sm:w-auto px-4 rounded-lg border text-sm font-medium inline-flex items-center justify-center hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                         className="h-11 w-full sm:w-auto px-4 rounded-lg border text-sm font-medium inline-flex items-center justify-center hover:bg-ui-inset focus:outline-none focus:ring-2 focus:ring-cyan-500"
                          onClick={(e) => e.stopPropagation()}
                        >
                          {t('nav.shop', 'Shop')}
                        </Link>
                        <Link
                          href={`/products/${p.slug}#reviews`}
-                         className="h-11 w-full sm:w-auto px-4 rounded-lg border text-sm font-medium inline-flex items-center justify-center hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                         className="h-11 w-full sm:w-auto px-4 rounded-lg border text-sm font-medium inline-flex items-center justify-center hover:bg-ui-inset focus:outline-none focus:ring-2 focus:ring-cyan-500"
                          onClick={(e) => e.stopPropagation()}
                        >
                          {t('reviews.title', 'Reviews')}

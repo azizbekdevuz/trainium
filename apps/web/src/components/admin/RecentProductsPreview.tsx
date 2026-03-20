@@ -29,19 +29,19 @@ export function RecentProductsPreview({ products, dict, lang }: RecentProductsPr
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 hover:shadow-lg transition-all duration-300 group">
+    <div className="glass-surface rounded-2xl shadow-sm border border-ui-default dark:border-ui-subtle p-6 hover:shadow-lg transition-all duration-300 group">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-green-500 flex items-center justify-center text-white">
+          <div className="w-10 h-10 rounded-xl bg-[linear-gradient(135deg,var(--accent),var(--accent-lo))] flex items-center justify-center text-[var(--on-accent-ink)]">
             <Icon name="shopping" className="w-5 h-5" />
           </div>
-          <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+          <h3 className="text-xl font-semibold text-ui-primary">
             {dict.admin?.dashboard?.recent?.products || 'Recent Products'}
           </h3>
         </div>
         <Link
           href={`/${lang}/admin/products`}
-          className="text-sm text-cyan-600 hover:text-cyan-700 font-medium transition-colors group-hover:translate-x-1 transform duration-200"
+          className="text-sm text-accent hover:opacity-80 font-medium transition-colors group-hover:translate-x-1 transform duration-200"
         >
           {dict.admin?.dashboard?.viewAll || 'View All'} <Icon name="arrowRight" className="w-3 h-3 inline ml-1" />
         </Link>
@@ -57,18 +57,17 @@ export function RecentProductsPreview({ products, dict, lang }: RecentProductsPr
                 key={product.id}
                 className={`
                   flex items-center space-x-4 p-4 rounded-xl 
-                  bg-slate-50 dark:bg-slate-800 
-                  hover:bg-slate-100 dark:hover:bg-slate-700 
+                  glass-surface
+                  border border-ui-default dark:border-ui-subtle
+                  hover:shadow-md hover:scale-[1.01] 
                   transition-all duration-200 group/item
-                  border border-transparent hover:border-slate-200 dark:hover:border-slate-600
-                  hover:shadow-md hover:scale-[1.02] transform
                 `}
                 style={{
                   animationDelay: `${index * 100}ms`,
                   animationFillMode: 'both'
                 }}
               >
-                <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700 flex-shrink-0 group-hover/item:scale-110 transition-transform duration-200">
+                <div className="flex h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-ui-inset transition-transform duration-200 group-hover/item:scale-110">
                   {imageSrc ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -77,7 +76,7 @@ export function RecentProductsPreview({ products, dict, lang }: RecentProductsPr
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-400 dark:text-slate-500">
+                    <div className="w-full h-full flex items-center justify-center text-ui-faint dark:text-ui-faint">
                       <Icon name="image" className="w-6 h-6" />
                     </div>
                   )}
@@ -85,24 +84,24 @@ export function RecentProductsPreview({ products, dict, lang }: RecentProductsPr
                 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center space-x-2 mb-1">
-                    <p className="font-medium text-slate-900 dark:text-slate-100 truncate">
+                    <p className="font-medium text-ui-primary truncate">
                       {product.name}
                     </p>
                     <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                       product.active 
                         ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' 
-                        : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
+                        : 'bg-ui-inset text-ui-primary dark:bg-[color-mix(in_srgb,var(--bg-inset)_30%,transparent)] dark:text-ui-faint'
                     }`}>
                       {product.active ? 'Active' : 'Inactive'}
                     </span>
                   </div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 truncate">
+                  <p className="text-sm text-ui-muted dark:text-ui-faint truncate">
                     /{product.slug}
                   </p>
                 </div>
                 
                 <div className="text-right">
-                  <p className="font-semibold text-slate-900 dark:text-slate-100">
+                  <p className="font-semibold text-ui-primary">
                     {formatCurrency(product.priceCents, product.currency)}
                   </p>
                 </div>
@@ -111,10 +110,10 @@ export function RecentProductsPreview({ products, dict, lang }: RecentProductsPr
           })
         ) : (
           <div className="text-center py-12">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-              <Icon name="shopping" className="w-8 h-8 text-slate-400 dark:text-slate-500" />
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-ui-inset dark:bg-ui-elevated flex items-center justify-center">
+              <Icon name="shopping" className="w-8 h-8 text-ui-faint dark:text-ui-faint" />
             </div>
-            <p className="text-slate-500 dark:text-slate-400">
+            <p className="text-ui-faint dark:text-ui-faint">
               {dict.admin?.dashboard?.noData || 'No products found'}
             </p>
           </div>

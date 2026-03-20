@@ -35,7 +35,7 @@ export default async function OrderDetailsPage({ params }: Params) {
             return `${short.toUpperCase()}`;
           })()}
         </h1>
-        <p className="text-sm text-gray-500">{dict.orderPage?.placed ?? 'Placed'} {order.createdAt.toLocaleString(lang, {
+        <p className="text-sm text-ui-faint">{dict.orderPage?.placed ?? 'Placed'} {order.createdAt.toLocaleString(lang, {
           year: 'numeric',
           month: '2-digit',
           day: '2-digit',
@@ -46,14 +46,14 @@ export default async function OrderDetailsPage({ params }: Params) {
         })}</p>
       </div>
 
-      <section className="rounded-2xl border bg-white p-5">
+      <section className="glass-surface rounded-2xl border border-[var(--border-default)] p-5">
         <h2 className="font-medium mb-3">{dict.orderPage?.items ?? 'Items'}</h2>
         <ul className="divide-y">
           {order.items.map((it) => (
             <li key={it.id} className="py-3 flex items-start justify-between gap-3 text-sm">
               <div className="min-w-0">
                 <div className="truncate">{it.name}{it.sku ? ` (${it.sku})` : ''}</div>
-                <div className="text-gray-500">{dict.orderPage?.qty ?? 'Qty'}: {it.qty}</div>
+                <div className="text-ui-faint">{dict.orderPage?.qty ?? 'Qty'}: {it.qty}</div>
               </div>
               <div className="font-medium whitespace-nowrap">{formatCurrency(it.priceCents * it.qty, order.currency)}</div>
             </li>
@@ -81,9 +81,9 @@ export default async function OrderDetailsPage({ params }: Params) {
           />
 
       {order.shipping && (
-        <section className="rounded-2xl border bg-white p-5">
+        <section className="glass-surface rounded-2xl border border-[var(--border-default)] p-5">
           <h2 className="font-medium mb-3">{dict.orderPage?.shippingDetails ?? 'Shipping Details'}</h2>
-          <div className="text-sm text-gray-700 space-y-1">
+          <div className="text-sm text-ui-secondary space-y-1">
             <div><span className="font-medium">{dict.orderPage?.name ?? 'Name'}:</span> {order.shipping.fullName}</div>
             <div><span className="font-medium">{dict.orderPage?.phone ?? 'Phone'}:</span> {order.shipping.phone}</div>
             <div><span className="font-medium">{dict.orderPage?.address ?? 'Address'}:</span> {order.shipping.address1}</div>

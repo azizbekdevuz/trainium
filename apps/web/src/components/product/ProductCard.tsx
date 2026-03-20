@@ -1,13 +1,14 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import SmartImage from '../ui/media/SmartImage';
-import { formatCurrency } from '../../lib/utils/format';
-import { useI18n } from '../providers/I18nProvider';
-import { useResponsive } from '../../hooks/useResponsive';
-import { Icon } from '../ui/media/Icon';
-import { FavoriteButton } from './FavoriteButton';
-import { ProductLikeButton } from './LikeButton';
+import Link from "next/link";
+import SmartImage from "../ui/media/SmartImage";
+import { formatCurrency } from "../../lib/utils/format";
+import { useI18n } from "../providers/I18nProvider";
+import { useResponsive } from "../../hooks/useResponsive";
+import { Icon } from "../ui/media/Icon";
+import { FavoriteButton } from "./FavoriteButton";
+import { ProductLikeButton } from "./LikeButton";
+import { cn } from "@/lib/utils/format";
 
 type ProductCardProps = {
   slug: string;
@@ -24,108 +25,204 @@ type ProductCardProps = {
   initialLikeCount?: number;
   showSocialCounts?: boolean;
   actions?: React.ReactNode;
+  /** Tighter layout for bento / dense grids */
+  compact?: boolean;
 };
 
-export function ProductCard({ slug, name, priceCents, currency, imageSrc, inStock, lowStockAt, productId, initiallyFavorited, initialFavCount, initialLiked, initialLikeCount, showSocialCounts = true, actions }: ProductCardProps) {
+export function ProductCard({
+  slug,
+  name,
+  priceCents,
+  currency,
+  imageSrc,
+  inStock,
+  lowStockAt,
+  productId,
+  initiallyFavorited,
+  initialFavCount,
+  initialLiked,
+  initialLikeCount,
+  showSocialCounts = true,
+  actions,
+  compact = false,
+}: ProductCardProps) {
   const { t } = useI18n();
   const { isMobile } = useResponsive();
-  
-  return (
-    <Link
-      href={`/products/${slug}`}
-      className="group block h-full rounded-xl sm:rounded-2xl border bg-white overflow-hidden transition hover:shadow-sm"
-    >
-      {/* Responsive aspect image */}
-      <div className="aspect-square sm:aspect-[4/3] bg-gray-100 relative">
-        {imageSrc ? (
-          <SmartImage 
-            src={imageSrc} 
-            alt={name} 
-            fill 
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" 
-            className="object-cover" 
-            priority={false} 
-          />
+
+  const isOutOfStock = inStock !== undefined && inStock === 0;
+  const isLowStock =
+    !isOutOfStock &&
+    inStock !== undefined &&
+    lowStockAt != null &&
+    inStock <= lowStockAt;
+
+  const wellH = compact ? (isMobile ? 120 : 140) : isMobile ? 160 : 200;
+
+  const accentBar = <div className="product-card-accent-line" />;
+
+  const well = (
+    <div className="product-well" style={{ height: wellH }}>
+      <div className="product-image-overlay" aria-hidden />
+
+      <div className="atm-orb product-card-orb-fill h-[58%] w-[58%]" aria-hidden />
+
+      {imageSrc ? (
+        <SmartImage
+          src={imageSrc}
+          alt={name}
+          fill
+          sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 25vw"
+          className="relative z-[1] object-cover"
+          priority={false}
+        />
+      ) : (
+        <span className="product-card-placeholder-emoji" aria-hidden>
+          🏋️
+        </span>
+      )}
+
+      {productId && !actions ? (
+        isMobile ? (
+          <div className="absolute bottom-2 left-2 right-2 z-[4] flex justify-between">
+            <div
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              <FavoriteButton
+                productId={productId}
+                initiallyFavorited={!!initiallyFavorited}
+                initialCount={initialFavCount ?? 0}
+                showCount={false}
+              />
+            </div>
+            <div
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              <ProductLikeButton
+                productId={productId}
+                initialLiked={!!initialLiked}
+                initialCount={initialLikeCount ?? 0}
+                compact={true}
+                showCount={false}
+              />
+            </div>
+          </div>
         ) : (
-          <div className="h-full w-full grid place-items-center text-gray-400 text-sm">
-            Image coming soon
-          </div>
-        )}
-        
-        {/* Responsive action buttons */}
-        {productId && !actions && (
           <>
-            {isMobile ? (
-              <div className="absolute bottom-2 left-2 right-2 flex justify-between">
-                <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
-                  <FavoriteButton productId={productId} initiallyFavorited={!!initiallyFavorited} initialCount={initialFavCount ?? 0} showCount={false} />
-                </div>
-                <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
-                  <ProductLikeButton productId={productId} initialLiked={!!initialLiked} initialCount={initialLikeCount ?? 0} compact={true} showCount={false} />
-                </div>
-              </div>
-            ) : (
-              <>
-                <div
-                  className="absolute bottom-3 left-3"
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                >
-                  <FavoriteButton productId={productId} initiallyFavorited={!!initiallyFavorited} initialCount={initialFavCount ?? 0} showCount={!!showSocialCounts} />
-                </div>
-                <div
-                  className="absolute bottom-3 right-3"
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                >
-                  <ProductLikeButton productId={productId} initialLiked={!!initialLiked} initialCount={initialLikeCount ?? 0} compact={true} showCount={!!showSocialCounts} />
-                </div>
-              </>
-            )}
+            <div
+              className="absolute bottom-3 left-3 z-[4]"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              <FavoriteButton
+                productId={productId}
+                initiallyFavorited={!!initiallyFavorited}
+                initialCount={initialFavCount ?? 0}
+                showCount={!!showSocialCounts}
+              />
+            </div>
+            <div
+              className="absolute bottom-3 right-3 z-[4]"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              <ProductLikeButton
+                productId={productId}
+                initialLiked={!!initialLiked}
+                initialCount={initialLikeCount ?? 0}
+                compact={true}
+                showCount={!!showSocialCounts}
+              />
+            </div>
           </>
-        )}
-        
-        {/* Stock Badges */}
-        {inStock !== undefined && lowStockAt !== null && lowStockAt !== undefined && inStock <= lowStockAt && inStock > 0 && (
-          <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
-            <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-lg animate-pulse">
-              {t('product.badges.lowStock', 'Low Stock (Only {{0}} left!)').replace('{{0}}', String(inStock))}
-            </div>
-          </div>
-        )}
-        
-        {inStock !== undefined && inStock === 0 && (
-          <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
-            <div className="bg-gradient-to-r from-gray-600 to-gray-800 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-lg">
-              {t('product.badges.outOfStock', 'Out of Stock')}
-            </div>
-          </div>
-        )}
-      </div>
+        )
+      ) : null}
 
-      {/* Responsive content */}
-      <div className="p-3 sm:p-4 flex flex-col gap-2">
-        {/* Title: responsive sizing */}
-        <h3
-          className="font-medium leading-snug text-sm sm:text-base line-clamp-2"
-          title={name}
-        >
-          {name}
-        </h3>
-
-        {/* Price row */}
-        <div className="mt-auto flex items-baseline justify-between">
-          <span className="text-cyan-700 font-semibold text-sm sm:text-base">
-            {formatCurrency(priceCents, currency)}
-          </span>
-          <span className="text-xs text-gray-500 opacity-0 group-hover:opacity-100 transition hidden sm:inline">
-            {t('common.view', 'View')} <Icon name="arrowRight" className="w-3 h-3 inline ml-1" />
-          </span>
+      {(isOutOfStock || isLowStock) && (
+        <div className="absolute right-2 top-2 z-[4] sm:right-3 sm:top-3">
+          {isOutOfStock ? (
+            <span className="badge-red">{t("product.badges.outOfStock", "Out of Stock")}</span>
+          ) : (
+            <span className="badge-amber">
+              {t("product.badges.lowStock", "Low Stock (Only {{0}} left!)").replace("{{0}}", String(inStock))}
+            </span>
+          )}
         </div>
-        {actions && (
-          <div className="mt-3 pt-2 border-t border-slate-200 dark:border-slate-700">
+      )}
+
+      <div className="product-card-price-chip">
+        <div className="product-card-price-text">{formatCurrency(priceCents, currency)}</div>
+      </div>
+    </div>
+  );
+
+  const titleBlock = (
+    <>
+      <h3
+        className="font-display mb-2 line-clamp-2 text-[13px] font-semibold leading-snug text-ui-primary sm:text-[13.5px]"
+        title={name}
+      >
+        {name}
+      </h3>
+
+      <div className="flex items-center justify-between gap-2">
+        <div
+          className={cn(
+            "min-w-0 text-[10.5px] font-semibold sm:text-[11px]",
+            isOutOfStock ? "text-stock-out" : "text-ui-muted",
+          )}
+        >
+          {isOutOfStock
+            ? t("product.badges.outOfStock", "Out of Stock")
+            : isLowStock
+              ? t("product.badges.lowStock", "Low Stock (Only {{0}} left!)").replace("{{0}}", String(inStock))
+              : inStock !== undefined
+                ? `✓ ${t("product.stock.inStock", "{{0}} in stock").replace("{{0}}", String(inStock))}`
+                : ""}
+        </div>
+        {!isMobile ? (
+          <span className="hidden shrink-0 text-xs text-ui-faint opacity-0 transition group-hover:opacity-100 sm:inline">
+            {t("common.view", "View")} <Icon name="arrowRight" className="ml-1 inline w-3 h-3" />
+          </span>
+        ) : null}
+      </div>
+    </>
+  );
+
+  if (actions) {
+    return (
+      <div className="product-card group block h-full">
+        <Link
+          href={`/products/${slug}`}
+          className="block rounded-t-[inherit] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--accent)_45%,transparent)]"
+        >
+          {accentBar}
+          {well}
+          <div className="relative z-[1] px-3 pt-3 sm:px-4 sm:pt-3.5">{titleBlock}</div>
+        </Link>
+        <div className="relative z-[1] px-3 pb-3 sm:px-4 sm:pb-3.5">
+          <div className="mt-3 border-t border-ui-subtle pt-2.5">
             {actions}
           </div>
-        )}
+        </div>
       </div>
+    );
+  }
+
+  return (
+    <Link href={`/products/${slug}`} className="product-card group block h-full">
+      {accentBar}
+      {well}
+      <div className="relative z-[1] px-3 py-3 sm:px-4 sm:py-3.5">{titleBlock}</div>
     </Link>
   );
 }

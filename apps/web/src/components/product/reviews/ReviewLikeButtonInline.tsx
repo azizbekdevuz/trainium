@@ -18,7 +18,7 @@ export function ReviewLikeButtonInline({ reviewId, initialLiked = false }: Revie
       className={`inline-flex items-center gap-1 text-xs rounded-full border px-2 h-7 transition-colors ${
         liked
           ? 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:border-emerald-400 dark:text-emerald-400 dark:hover:bg-emerald-900/30'
-          : 'border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800'
+          : 'border-ui-default text-ui-secondary hover:bg-ui-inset dark:border-gray-600 dark:text-ui-faint dark:hover:bg-gray-800'
       }`}
       disabled={isPending}
       onClick={() => {

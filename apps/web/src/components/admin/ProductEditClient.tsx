@@ -55,8 +55,8 @@ export function ProductEditClient({ categories: initialCategories, selectedCateg
       {/* Header with search and add button */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <Filter className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+          <Filter className="h-4 w-4 text-ui-faint dark:text-ui-faint" />
+          <span className="text-sm font-medium text-ui-secondary">
             {dict.admin?.products?.categories ?? 'Categories'}
           </span>
           {selectedCategoriesState.length > 0 && (
@@ -75,21 +75,21 @@ export function ProductEditClient({ categories: initialCategories, selectedCateg
 
       {/* Search bar */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-ui-faint" />
         <Input
           type="text"
           placeholder={dict.admin?.products?.searchCategories ?? "Search categories..."}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10 h-10 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+          className="pl-10 h-10 glass-surface border-ui-default dark:border-ui-subtle text-ui-primary focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
         />
       </div>
 
       {/* Categories grid */}
-      <div className="max-h-80 overflow-y-auto border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+      <div className="max-h-80 overflow-y-auto border border-ui-default dark:border-ui-subtle rounded-lg bg-ui-inset dark:bg-ui-elevated/50">
         <div className="p-3 space-y-2">
           {filteredCategories.length === 0 ? (
-            <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+            <div className="text-center py-8 text-ui-faint dark:text-ui-faint">
               <Filter className="h-8 w-8 mx-auto mb-2 opacity-50" />
               <p className="text-sm">{dict.admin?.products?.noCategoriesFound ?? 'No categories found'}</p>
               {searchTerm && (
@@ -103,7 +103,7 @@ export function ProductEditClient({ categories: initialCategories, selectedCateg
                 className={`flex items-center justify-between p-3 rounded-lg border transition-all cursor-pointer hover:shadow-sm ${
                   selectedCategoriesState.includes(category.slug)
                     ? 'bg-cyan-50 dark:bg-cyan-900/20 border-cyan-200 dark:border-cyan-700 shadow-sm'
-                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                    : 'glass-surface border-ui-default dark:border-ui-subtle hover:border-ui-default dark:hover:border-ui-subtle'
                 }`}
                 onClick={() => handleCategoryToggle(category.slug)}
               >
@@ -114,12 +114,12 @@ export function ProductEditClient({ categories: initialCategories, selectedCateg
                     value={category.slug}
                     checked={selectedCategoriesState.includes(category.slug)}
                     onChange={() => handleCategoryToggle(category.slug)}
-                    className="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-cyan-600 focus:ring-cyan-500 bg-white dark:bg-slate-800"
+                    className="h-4 w-4 rounded border-ui-default dark:border-ui-subtle text-cyan-600 focus:ring-cyan-500 glass-surface"
                   />
                   <span className={`text-sm font-medium ${
                     selectedCategoriesState.includes(category.slug) 
                       ? 'text-cyan-900 dark:text-cyan-100' 
-                      : 'text-slate-700 dark:text-slate-300'
+                      : 'text-ui-secondary'
                   }`}>
                     {getCategoryDisplayName(category, dict)}
                   </span>

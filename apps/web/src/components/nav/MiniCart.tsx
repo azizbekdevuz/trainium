@@ -94,30 +94,30 @@ export default function MiniCart() {
       </button>
 
       {open && (
-        <div className={`absolute right-0 mt-2 ${isMobile ? 'w-[280px]' : 'w-[320px]'} rounded-2xl border bg-white dark:bg-slate-900 shadow-lg overflow-hidden z-[90]`}>
+        <div className={`absolute right-0 mt-2 ${isMobile ? 'w-[280px]' : 'w-[320px]'} rounded-2xl frosted-panel overflow-hidden z-[90]`}>
           <div className="p-3 sm:p-4 border-b font-medium text-sm sm:text-base">{dict.cart?.minicart?.title ?? 'Your cart'}</div>
           <div className="max-h-60 sm:max-h-80 overflow-auto">
             {loading ? (
-              <div className="p-3 sm:p-4 text-sm text-gray-500 dark:text-slate-400">{dict.cart?.minicart?.loading ?? 'Loading…'}</div>
+              <div className="p-3 sm:p-4 text-sm text-ui-faint dark:text-ui-faint">{dict.cart?.minicart?.loading ?? 'Loading…'}</div>
             ) : items.length === 0 ? (
-              <div className="p-3 sm:p-4 text-sm text-gray-500 dark:text-slate-400">{dict.cart?.empty ?? 'Your cart is empty.'}</div>
+              <div className="p-3 sm:p-4 text-sm text-ui-faint dark:text-ui-faint">{dict.cart?.empty ?? 'Your cart is empty.'}</div>
             ) : (
               <ul className="divide-y">
                 {items.map((it) => (
                   <li key={it.id} className="flex gap-2 sm:gap-3 p-2 sm:p-3 items-center">
-                    <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-lg bg-gray-100 dark:bg-slate-800 relative overflow-hidden flex-shrink-0">
+                    <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-lg bg-ui-inset dark:bg-ui-elevated relative overflow-hidden flex-shrink-0">
                       {it.image ? (
                         <SmartImage src={it.image} alt={it.name} fill sizes="48px" className="object-cover" />
                       ) : (
-                        <div className="h-full w-full grid place-items-center text-gray-400 text-xs">No image</div>
+                        <div className="h-full w-full grid place-items-center text-ui-faint text-xs">No image</div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="truncate text-xs sm:text-sm">{it.name}</div>
                       {it.variantName && (
-                        <div className="text-xs text-gray-500 truncate">{it.variantName}</div>
+                        <div className="text-xs text-ui-faint truncate">{it.variantName}</div>
                       )}
-                      <div className="text-xs text-gray-600">x{it.qty}</div>
+                      <div className="text-xs text-ui-muted">x{it.qty}</div>
                     </div>
                     <div className="text-xs sm:text-sm font-medium flex-shrink-0">
                       {formatCurrency(it.priceCents * it.qty, it.currency)}
@@ -129,14 +129,14 @@ export default function MiniCart() {
           </div>
           <div className="p-3 sm:p-4 border-t">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600 dark:text-slate-400">{dict.cart?.subtotal ?? 'Subtotal'}</span>
+              <span className="text-ui-muted dark:text-ui-faint">{dict.cart?.subtotal ?? 'Subtotal'}</span>
               <span className="font-semibold">{formatCurrency(subtotal, currency)}</span>
             </div>
             {!loading && (
               <div className="mt-3 grid grid-cols-2 gap-2">
                 <Link
                   href={`/${lang}/cart`}
-                  className={`text-center rounded-xl border px-2 sm:px-3 py-2 text-xs sm:text-sm ${isEmpty ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 dark:hover:bg-slate-700 dark:text-slate-100'}`}
+                  className={`text-center rounded-xl border px-2 sm:px-3 py-2 text-xs sm:text-sm ${isEmpty ? 'opacity-50 cursor-not-allowed' : 'hover:bg-ui-inset dark:hover:bg-ui-inset dark:text-slate-100'}`}
                   onClick={emptyClick}
                 >
                   {dict.cart?.minicart?.viewCart ?? 'View cart'}

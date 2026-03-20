@@ -47,16 +47,16 @@ export function ContactForm() {
     <form onSubmit={onSubmit} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm text-gray-600 mb-1">{dict.pages?.contact?.form?.name ?? 'Name'}</label>
+          <label className="block text-sm text-ui-muted mb-1">{dict.pages?.contact?.form?.name ?? 'Name'}</label>
           <input name="name" required className="h-11 w-full rounded-xl border px-3" placeholder={dict.pages?.contact?.form?.namePh ?? 'Your full name'} />
         </div>
         <div>
-          <label className="block text-sm text-gray-600 mb-1">{dict.pages?.contact?.form?.email ?? 'Email'}</label>
+          <label className="block text-sm text-ui-muted mb-1">{dict.pages?.contact?.form?.email ?? 'Email'}</label>
           <input type="email" name="email" required className="h-11 w-full rounded-xl border px-3" placeholder={dict.pages?.contact?.form?.emailPh ?? 'you@example.com'} />
         </div>
       </div>
       <div>
-        <label className="block text-sm text-gray-600 mb-1">{dict.pages?.contact?.form?.reason ?? 'Reason'}</label>
+        <label className="block text-sm text-ui-muted mb-1">{dict.pages?.contact?.form?.reason ?? 'Reason'}</label>
         <select name="reason" required className="h-11 w-full rounded-xl border px-3">
           <option value="Help">{dict.pages?.contact?.form?.reasons?.help ?? 'Help'}</option>
           <option value="Complain">{dict.pages?.contact?.form?.reasons?.complain ?? 'Complain'}</option>
@@ -65,7 +65,7 @@ export function ContactForm() {
         </select>
       </div>
       <div>
-        <label className="block text-sm text-gray-600 mb-1">{dict.pages?.contact?.form?.message ?? 'Message'}</label>
+        <label className="block text-sm text-ui-muted mb-1">{dict.pages?.contact?.form?.message ?? 'Message'}</label>
         <textarea name="message" required rows={5} className="w-full rounded-xl border px-3 py-2" placeholder={dict.pages?.contact?.form?.messagePh ?? 'Write your message here...'} />
       </div>
       <div className="flex items-center gap-3">
@@ -73,7 +73,7 @@ export function ContactForm() {
           {status === 'submitting' ? (dict.pages?.contact?.form?.sending ?? 'Sending…') : (dict.pages?.contact?.form?.send ?? 'Send Message')}
         </button>
         {message && (
-          <div className={`text-sm ${status === 'success' ? 'text-emerald-600' : status === 'error' ? 'text-red-600' : 'text-gray-600'}`}>{message}</div>
+          <div className={`text-sm ${status === 'success' ? 'text-emerald-600' : status === 'error' ? 'text-red-600' : 'text-ui-muted'}`}>{message}</div>
         )}
       </div>
     </form>

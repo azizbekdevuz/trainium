@@ -9,11 +9,11 @@ interface ShippingSectionProps {
 
 export function ShippingSection({ shipping, onUpdate, dict }: ShippingSectionProps) {
   return (
-    <section className="rounded-2xl border bg-white p-6">
+    <section className="glass-surface rounded-2xl border border-[var(--border-default)] p-6">
       <h2 className="text-lg font-semibold mb-4">{dict.admin?.orders?.detail?.shippingHeader ?? 'Shipping Information'}</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{dict.admin?.orders?.detail?.fullName ?? 'Full Name'}</label>
+          <label className="block text-sm font-medium text-ui-secondary mb-1">{dict.admin?.orders?.detail?.fullName ?? 'Full Name'}</label>
           <input
             type="text"
             defaultValue={shipping.fullName}
@@ -22,7 +22,7 @@ export function ShippingSection({ shipping, onUpdate, dict }: ShippingSectionPro
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{dict.admin?.orders?.detail?.phone ?? 'Phone'}</label>
+          <label className="block text-sm font-medium text-ui-secondary mb-1">{dict.admin?.orders?.detail?.phone ?? 'Phone'}</label>
           <input
             type="text"
             defaultValue={shipping.phone}
@@ -31,7 +31,7 @@ export function ShippingSection({ shipping, onUpdate, dict }: ShippingSectionPro
           />
         </div>
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">{dict.admin?.orders?.detail?.address1 ?? 'Address Line 1'}</label>
+          <label className="block text-sm font-medium text-ui-secondary mb-1">{dict.admin?.orders?.detail?.address1 ?? 'Address Line 1'}</label>
           <input
             type="text"
             defaultValue={shipping.address1}
@@ -41,7 +41,7 @@ export function ShippingSection({ shipping, onUpdate, dict }: ShippingSectionPro
         </div>
         {shipping.address2 && (
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">{dict.admin?.orders?.detail?.address2 ?? 'Address Line 2'}</label>
+            <label className="block text-sm font-medium text-ui-secondary mb-1">{dict.admin?.orders?.detail?.address2 ?? 'Address Line 2'}</label>
             <input
               type="text"
               defaultValue={shipping.address2}
@@ -51,7 +51,7 @@ export function ShippingSection({ shipping, onUpdate, dict }: ShippingSectionPro
           </div>
         )}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{dict.admin?.orders?.detail?.city ?? 'City'}</label>
+          <label className="block text-sm font-medium text-ui-secondary mb-1">{dict.admin?.orders?.detail?.city ?? 'City'}</label>
           <input
             type="text"
             defaultValue={shipping.city}
@@ -60,7 +60,7 @@ export function ShippingSection({ shipping, onUpdate, dict }: ShippingSectionPro
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{dict.admin?.orders?.detail?.postalCode ?? 'Postal Code'}</label>
+          <label className="block text-sm font-medium text-ui-secondary mb-1">{dict.admin?.orders?.detail?.postalCode ?? 'Postal Code'}</label>
           <input
             type="text"
             defaultValue={shipping.postalCode}
@@ -69,7 +69,7 @@ export function ShippingSection({ shipping, onUpdate, dict }: ShippingSectionPro
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{dict.admin?.orders?.detail?.country ?? 'Country'}</label>
+          <label className="block text-sm font-medium text-ui-secondary mb-1">{dict.admin?.orders?.detail?.country ?? 'Country'}</label>
           <input
             type="text"
             defaultValue={shipping.country}
@@ -78,7 +78,7 @@ export function ShippingSection({ shipping, onUpdate, dict }: ShippingSectionPro
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{dict.admin?.orders?.detail?.carrier ?? 'Carrier'}</label>
+          <label className="block text-sm font-medium text-ui-secondary mb-1">{dict.admin?.orders?.detail?.carrier ?? 'Carrier'}</label>
           <input
             type="text"
             defaultValue={shipping.carrier || ''}
@@ -88,7 +88,7 @@ export function ShippingSection({ shipping, onUpdate, dict }: ShippingSectionPro
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{dict.admin?.orders?.detail?.trackingNo ?? 'Tracking Number'}</label>
+          <label className="block text-sm font-medium text-ui-secondary mb-1">{dict.admin?.orders?.detail?.trackingNo ?? 'Tracking Number'}</label>
           <input
             type="text"
             defaultValue={shipping.trackingNo || ''}
@@ -98,7 +98,7 @@ export function ShippingSection({ shipping, onUpdate, dict }: ShippingSectionPro
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{dict.admin?.orders?.detail?.shippingStatus ?? 'Shipping Status'}</label>
+          <label className="block text-sm font-medium text-ui-secondary mb-1">{dict.admin?.orders?.detail?.shippingStatus ?? 'Shipping Status'}</label>
           <select
             defaultValue={shipping.status || 'Preparing'}
             onChange={(e) => onUpdate('status', e.target.value)}

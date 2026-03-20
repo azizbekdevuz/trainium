@@ -88,9 +88,9 @@ export function OrderTrackingTimeline({
 
   if (trackingEvents.length === 0) {
     return (
-      <div className="rounded-2xl border bg-white p-5">
+      <div className="glass-surface rounded-2xl border border-[var(--border-default)] p-5">
         <h2 className="font-medium mb-4">{dict.track?.resultsTitle ?? 'Package Tracking'}</h2>
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-ui-faint">
           {dict.timeline?.noInfoYet ?? 'No tracking information available yet.'}
         </div>
       </div>
@@ -98,11 +98,11 @@ export function OrderTrackingTimeline({
   }
 
   return (
-    <div className="rounded-2xl border bg-white p-5">
+    <div className="glass-surface rounded-2xl border border-[var(--border-default)] p-5">
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-medium">{dict.track?.resultsTitle ?? 'Package Tracking'}</h2>
         {trackingNo && (
-          <div className="text-sm text-gray-500 font-mono">
+          <div className="text-sm text-ui-faint font-mono">
             {trackingNo}
           </div>
         )}
@@ -122,7 +122,7 @@ export function OrderTrackingTimeline({
                     ? 'bg-blue-500 border-blue-500 text-white animate-pulse' 
                     : event.completed 
                       ? 'bg-green-500 border-green-500 text-white' 
-                      : 'bg-gray-100 border-gray-300 text-gray-400 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-500'
+                      : 'bg-ui-inset border-ui-default text-ui-faint dark:border-ui-subtle'
                   }
                 `}>
                   <Icon name={iconName as any} className="w-4 h-4" />
@@ -130,7 +130,7 @@ export function OrderTrackingTimeline({
                 {!isLast && (
                   <div className={`
                     w-0.5 h-8 mt-2
-                    ${event.completed ? 'bg-green-500' : 'bg-gray-200'}
+                    ${event.completed ? 'bg-green-500' : 'bg-gray-200 dark:bg-ui-inset'}
                   `} />
                 )}
               </div>
@@ -139,7 +139,7 @@ export function OrderTrackingTimeline({
                 <div className="flex items-center space-x-2">
                   <h3 className={`
                     font-medium text-sm
-                    ${event.completed || event.current ? 'text-gray-900' : 'text-gray-500'}
+                    ${event.completed || event.current ? 'text-ui-primary' : 'text-ui-faint'}
                   `}>
                     {event.label}
                   </h3>
@@ -149,8 +149,8 @@ export function OrderTrackingTimeline({
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-gray-600 mt-1">{event.description}</p>
-                <p className="text-xs text-gray-500 mt-1"><LocalTime date={event.timestamp} /></p>
+                <p className="text-sm text-ui-muted mt-1">{event.description}</p>
+                <p className="text-xs text-ui-faint mt-1"><LocalTime date={event.timestamp} /></p>
               </div>
             </div>
           );
@@ -160,7 +160,7 @@ export function OrderTrackingTimeline({
       {trackingNo && (
         <div className="mt-6 pt-4 border-t">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600">{dict.orderPage?.carrier ?? 'Carrier'}: {carrier || (dict.timeline?.unknown ?? 'Unknown')}</span>
+            <span className="text-ui-muted">{dict.orderPage?.carrier ?? 'Carrier'}: {carrier || (dict.timeline?.unknown ?? 'Unknown')}</span>
             <a
               target="_blank"
               rel="noopener noreferrer"

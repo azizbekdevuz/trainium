@@ -35,8 +35,8 @@ export function Badges({ badges }: { badges?: string[] }) {
             className="relative rounded-2xl p-[1px] bg-gradient-to-br from-[rgba(14,165,233,.25)] to-transparent"
           >
             <div className="glass rounded-2xl p-4">
-              <div className="font-medium">{it.title}</div>
-              <div className="text-sm text-gray-600">{it.desc}</div>
+              <div className="font-semibold text-ui-primary">{it.title}</div>
+              <div className="text-sm text-ui-secondary dark:text-ui-muted">{it.desc}</div>
             </div>
           </motion.div>
         ))}

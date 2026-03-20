@@ -58,7 +58,7 @@ export function FaqManagementClient() {
       <div className="flex items-center justify-center py-12">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-5 w-5 animate-spin" />
-          <span className="text-sm text-slate-600 dark:text-slate-400">{t('common.loading', "Loading...")}</span>
+          <span className="text-sm text-ui-muted dark:text-ui-faint">{t('common.loading', "Loading...")}</span>
         </div>
       </div>
     );
@@ -71,10 +71,10 @@ export function FaqManagementClient() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div className="flex-1 min-w-0">
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
+          <h2 className="text-xl sm:text-2xl font-bold text-ui-primary">
             {t('faq.admin.categories', "Categories")}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-ui-muted dark:text-ui-faint mt-1">
             {t('faq.manageCategoriesAndQuestions', "Manage FAQ categories and questions with multi-language support")}
           </p>
         </div>

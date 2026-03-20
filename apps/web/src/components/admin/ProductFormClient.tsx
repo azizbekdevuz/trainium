@@ -57,8 +57,8 @@ export function ProductFormClient({ categories: initialCategories, dict, childre
         {/* Header with search and add button */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Filter className="h-4 w-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-700">
+            <Filter className="h-4 w-4 text-ui-faint" />
+            <span className="text-sm font-medium text-ui-secondary">
               {dict.admin?.products?.categories ?? 'Categories'}
             </span>
             {selectedCategories.length > 0 && (
@@ -77,7 +77,7 @@ export function ProductFormClient({ categories: initialCategories, dict, childre
 
         {/* Search bar */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-ui-faint" />
           <Input
             type="text"
             placeholder="Search categories..."
@@ -88,10 +88,10 @@ export function ProductFormClient({ categories: initialCategories, dict, childre
         </div>
 
         {/* Categories grid */}
-        <div className="max-h-80 overflow-y-auto border rounded-lg bg-gray-50/50">
+        <div className="max-h-80 overflow-y-auto border rounded-lg bg-ui-inset/50">
           <div className="p-3 space-y-2">
             {filteredCategories.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-ui-faint">
                 <Filter className="h-8 w-8 mx-auto mb-2 opacity-50" />
                 <p className="text-sm">No categories found</p>
                 {searchTerm && (
@@ -105,7 +105,7 @@ export function ProductFormClient({ categories: initialCategories, dict, childre
                   className={`flex items-center justify-between p-3 rounded-lg border transition-all cursor-pointer hover:shadow-sm ${
                     selectedCategories.includes(category.id)
                       ? 'bg-cyan-50 border-cyan-200 shadow-sm'
-                      : 'bg-white border-gray-200 hover:border-gray-300'
+                      : 'glass-surface border border-[var(--border-default)] hover:border-[var(--border-strong)]'
                   }`}
                   onClick={() => handleCategoryToggle(category.id)}
                 >
@@ -116,10 +116,10 @@ export function ProductFormClient({ categories: initialCategories, dict, childre
                       value={category.id}
                       checked={selectedCategories.includes(category.id)}
                       onChange={() => handleCategoryToggle(category.id)}
-                      className="rounded border-gray-300 text-cyan-600 focus:ring-cyan-500 h-4 w-4"
+                      className="rounded border-ui-default text-cyan-600 focus:ring-cyan-500 h-4 w-4"
                     />
                     <span className={`text-sm font-medium ${
-                      selectedCategories.includes(category.id) ? 'text-cyan-900' : 'text-gray-700'
+                      selectedCategories.includes(category.id) ? 'text-cyan-900' : 'text-ui-secondary'
                     }`}>
                       {getCategoryDisplayName(category, dict)}
                     </span>

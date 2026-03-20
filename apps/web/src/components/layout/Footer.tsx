@@ -1,6 +1,7 @@
 "use client";
 import { useState, useMemo } from 'react';
 import { Brain, Github, Linkedin, Globe, ArrowDown } from 'lucide-react';
+import { cn } from '@/lib/utils/format';
 
 // Developer info (no env, single source of truth)
 const DEV = {
@@ -17,9 +18,9 @@ export default function Footer({ year, brand, tagline, devDict }: { year: number
   const intro = devDict?.intro || '';
   const tech = useMemo(() => Array.isArray(devDict?.tech) ? devDict?.tech as string[] : [], [devDict]);
   return (
-    <footer className="inset-x-0 border-t glass">
+    <footer className="frosted-panel relative z-10 border-t border-[var(--border-subtle)]">
       {/* First section: brand + tagline (full width, responsive layout) */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-3 text-xs text-gray-600 dark:text-slate-400">
+      <div className="mx-auto max-w-7xl px-4 py-3 text-xs text-ui-muted sm:px-6">
         <div className="flex flex-col sm:flex-row justify-between items-center sm:items-center gap-2 sm:gap-0">
           <span className="text-center sm:text-left">© {year} {brand}</span>
           <span className="text-center sm:text-right">{tagline}</span>
@@ -31,7 +32,10 @@ export default function Footer({ year, brand, tagline, devDict }: { year: number
         <div className="flex flex-col gap-3 sm:gap-4">
           {/* Developer pill section */}
           <div className="w-full">
-            <div className="relative overflow-hidden rounded-full border p-2 sm:p-2.5 bg-white/80 dark:bg-slate-900/80 md:bg-transparent md:dark:bg-transparent holo">
+            <div
+              className="glass-elevated holo relative overflow-hidden rounded-full border p-2 sm:p-2.5 md:bg-transparent md:dark:bg-transparent"
+              style={{ borderColor: "var(--border-default)" }}
+            >
               {/* low-cost ambient line */}
               <div className="absolute inset-0 pointer-events-none opacity-50">
                 <div className="scroll-glow" />
@@ -66,18 +70,27 @@ export default function Footer({ year, brand, tagline, devDict }: { year: number
                     title={open ? 'Close' : 'Open'}
                     aria-label={open ? 'Close developer details' : 'Open developer details'}
                   >
-                    <ArrowDown className="w-4 h-4 sm:w-[18px] sm:h-[18px]" style={{ transition: 'transform .2s ease', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+                    <ArrowDown
+                      className={cn(
+                        'h-4 w-4 transition-transform duration-200 sm:h-[18px] sm:w-[18px]',
+                        open && 'rotate-180',
+                      )}
+                    />
                   </button>
                 </div>
               </div>
             </div>
             <div
               id="dev-details"
-              className={`dev-details ${open ? 'open' : ''} rounded-2xl border mt-3 p-4 sm:p-5 bg-white/80 dark:bg-slate-900/80 md:bg-transparent md:dark:bg-transparent holo`}
+              className={`dev-details glass-surface holo mt-3 rounded-2xl border border-ui-subtle p-4 sm:p-5 md:bg-transparent md:dark:bg-transparent ${open ? "open" : ""}`}
             >
               <div className="text-sm">
                 <div className="font-display text-lg mb-2">{title}</div>
-                {intro ? <p className="text-gray-700 dark:text-slate-300 leading-relaxed mb-3">{intro}</p> : null}
+                {intro ? (
+                  <p className="mb-3 leading-relaxed text-ui-secondary">
+                    {intro}
+                  </p>
+                ) : null}
                 {tech?.length ? (
                   <div className="mt-2 flex flex-wrap gap-2">
                     {tech.map((t) => (<span key={t} className="cyber-chip">{t}</span>))}

@@ -53,7 +53,7 @@ export function SearchableMultiSelect({
 
   return (
     <div className="relative">
-      <span className="mb-1 block text-xs font-medium text-gray-600">{label}</span>
+      <span className="mb-1 block text-xs font-medium text-ui-muted">{label}</span>
       
       {/* Hidden inputs for form submission */}
       {selected.map((v) => (
@@ -68,7 +68,7 @@ export function SearchableMultiSelect({
                 ref={setButtonRef}
                 className="h-11 w-full rounded-xl border px-3 text-left focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
               >
-                <span className="block truncate text-gray-700">{summary}</span>
+                <span className="block truncate text-ui-secondary">{summary}</span>
               </Listbox.Button>
               
               {open && buttonRef && createPortal(
@@ -84,7 +84,7 @@ export function SearchableMultiSelect({
                 >
                   <Listbox.Options 
                     static
-                    className="fixed z-50 mt-2 max-h-80 w-80 overflow-hidden rounded-xl border bg-white shadow-xl focus:outline-none"
+                    className="glass-elevated fixed z-50 mt-2 max-h-80 w-80 overflow-hidden rounded-xl border border-[var(--border-default)] shadow-[var(--shadow-lg)] focus:outline-none"
                     style={{
                       top: buttonRef.getBoundingClientRect().bottom + window.scrollY + 8,
                       left: buttonRef.getBoundingClientRect().left + window.scrollX,
@@ -92,9 +92,9 @@ export function SearchableMultiSelect({
                     }}
                   >
                   {/* Search Header */}
-                  <div className="sticky top-0 z-10 bg-white border-b p-3">
+                  <div className="sticky top-0 z-10 border-b border-[var(--border-subtle)] bg-ui-inset p-3">
                     <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-ui-faint" />
                       <input
                         type="text"
                         placeholder="Search categories..."
@@ -111,19 +111,19 @@ export function SearchableMultiSelect({
                         <button
                           type="button"
                           onClick={handleSelectAll}
-                          className="text-xs rounded-lg border px-2 py-1 hover:bg-gray-50 transition-colors"
+                          className="text-xs rounded-lg border px-2 py-1 hover:bg-ui-inset transition-colors"
                         >
                           {dict.common?.multiSelect?.selectAll ?? 'Select all'}
                         </button>
                         <button
                           type="button"
                           onClick={handleDeselectAll}
-                          className="text-xs rounded-lg border px-2 py-1 hover:bg-gray-50 transition-colors"
+                          className="text-xs rounded-lg border px-2 py-1 hover:bg-ui-inset transition-colors"
                         >
                           {dict.common?.multiSelect?.deselectAll ?? 'Deselect all'}
                         </button>
                       </div>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-ui-faint">
                         {(dict.common?.multiSelect?.selectedCount ?? '{{0}}/{{1}} selected')
                           .replace('{{0}}', String(selected.length))
                           .replace('{{1}}', String(options.length))}
@@ -134,7 +134,7 @@ export function SearchableMultiSelect({
                   {/* Options List */}
                   <div className="max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                     {filteredOptions.length === 0 ? (
-                      <div className="p-4 text-center text-gray-500">
+                      <div className="p-4 text-center text-ui-faint">
                         <Search className="h-6 w-6 mx-auto mb-2 opacity-50" />
                         <p className="text-sm">No categories found</p>
                         {searchTerm && (
@@ -149,7 +149,7 @@ export function SearchableMultiSelect({
                           className={({ active }) =>
                             `relative cursor-pointer select-none py-3 px-4 text-sm transition-colors ${
                               active ? 'bg-cyan-50' : ''
-                            } ${selected.includes(option.value) ? 'bg-cyan-50 text-cyan-700' : 'text-gray-800'}`
+                            } ${selected.includes(option.value) ? 'bg-cyan-50 text-cyan-700' : 'text-ui-primary'}`
                           }
                         >
                           {({ selected: isSelected }) => (
@@ -158,7 +158,7 @@ export function SearchableMultiSelect({
                                 <div className={`w-4 h-4 rounded border-2 mr-3 flex items-center justify-center ${
                                   isSelected 
                                     ? 'bg-cyan-600 border-cyan-600' 
-                                    : 'border-gray-300'
+                                    : 'border-ui-default'
                                 }`}>
                                   {isSelected && (
                                     <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">

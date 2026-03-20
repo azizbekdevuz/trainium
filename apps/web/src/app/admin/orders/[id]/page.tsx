@@ -95,7 +95,7 @@ export default async function AdminOrderPage({ params }: Params) {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="font-display text-3xl">{dict.admin?.orders?.detail?.title ?? 'Order Management'}</h1>
-          <p className="text-gray-600">
+          <p className="text-ui-muted">
             {(dict.admin?.orders?.detail?.orderPrefix ?? 'Order')} {order.id.slice(0, 8).toUpperCase()} • {order.createdAt.toLocaleDateString('en-US', {
               year: 'numeric',
               month: '2-digit',

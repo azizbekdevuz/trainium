@@ -67,12 +67,12 @@ export function QuickActionsPanel({ dict, lang }: QuickActionsPanelProps) {
   ];
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 hover:shadow-lg transition-all duration-300">
+    <div className="glass-surface rounded-2xl shadow-sm border border-ui-default dark:border-ui-subtle p-6 hover:shadow-lg transition-all duration-300">
       <div className="flex items-center space-x-3 mb-6">
         <div className="w-10 h-10 rounded-xl bg-cyan-50 dark:bg-cyan-900/20 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
           <Icon name="zap" className="w-5 h-5" />
         </div>
-        <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+        <h3 className="text-xl font-semibold text-ui-primary">
           {dict.admin?.dashboard?.quickActions?.title || 'Quick Actions'}
         </h3>
       </div>
@@ -84,11 +84,11 @@ export function QuickActionsPanel({ dict, lang }: QuickActionsPanelProps) {
             href={action.href}
             className={`
               block p-4 rounded-xl 
-              bg-white dark:bg-slate-800
-              border border-slate-200 dark:border-slate-700
+              glass-surface
+              border border-ui-default dark:border-ui-subtle
               hover:shadow-md hover:shadow-slate-200/50 dark:hover:shadow-slate-900/50
               transition-shadow duration-200 ease-out
-              hover:border-slate-300 dark:hover:border-slate-600
+              hover:border-ui-default dark:hover:border-ui-subtle
               group
             `}
             onMouseEnter={() => setHoveredAction(action.id)}
@@ -105,15 +105,15 @@ export function QuickActionsPanel({ dict, lang }: QuickActionsPanelProps) {
               </div>
               
               <div className="flex-1 min-w-0">
-                <h4 className="font-semibold text-slate-900 dark:text-slate-100">
+                <h4 className="font-semibold text-ui-primary">
                   {action.title}
                 </h4>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
+                <p className="text-sm text-ui-muted dark:text-ui-faint">
                   {action.description}
                 </p>
               </div>
               
-              <div className="text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors duration-200">
+              <div className="text-ui-faint dark:text-ui-faint group-hover:text-ui-muted dark:group-hover:text-ui-faint transition-colors duration-200">
                 <Icon name="arrowRight" className="w-4 h-4" />
               </div>
             </div>
@@ -122,15 +122,15 @@ export function QuickActionsPanel({ dict, lang }: QuickActionsPanelProps) {
       </div>
 
       {/* Additional Quick Stats */}
-      <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
+      <div className="mt-6 pt-6 border-t border-ui-default dark:border-ui-subtle">
         <div className="grid grid-cols-2 gap-4">
-          <div className="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
-            <div className="text-lg font-bold text-slate-900 dark:text-slate-100">24/7</div>
-            <div className="text-xs text-slate-600 dark:text-slate-400">{dict.admin?.dashboard?.quickActions?.support || 'Support'}</div>
+          <div className="text-center p-3 rounded-lg bg-ui-inset dark:bg-ui-elevated hover:bg-ui-inset dark:hover:bg-ui-inset transition-colors">
+            <div className="text-lg font-bold text-ui-primary">24/7</div>
+            <div className="text-xs text-ui-muted dark:text-ui-faint">{dict.admin?.dashboard?.quickActions?.support || 'Support'}</div>
           </div>
-          <div className="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
-            <div className="text-lg font-bold text-slate-900 dark:text-slate-100">99.9%</div>
-            <div className="text-xs text-slate-600 dark:text-slate-400">{dict.admin?.dashboard?.quickActions?.uptime || 'Uptime'}</div>
+          <div className="text-center p-3 rounded-lg bg-ui-inset dark:bg-ui-elevated hover:bg-ui-inset dark:hover:bg-ui-inset transition-colors">
+            <div className="text-lg font-bold text-ui-primary">99.9%</div>
+            <div className="text-xs text-ui-muted dark:text-ui-faint">{dict.admin?.dashboard?.quickActions?.uptime || 'Uptime'}</div>
           </div>
         </div>
       </div>

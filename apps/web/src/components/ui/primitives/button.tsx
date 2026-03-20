@@ -2,18 +2,21 @@ import * as React from "react"
 import { cn } from "@/lib/utils/format"
 
 const buttonVariants = {
-  default: "bg-cyan-600 text-white hover:bg-cyan-700",
-  destructive: "bg-red-600 text-white hover:bg-red-700",
-  outline: "border border-slate-200 bg-white hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:hover:bg-slate-800",
-  secondary: "bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700",
-  ghost: "hover:bg-slate-100 dark:hover:bg-slate-800",
-  link: "text-cyan-600 underline-offset-4 hover:underline dark:text-cyan-400",
+  default: "btn-primary shadow-sm",
+  destructive: "btn-danger",
+  outline:
+    "border border-[var(--border-default)] bg-transparent text-[var(--text-primary)] hover:bg-[var(--bg-surface)]",
+  secondary:
+    "glass-surface border border-[var(--border-subtle)] text-[var(--text-primary)] hover:brightness-[1.03]",
+  ghost:
+    "text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] bg-transparent border-0 shadow-none",
+  link: "text-[var(--accent)] underline-offset-4 hover:underline bg-transparent border-0 shadow-none h-auto px-0 py-0",
 }
 
 const buttonSizes = {
   default: "h-10 px-4 py-2",
-  sm: "h-9 rounded-md px-3",
-  lg: "h-11 rounded-md px-8",
+  sm: "h-9 rounded-xl px-3 text-xs",
+  lg: "h-11 rounded-xl px-8",
   icon: "h-10 w-10",
 }
 
@@ -27,12 +30,13 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "default", size = "default", asChild = false, ...props }, ref) => {
     const Comp = asChild ? "span" : "button"
+    const sizeClasses = variant === "link" ? "h-auto min-h-0 px-0 py-0" : buttonSizes[size]
     return (
       <Comp
         className={cn(
-          "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+          "inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--accent)_40%,transparent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)] disabled:pointer-events-none disabled:opacity-50",
           buttonVariants[variant],
-          buttonSizes[size],
+          sizeClasses,
           className
         )}
         ref={ref}

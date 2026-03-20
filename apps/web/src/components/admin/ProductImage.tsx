@@ -12,7 +12,7 @@ export function ProductImage({ images, name, className = "w-12 h-12" }: ProductI
   const imageSrc = firstImage?.src || null;
   
   return (
-    <div className={`${className} rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 flex-shrink-0`}>
+    <div className={`${className} rounded-lg overflow-hidden bg-ui-inset dark:bg-ui-elevated flex-shrink-0`}>
       {imageSrc ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -27,7 +27,7 @@ export function ProductImage({ images, name, className = "w-12 h-12" }: ProductI
       ) : (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src="/images/default-avatar.png"
+          src="/images/default-image.webp"
           alt="No image"
           className="w-full h-full object-cover opacity-50"
         />

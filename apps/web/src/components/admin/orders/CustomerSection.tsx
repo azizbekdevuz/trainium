@@ -9,25 +9,25 @@ interface CustomerSectionProps {
 
 export function CustomerSection({ user, dict }: CustomerSectionProps) {
   return (
-    <section className="rounded-2xl border bg-white p-6">
+    <section className="glass-surface rounded-2xl border border-[var(--border-default)] p-6">
       <h2 className="text-lg font-semibold mb-4">{dict.admin?.orders?.detail?.customerHeader ?? 'Customer Information'}</h2>
       {user ? (
         <div className="space-y-2">
           <div>
-            <span className="text-sm font-medium text-gray-700">{dict.admin?.orders?.detail?.name ?? 'Name'}:</span>
+            <span className="text-sm font-medium text-ui-secondary">{dict.admin?.orders?.detail?.name ?? 'Name'}:</span>
             <div className="text-sm">{user.name || (dict.admin?.orders?.detail?.notProvided ?? 'Not provided')}</div>
           </div>
           <div>
-            <span className="text-sm font-medium text-gray-700">{dict.admin?.orders?.detail?.email ?? 'Email'}:</span>
+            <span className="text-sm font-medium text-ui-secondary">{dict.admin?.orders?.detail?.email ?? 'Email'}:</span>
             <div className="text-sm">{user.email}</div>
           </div>
           <div>
-            <span className="text-sm font-medium text-gray-700">{dict.admin?.orders?.detail?.customerSince ?? 'Customer Since'}:</span>
+            <span className="text-sm font-medium text-ui-secondary">{dict.admin?.orders?.detail?.customerSince ?? 'Customer Since'}:</span>
             <div className="text-sm"><LocalTime date={user.createdAt} /></div>
           </div>
         </div>
       ) : (
-        <div className="text-sm text-gray-500">{dict.admin?.orders?.detail?.guest ?? 'Guest order'}</div>
+        <div className="text-sm text-ui-faint">{dict.admin?.orders?.detail?.guest ?? 'Guest order'}</div>
       )}
     </section>
   );

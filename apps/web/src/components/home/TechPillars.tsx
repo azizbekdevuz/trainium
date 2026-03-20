@@ -20,7 +20,7 @@ export default function TechPillars() {
               <div className="glass rounded-2xl p-5">
                 <Icon className="h-5 w-5 text-cyan-600 mb-2" />
                 <div className="font-medium">{item.title}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">{item.desc}</div>
+                <div className="text-sm text-ui-muted dark:text-ui-faint">{item.desc}</div>
               </div>
             </div>
           );

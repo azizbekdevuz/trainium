@@ -114,7 +114,7 @@ export default async function ProductsPage({ searchParams }: Props) {
       <div className="flex flex-col gap-4 md:gap-6">
         <div>
           <h2 className="font-display text-3xl">{dict.pages.products.title}</h2>
-          <p className="text-gray-600">{dict.pages.products.subtitle}</p>
+          <p className="text-ui-muted">{dict.pages.products.subtitle}</p>
         </div>
 
         <MerchandisingZones lang={lang} dict={dict} />

@@ -46,7 +46,7 @@ export default function LanguageSwitcher({ locale }: { locale: L }) {
     <div className="relative">
       <select
         aria-label="Language"
-        className="h-9 rounded-xl border bg-white/70 backdrop-blur px-3 py-1 text-sm shadow-sm hover:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500 disabled:opacity-60"
+        className="glass-surface h-9 rounded-xl border border-[var(--border-default)] px-3 py-1 text-sm shadow-sm transition hover:brightness-[1.03] focus:outline-none focus:ring-2 focus:ring-[color-mix(in_srgb,var(--accent)_45%,transparent)] disabled:opacity-60"
         value={current}
         onChange={(e) => onChange(e.target.value as L)}
         disabled={isPending}

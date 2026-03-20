@@ -49,42 +49,42 @@ export default async function AdminCustomerDetailPage({ params }: Params) {
       <div className="flex items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl">{dict.admin?.customers?.detail?.title ?? 'Customer'}</h1>
-          <p className="text-gray-600">{dict.admin?.customers?.detail?.subtitle ?? 'Manage customer profile and view activity.'}</p>
+          <p className="text-ui-muted">{dict.admin?.customers?.detail?.subtitle ?? 'Manage customer profile and view activity.'}</p>
         </div>
-        <Link href={`/${lang}/admin/customers`} className="px-4 py-2 text-sm rounded-lg border hover:bg-gray-50">{dict.admin?.customers?.detail?.back ?? '← Back'}</Link>
+        <Link href={`/${lang}/admin/customers`} className="px-4 py-2 text-sm rounded-lg border hover:bg-ui-inset">{dict.admin?.customers?.detail?.back ?? '← Back'}</Link>
       </div>
 
-      <section className="rounded-2xl border bg-white p-5">
+      <section className="glass-surface rounded-2xl border border-[var(--border-default)] p-5">
         <h2 className="font-medium mb-3">{dict.admin?.customers?.detail?.profile ?? 'Profile'}</h2>
         <div className="grid sm:grid-cols-2 gap-4 text-sm">
           <div>
-            <div className="text-gray-500">{dict.admin?.customers?.detail?.name ?? 'Name'}</div>
+            <div className="text-ui-faint">{dict.admin?.customers?.detail?.name ?? 'Name'}</div>
             <div className="font-medium">{user.name ?? '—'}</div>
           </div>
           <div>
-            <div className="text-gray-500">{dict.admin?.customers?.detail?.email ?? 'Email'}</div>
+            <div className="text-ui-faint">{dict.admin?.customers?.detail?.email ?? 'Email'}</div>
             <div className="font-medium">{user.email}</div>
           </div>
           <div>
-            <div className="text-gray-500 mb-1">{dict.admin?.customers?.detail?.role ?? 'Role'}</div>
+            <div className="text-ui-faint mb-1">{dict.admin?.customers?.detail?.role ?? 'Role'}</div>
             <CustomerRoleEditor userId={user.id} initialRole={user.role as any} />
           </div>
           <div>
-            <div className="text-gray-500">{dict.admin?.customers?.detail?.joined ?? 'Joined'}</div>
+            <div className="text-ui-faint">{dict.admin?.customers?.detail?.joined ?? 'Joined'}</div>
             <div className="font-medium">{user.createdAt.toLocaleDateString()}</div>
           </div>
           <div>
-            <div className="text-gray-500">{dict.admin?.customers?.detail?.orders ?? 'Orders'}</div>
+            <div className="text-ui-faint">{dict.admin?.customers?.detail?.orders ?? 'Orders'}</div>
             <div className="font-medium">{user._count.orders}</div>
           </div>
         </div>
       </section>
 
-      <section className="rounded-2xl border bg-white p-5">
+      <section className="glass-surface rounded-2xl border border-[var(--border-default)] p-5">
         <h2 className="font-medium mb-3">{dict.admin?.customers?.detail?.recentOrders ?? 'Recent Orders'}</h2>
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
-            <thead className="bg-gray-50">
+            <thead className="bg-ui-inset">
               <tr>
                 <th className="px-4 py-2 text-left">{dict.admin?.customers?.detail?.thOrder ?? 'Order'}</th>
                 <th className="px-4 py-2 text-left">{dict.admin?.customers?.detail?.thStatus ?? 'Status'}</th>

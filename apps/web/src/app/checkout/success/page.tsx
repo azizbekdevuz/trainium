@@ -32,10 +32,10 @@ export default async function SuccessPage({
         </div>
       )}
       
-      <p className="text-gray-600 dark:text-slate-400 mb-2">{dict.checkout_success?.success ?? 'Your payment was successful.'}</p>
+      <p className="text-ui-muted dark:text-ui-faint mb-2">{dict.checkout_success?.success ?? 'Your payment was successful.'}</p>
       
       {paymentMethod && (
-        <p className="text-sm text-gray-500 dark:text-slate-400 mb-6">
+        <p className="text-sm text-ui-faint dark:text-ui-faint mb-6">
           {dict.checkout_success?.paymentMethod ?? 'Payment method'}: {
             paymentMethod === 'toss' 
               ? `${dict.checkout?.toss ?? 'Toss Payments'}${specificPaymentMethod ? ` (${specificPaymentMethod})` : ''}`
@@ -54,7 +54,7 @@ export default async function SuccessPage({
         <br />
         <Link 
           href={`/${lang}/products?q=&category=&inStock=1&min=0&max=50000000&sort=new`} 
-          className="inline-block rounded-2xl px-6 py-3 bg-gray-100 text-gray-700 hover:bg-gray-200 transition"
+          className="inline-block rounded-2xl px-6 py-3 bg-ui-inset text-ui-secondary hover:bg-ui-inset transition"
         >
           {dict.checkout_success?.continue ?? 'Continue shopping'}
         </Link>

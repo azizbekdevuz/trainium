@@ -38,7 +38,7 @@ export function OrderTimeline({ orderStatus, trackingNo, createdAt }: OrderTimel
     : timelineEvents;
 
   return (
-    <section className="rounded-2xl border bg-white p-5">
+    <section className="glass-surface rounded-2xl border border-[var(--border-default)] p-5">
       <h2 className="font-medium mb-4">{dict.timeline?.orderTimeline ?? 'Order Timeline'}</h2>
       <div className="space-y-4">
         {eventsToShow.map((event, index) => {
@@ -95,7 +95,7 @@ export function OrderTimeline({ orderStatus, trackingNo, createdAt }: OrderTimel
                     ? 'bg-green-500 border-green-500 text-white animate-ping' 
                     : event.completed 
                       ? 'bg-green-500 border-green-500 text-white' 
-                      : 'bg-gray-100 border-gray-300 text-gray-400 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-500'
+                      : 'bg-ui-inset border-ui-default text-ui-faint dark:border-ui-subtle'
                   }
                 `}>
                   <Icon name={iconName as any} className="w-4 h-4" />
@@ -103,7 +103,7 @@ export function OrderTimeline({ orderStatus, trackingNo, createdAt }: OrderTimel
                 {!isLast && (
                   <div className={`
                     w-0.5 h-8 mt-2
-                    ${event.completed ? 'bg-green-500' : 'bg-gray-200'}
+                    ${event.completed ? 'bg-green-500' : 'bg-gray-200 dark:bg-ui-inset'}
                   `} />
                 )}
               </div>
@@ -112,19 +112,19 @@ export function OrderTimeline({ orderStatus, trackingNo, createdAt }: OrderTimel
                 <div className="flex items-center space-x-2">
                   <h3 className={`
                     font-medium text-sm
-                    ${event.completed || event.current ? 'text-gray-900' : 'text-gray-500'}
+                    ${event.completed || event.current ? 'text-ui-primary' : 'text-ui-faint'}
                   `}>
                     {label}
                   </h3>
                   {event.current && (
-                    <span className="animate-pulse px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
+                    <span className="animate-pulse px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium dark:bg-blue-900/30 dark:text-blue-300">
                       {dict.timeline?.current ?? 'Current'}
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-gray-600 mt-1">{description}</p>
+                <p className="text-sm text-ui-muted mt-1">{description}</p>
                 {event.completed && (
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-ui-faint mt-1">
                     {event.status === 'PENDING' ? <LocalTime date={createdAt} /> : (dict.timeline?.completed ?? 'Completed')}
                   </p>
                 )}

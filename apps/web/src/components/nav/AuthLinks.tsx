@@ -8,14 +8,14 @@ export default function AuthLinks() {
   const { t, lang } = useI18n();
 
   if (status === 'loading') {
-    return <div className="text-sm text-gray-400">…</div>;
+    return <div className="text-sm text-ui-faint">…</div>;
   }
 
   return session?.user ? (
     <div className="flex flex-col sm:flex-row items-center gap-3 text-sm">
       <Link 
         href={`/${lang}/account`} 
-        className="w-full sm:w-auto text-center px-4 py-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors border border-slate-200 dark:border-slate-600"
+        className="glass-surface w-full rounded-lg border border-[var(--border-default)] px-4 py-2 text-center text-ui-primary transition-colors hover:brightness-[1.02] dark:border-ui-subtle sm:w-auto"
       >
         {t('nav.account', 'My Account')}
       </Link>
@@ -30,7 +30,7 @@ export default function AuthLinks() {
     <div className="flex flex-col sm:flex-row items-center gap-3 text-sm">
       <Link 
         href={`/${lang}/auth/signin`} 
-        className="w-full sm:w-auto text-center px-4 py-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors border border-slate-200 dark:border-slate-600"
+        className="glass-surface w-full rounded-lg border border-[var(--border-default)] px-4 py-2 text-center text-ui-primary transition-colors hover:brightness-[1.02] dark:border-ui-subtle sm:w-auto"
       >
         {t('auth.signin', 'Sign in')}
       </Link>

@@ -12,23 +12,23 @@ export function MerchandisingZones({ lang, dict }: MerchandisingZonesProps) {
     <div className="grid gap-3 sm:grid-cols-2">
       <Link
         href={`/${lang}/products?inStock=1&max=100000&sort=new`}
-        className="group rounded-2xl border bg-white dark:bg-slate-900 p-5 hover:shadow-sm transition flex items-center justify-between"
+        className="group rounded-2xl border glass-surface p-5 hover:shadow-sm transition flex items-center justify-between"
       >
         <div>
-          <div className="text-sm text-cyan-700 font-semibold">{dict.pages.products.hotDeals}</div>
-          <div className="text-gray-600 text-sm">{dict.pages.products.hotDealsDesc}</div>
+          <div className="text-sm font-semibold text-cyan-700 dark:text-cyan-300">{dict.pages.products.hotDeals}</div>
+          <div className="text-sm text-ui-secondary dark:text-ui-muted">{dict.pages.products.hotDealsDesc}</div>
         </div>
-        <span className="text-xs text-gray-500 group-hover:text-gray-700">{dict.nav.shop} <Icon name="arrowRight" className="w-3 h-3 inline ml-1" /></span>
+        <span className="text-xs text-ui-faint group-hover:text-ui-secondary dark:text-ui-muted dark:group-hover:text-ui-secondary">{dict.nav.shop} <Icon name="arrowRight" className="w-3 h-3 inline ml-1" /></span>
       </Link>
       <Link
         href={`/${lang}/special-bargain`}
-        className="group rounded-2xl border bg-white dark:bg-slate-900 p-5 hover:shadow-sm transition flex items-center justify-between"
+        className="group rounded-2xl border glass-surface p-5 hover:shadow-sm transition flex items-center justify-between"
       >
         <div>
-          <div className="text-sm text-cyan-700 font-semibold">{dict.pages.products.cashback}</div>
-          <div className="text-gray-600 text-sm">{dict.pages.products.cashbackDesc}</div>
+          <div className="text-sm font-semibold text-cyan-700 dark:text-cyan-300">{dict.pages.products.cashback}</div>
+          <div className="text-sm text-ui-secondary dark:text-ui-muted">{dict.pages.products.cashbackDesc}</div>
         </div>
-        <span className="text-xs text-gray-500 group-hover:text-gray-700">{dict.pages.products.learnMore}</span>
+        <span className="text-xs text-ui-faint group-hover:text-ui-secondary">{dict.pages.products.learnMore}</span>
       </Link>
     </div>
   );

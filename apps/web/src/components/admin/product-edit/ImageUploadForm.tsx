@@ -9,8 +9,8 @@ interface ImageUploadFormProps {
 
 export function ImageUploadForm({ productId, dict, uploadImage }: ImageUploadFormProps) {
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 mb-6">
-      <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-6">
+    <div className="glass-surface rounded-xl shadow-sm border border-ui-default dark:border-ui-subtle p-6 mb-6">
+      <h2 className="text-xl font-semibold text-ui-primary mb-6">
         {dict.admin?.products?.images ?? 'Images'}
       </h2>
       <form action={uploadImage} className="space-y-4">

@@ -104,7 +104,7 @@ export default function StickyFeatures() {
                 ].join(' ')}
               >
                 <div className="font-medium">{f.title}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">{f.desc}</div>
+                <div className="text-sm text-ui-muted dark:text-ui-faint">{f.desc}</div>
               </button>
             </Reveal>
           ))}
