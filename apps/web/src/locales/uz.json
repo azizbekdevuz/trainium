@@ -599,6 +599,7 @@
     "showMore": "Yana ko‘rsatish",
     "tryAgain": "Qayta urinish",
     "undo": "Bekor qilish",
+    "refresh": "Yangilash",
     "view": "Ko‘rish",
     "yes": "Ha"
   },
@@ -730,6 +731,7 @@
       "warranty": "Kafolat va ta'mirlash tarmog'i"
     },
     "hero": {
+      "statusPill": "Premium Fitness Jihozlar · Korea",
       "bullet1": "14 kun ichida qaytarish",
       "bullet2": "Kafolat xizmati",
       "bullet3": "Real vaqt kuzatuv",
@@ -1226,6 +1228,7 @@
     "title": "Sharhlar",
     "titleLabel": "Sarlavha (ixtiyoriy)",
     "titlePh": "Masalan: Mustahkam sifati, jim ishlashi",
+    "undoPending": "Sharh o‘chirildi. Sharhni tiklash uchun pastdagi bekor qilish tugmasini bosishingiz mumkin yoki sahifani yangilashingiz mumkin.",
     "updatePosted": "Yangilanish yuborildi",
     "updated": "Sharh yangilandi",
     "write": "Sharh yozish"
