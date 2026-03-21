@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { useI18n } from '../providers/I18nProvider';
 import { Form } from '../ui/forms/Form';
 import FileUpload from '../ui/media/FileUpload';
 
 export default function AccountProfileEditor({ initialName, initialImage, initialEmail, onUpdated, onClose }: { initialName: string | null; initialImage: string | null; initialEmail?: string | null; onUpdated: (u: { name: string | null; image: string | null }) => void; onClose: () => void }) {
   const { t, lang } = useI18n();
+  const { update: updateSession } = useSession();
   const [name, setName] = useState(initialName ?? '');
   const [image, setImage] = useState(initialImage ?? '');
   const [email, setEmail] = useState<string>(initialEmail ?? '');
@@ -81,6 +82,7 @@ export default function AccountProfileEditor({ initialName, initialImage, initia
         }
         const data = await res.json();
         onUpdated({ name: data.user?.name ?? null, image: data.user?.image ?? null });
+        await updateSession();
         onClose();
       } catch {
         setError(t('account.profile.updateFailed', 'Failed to update profile'));
@@ -95,11 +97,11 @@ export default function AccountProfileEditor({ initialName, initialImage, initia
       title={t('account.profile.title', 'Edit profile')}
     >
       <div className="space-y-3">
-          <label className="block text-sm text-gray-700 dark:text-slate-300">
+          <label className="block text-sm text-ui-secondary">
             {t('account.profile.name', 'Name')}
             <input value={name} onChange={e => setName(e.target.value)} className="mt-1 h-10 w-full rounded-xl border px-3" />
           </label>
-          <label className="block text-sm text-gray-700 dark:text-slate-300">
+          <label className="block text-sm text-ui-secondary">
             {t('auth.form.emailLabel', 'Email Address')}
             <input value={email} onChange={e => setEmail(e.target.value)} className={`mt-1 h-10 w-full rounded-xl border px-3 ${fieldErrors.email ? 'border-red-400' : ''}`} placeholder="you@example.com" />
             {fieldErrors.email && <div className="mt-1 text-xs text-red-600">{fieldErrors.email}</div>}
@@ -111,12 +113,12 @@ export default function AccountProfileEditor({ initialName, initialImage, initia
           </div>
           {showPassword && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <label className="block text-sm text-gray-700 dark:text-slate-300">
+              <label className="block text-sm text-ui-secondary">
                 {t('account.profile.currentPassword', 'Current password')}
                 <input value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} type="password" className={`mt-1 h-10 w-full rounded-xl border px-3 ${fieldErrors.currentPassword ? 'border-red-400' : ''}`} />
                 {fieldErrors.currentPassword && <div className="mt-1 text-xs text-red-600">{fieldErrors.currentPassword}</div>}
               </label>
-              <label className="block text-sm text-gray-700 dark:text-slate-300">
+              <label className="block text-sm text-ui-secondary">
                 {t('account.profile.newPassword', 'New password (optional)')}
                 <input value={newPassword} onChange={e => setNewPassword(e.target.value)} type="password" className={`mt-1 h-10 w-full rounded-xl border px-3 ${fieldErrors.newPassword ? 'border-red-400' : ''}`} />
                 {fieldErrors.newPassword && <div className="mt-1 text-xs text-red-600">{fieldErrors.newPassword}</div>}
@@ -124,19 +126,20 @@ export default function AccountProfileEditor({ initialName, initialImage, initia
             </div>
           )}
           <div>
-            <label className="block text-sm text-gray-700 dark:text-slate-300 mb-1">{t('account.profile.image', 'Avatar URL (optional)')}</label>
+            <label className="block text-sm text-ui-secondary mb-1">{t('account.profile.image', 'Avatar URL (optional)')}</label>
             <FileUpload
+              key={image || 'empty'}
               name="avatar"
               label={t('account.profile.image', 'Avatar URL (optional)')}
               allowedFormats={[ 'image/jpeg','image/png','image/webp' ]}
               maxSize={5}
               className="dark:text-slate-200"
               uploadTo="/api/account/profile/avatar"
-              onUploaded={(url) => { setImage(url); onUpdated({ name: (name.trim() || null), image: url }); }}
+              onUploaded={(url) => { setImage(url); onUpdated({ name: (name.trim() || null), image: url }); updateSession(); }}
               onError={() => setError(t('account.profile.updateFailed', 'Failed to update profile'))}
             />
             {image ? (
-              <div className="mt-2 text-xs text-gray-500 dark:text-slate-400">{image}</div>
+              <div className="mt-2 text-xs text-ui-faint dark:text-ui-faint">{image}</div>
             ) : null}
           </div>
         {image && (
@@ -149,9 +152,13 @@ export default function AccountProfileEditor({ initialName, initialImage, initia
                 setRemoving(true);
                 try {
                   const res = await fetch('/api/account/profile/avatar', { method: 'DELETE' });
-                  if (!res.ok) throw new Error('Failed');
+                  if (!res.ok) {
+                    const data = await res.json().catch(() => ({}));
+                    throw new Error(data.error || 'Failed');
+                  }
                   setImage('');
                   onUpdated({ name: (name.trim() || null), image: null });
+                  await updateSession();
                 } catch {
                   setError(t('account.profile.updateFailed', 'Failed to update profile'));
                 } finally {
@@ -180,14 +187,14 @@ export default function AccountProfileEditor({ initialName, initialImage, initia
             )}
           </div>
           {showDelete && (
-          <div className="mt-2 rounded-xl border p-3 bg-gray-50 dark:bg-slate-800/50 dark:border-slate-700">
+          <div className="mt-2 rounded-xl border p-3 bg-ui-inset dark:bg-ui-elevated/50 dark:border-ui-subtle">
             <div className="flex items-center justify-between gap-2">
-              <div className="text-xs text-gray-600 dark:text-slate-300">
+              <div className="text-xs text-ui-muted dark:text-ui-faint">
                 {t('account.profile.deleteTitle', 'Delete account?')}
               </div>
               {accountEmail && (
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-600 dark:text-slate-300 select-all">{accountEmail}</span>
+                  <span className="text-xs text-ui-muted dark:text-ui-faint select-all">{accountEmail}</span>
                   <button
                     type="button"
                     onClick={async () => {
@@ -206,7 +213,7 @@ export default function AccountProfileEditor({ initialName, initialImage, initia
                         document.body.removeChild(ta);
                       }
                     }}
-                    className="px-2 py-1 rounded-lg border text-xs text-slate-700 hover:bg-gray-100 transition dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-700"
+                    className="px-2 py-1 rounded-lg border text-xs text-ui-secondary hover:bg-ui-inset transition dark:border-ui-subtle dark:text-slate-200 dark:hover:bg-ui-inset"
                   >
                     {copied ? t('common.copied', 'Copied!') : t('common.copy', 'Copy')}
                   </button>
@@ -214,20 +221,20 @@ export default function AccountProfileEditor({ initialName, initialImage, initia
               )}
             </div>
             <div className="mt-2">
-              <label className="block text-xs text-gray-600 dark:text-slate-300 mb-1">
+              <label className="block text-xs text-ui-muted dark:text-ui-faint mb-1">
                 {t('account.profile.deleteConfirm', 'Type your email to confirm:')}
               </label>
               <input
                 value={confirmEmail}
                 onChange={(e) => setConfirmEmail(e.target.value)}
                 placeholder={accountEmail || 'you@example.com'}
-                className="h-10 w-full rounded-xl border px-3 bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100"
+                className="h-10 w-full rounded-xl border px-3 glass-surface dark:border-ui-subtle dark:text-slate-100"
               />
               <div className="mt-2">
                 <button
                   type="button"
                   onClick={() => setShowDelete(false)}
-                  className="text-xs text-slate-600 hover:text-slate-700 underline dark:text-slate-300"
+                  className="text-xs text-ui-muted hover:text-ui-secondary underline dark:text-ui-faint"
                 >
                   {t('common.cancel', 'Cancel')}
                 </button>
@@ -239,7 +246,7 @@ export default function AccountProfileEditor({ initialName, initialImage, initia
             <button
               type="button"
               onClick={onClose}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-slate-300 text-slate-700 rounded-xl text-sm font-medium hover:bg-gray-50 transition dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+              className="inline-flex items-center gap-2 px-4 py-2 border border-ui-default text-ui-secondary rounded-xl text-sm font-medium hover:bg-ui-inset transition dark:border-ui-subtle dark:text-slate-200 dark:hover:bg-ui-elevated"
             >
               {t('common.cancel', 'Cancel')}
             </button>
