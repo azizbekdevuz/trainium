@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Sora, DM_Sans, DM_Mono } from "next/font/google";
 import { getDictionary, negotiateLocale } from "../lib/i18n/i18n";
 import SessionProviderWrapper from "../components/providers/SessionProviderWrapper";
 import { SocketNotificationsProvider } from "../components/providers/SocketNotificationsProvider";
@@ -11,11 +11,31 @@ import { I18nProvider } from "../components/providers/I18nProvider";
 import ThemeProvider from "../components/providers/ThemeProvider";
 import Footer from "../components/layout/Footer";
 import { ResponsiveNavigation } from "../components/nav/ResponsiveNavigation";
+import ScrollReveal from "../components/motion/ScrollReveal";
+import KineticHeadings from "../components/motion/KineticHeadings";
 import Script from "next/script";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-const space = Space_Grotesk({ subsets: ['latin'], variable: '--font-space' });
+const sora = Sora({
+  subsets: ["latin"],
+  variable: "--font-sora",
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-dm-sans",
+  weight: ["300", "400", "500", "600"],
+  display: "swap",
+});
+
+const dmMono = DM_Mono({
+  subsets: ["latin"],
+  variable: "--font-dm-mono",
+  weight: ["400", "500"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://trainium.shop'),
@@ -77,7 +97,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const lang = await negotiateLocale();
   const dict = await getDictionary(lang);
   return (
-    <html lang={lang} className={`${inter.variable} ${space.variable}`} suppressHydrationWarning>
+    <html lang={lang} className={`${sora.variable} ${dmSans.variable} ${dmMono.variable}`} suppressHydrationWarning>
       <body className="body-grid relative min-h-screen flex flex-col">
         
         {/* 
@@ -156,8 +176,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <I18nProvider lang={lang} dict={dict}>
               <ThemeProvider>
                 <InteractiveBackground />
-                <div className="absolute inset-0 bg-gradient-to-br from-cyan-600/10 via-transparent to-cyan-600/10 animate-pulse" />
-                <header className="site-header inset-x-0 top-0 z-30 border-b glass">
+                <header className="site-header glass-nav inset-x-0 top-0 z-30 border-b border-transparent">
                   <ResponsiveNavigation lang={lang} dict={dict} />
                 </header>
 
@@ -167,6 +186,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <ToastContainer />
 
                 <Footer year={new Date().getFullYear()} brand={dict.brand.name} tagline={dict.footer.tagline} devDict={dict.pages?.about?.dev} />
+                <ScrollReveal />
+                <KineticHeadings />
               </ThemeProvider>
             </I18nProvider>
           </SocketNotificationsProvider>
