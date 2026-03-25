@@ -13,6 +13,7 @@
 10. [Payment Processing](#payment-processing)
 11. [Internationalization](#internationalization)
 12. [Deployment Architecture](#deployment-architecture)
+13. [UI Design System & Presentation Layer](#ui-design-system--presentation-layer)
 
 ---
 
@@ -30,6 +31,7 @@ Trainium is a modern, full-stack e-commerce platform built for selling high-tech
 - **Product Recommendations**: AI-powered recommendation engine
 - **Social Features**: Reviews, ratings, favorites, and likes
 - **Inventory Management**: Stock tracking with low-stock alerts
+- **Presentation Layer**: Token-based light/dark UI, glass-morphism surfaces, motion micro-interactions (scroll reveal, kinetic headings), and a cursor-responsive background layer
 
 ---
 
@@ -167,11 +169,14 @@ apps/web/src/
 │   └── ...
 ├── components/            # React components
 │   ├── admin/             # Admin components
+│   ├── background/        # Interactive background (e.g. cursor blob)
 │   ├── cart/              # Cart components
 │   ├── checkout/          # Checkout components
+│   ├── motion/            # Scroll reveal, kinetic headings (client)
 │   ├── product/           # Product components
 │   ├── nav/               # Navigation
-│   └── ui/                # Reusable UI components
+│   └── ui/                # Reusable UI (primitives, forms, glass, feedback, …)
+├── styles/                # Shared CSS: glass, components, admin (imported with globals)
 ├── lib/                   # Business logic & utilities
 │   ├── auth/              # Auth utilities
 │   ├── cart/              # Cart logic
@@ -201,6 +206,37 @@ apps/socket/src/
     ├── Event handlers
     └── Admin HTTP endpoints
 ```
+
+---
+
+## UI Design System & Presentation Layer
+
+The storefront and admin UIs share a **token-based** presentation layer: CSS variables for surfaces, borders, and accent colors, with **light/dark** theming via `ThemeProvider` and the `html.dark` class.
+
+### Stylesheets
+
+| Location | Role |
+| -------- | ---- |
+| `apps/web/src/app/globals.css` | Global layout (e.g. body grid), design tokens, utility classes such as `glass-surface` and `frosted-panel`, modal/backdrop layering, motion-related variables and classes (`reveal-init` / `reveal-visible`), and `.cursor-blob` styles for the interactive background |
+| `apps/web/src/styles/glass.css` | Glass-morphism surfaces and specular highlights |
+| `apps/web/src/styles/components.css` | Product cards and shared component-level patterns |
+| `apps/web/src/styles/admin.css` | Admin-specific presentation |
+
+`globals.css` is imported from the root `layout.tsx`; other stylesheets are composed as part of that pipeline.
+
+### Motion and background
+
+- **`apps/web/src/components/motion/ScrollReveal.tsx`**: Client component that uses `IntersectionObserver` to add reveal classes to main sections (skips nodes under `[data-no-reveal]`).
+- **`apps/web/src/components/motion/KineticHeadings.tsx`**: Applies a subtle scroll-linked horizontal shift to `h1` / `h2` inside `main`.
+- **`apps/web/src/components/background/InteractiveBackground.tsx`**: Framer Motion–driven background layer, including a **cursor-following blob** (`.cursor-blob`); respects reduced-motion preferences where applicable.
+
+### Overlays and portals
+
+Modal dialogs, the shared account `Form` overlay, mobile bottom sheets, and some review flows render through **`createPortal`** to `document.body` with a consistent backdrop pattern to stabilize stacking and clipping. Shared building blocks live under `apps/web/src/components/ui/primitives/` (e.g. `dialog`, `dropdown-menu`) and `apps/web/src/components/ui/forms/Form.tsx`.
+
+### `components/ui` layout
+
+`apps/web/src/components/ui/` is grouped by concern: `primitives/`, `forms/`, `navigation/`, `feedback/`, `media/`, `glass/`, `animations/`, etc., rather than a single flat folder.
 
 ---
 
