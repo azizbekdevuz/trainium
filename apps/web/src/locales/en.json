@@ -585,6 +585,7 @@
     "showMore": "Show more",
     "tryAgain": "Try Again",
     "undo": "Undo",
+    "refresh": "Refresh",
     "view": "View",
     "yes": "Yes"
   },
@@ -716,6 +717,7 @@
       "warranty": "Warranty & repair network coverage"
     },
     "hero": {
+      "statusPill": "Premium Fitness Equipment · Korea",
       "bullet1": "14-day returns",
       "bullet2": "Warranty support",
       "bullet3": "Real-time tracking",
@@ -1168,6 +1170,7 @@
     "title": "Reviews",
     "titleLabel": "Title (optional)",
     "titlePh": "e.g. Solid quality, quiet drive",
+    "undoPending": "Your review was deleted. You can click undo button below or try refreshing the page to restore it.",
     "updatePosted": "Update posted",
     "updated": "Review updated",
     "write": "Write a review"

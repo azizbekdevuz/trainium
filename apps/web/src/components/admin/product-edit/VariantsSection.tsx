@@ -11,28 +11,28 @@ interface VariantsSectionProps {
 
 export function VariantsSection({ product, dict, addVariant, saveVariant, removeVariant }: VariantsSectionProps) {
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
-      <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-6">
+    <div className="glass-surface rounded-xl shadow-sm border border-ui-default dark:border-ui-subtle p-6">
+      <h2 className="text-xl font-semibold text-ui-primary mb-6">
         {dict.admin?.products?.variants ?? 'Variants'}
       </h2>
 
-      <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+      <div className="overflow-x-auto rounded-lg border border-ui-default dark:border-ui-subtle glass-surface">
         <table className="min-w-full text-sm">
-          <thead className="bg-slate-50 dark:bg-slate-700">
+          <thead className="bg-ui-inset dark:bg-ui-inset">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-ui-faint dark:text-ui-faint uppercase tracking-wider">
                 {dict.admin?.products?.thName ?? 'Name'}
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-ui-faint dark:text-ui-faint uppercase tracking-wider">
                 {dict.admin?.products?.thSku ?? 'SKU'}
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-ui-faint dark:text-ui-faint uppercase tracking-wider">
                 {(dict.admin?.products?.priceCentsWithCurrency ?? 'Price ({{currency}} cents)').replace('{{currency}}', product.currency)}
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-ui-faint dark:text-ui-faint uppercase tracking-wider">
                 {dict.admin?.products?.thActive ?? 'Active'}
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-ui-faint dark:text-ui-faint uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -41,7 +41,7 @@ export function VariantsSection({ product, dict, addVariant, saveVariant, remove
             {product.variants.map(v => {
               const formId = `v-${v.id}`;
               return (
-                <tr key={v.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                <tr key={v.id} className="hover:bg-ui-inset dark:hover:bg-ui-inset/50">
                   <td className="px-4 py-3">
                     <input form={formId} type="hidden" name="id" value={product.id} />
                     <input form={formId} type="hidden" name="variantId" value={v.id} />
@@ -49,7 +49,7 @@ export function VariantsSection({ product, dict, addVariant, saveVariant, remove
                       form={formId} 
                       name="name" 
                       defaultValue={v.name} 
-                      className="h-9 w-48 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors" 
+                      className="h-9 w-48 rounded-lg border border-ui-default dark:border-ui-subtle glass-surface text-ui-primary px-3 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors" 
                     />
                   </td>
                   <td className="px-4 py-3">
@@ -57,7 +57,7 @@ export function VariantsSection({ product, dict, addVariant, saveVariant, remove
                       form={formId} 
                       name="sku" 
                       defaultValue={v.sku} 
-                      className="h-9 w-40 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors" 
+                      className="h-9 w-40 rounded-lg border border-ui-default dark:border-ui-subtle glass-surface text-ui-primary px-3 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors" 
                     />
                   </td>
                   <td className="px-4 py-3">
@@ -66,7 +66,7 @@ export function VariantsSection({ product, dict, addVariant, saveVariant, remove
                       name="priceCents" 
                       type="number" 
                       defaultValue={v.priceCents} 
-                      className="h-9 w-32 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors" 
+                      className="h-9 w-32 rounded-lg border border-ui-default dark:border-ui-subtle glass-surface text-ui-primary px-3 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors" 
                     />
                   </td>
                   <td className="px-4 py-3">
@@ -76,7 +76,7 @@ export function VariantsSection({ product, dict, addVariant, saveVariant, remove
                       name="active" 
                       value="1" 
                       defaultChecked={v.active} 
-                      className="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-cyan-600 focus:ring-cyan-500 bg-white dark:bg-slate-800" 
+                      className="h-4 w-4 rounded border-ui-default dark:border-ui-subtle text-cyan-600 focus:ring-cyan-500 glass-surface" 
                     />
                   </td>
                   <td className="px-4 py-3 text-right">
@@ -107,31 +107,31 @@ export function VariantsSection({ product, dict, addVariant, saveVariant, remove
         <input type="hidden" name="id" value={product.id} />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2">
-            <label htmlFor="v_name" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+            <label htmlFor="v_name" className="block text-sm font-medium text-ui-secondary">
               {dict.admin?.products?.variantName ?? 'Variant Name'}
             </label>
             <input 
               id="v_name"
               name="v_name" 
               placeholder={dict.admin?.products?.variantNamePh ?? 'e.g. Single'} 
-              className="w-full h-10 px-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors" 
+              className="w-full h-10 px-3 rounded-lg border border-ui-default dark:border-ui-subtle glass-surface text-ui-primary focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors" 
               required
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="v_sku" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+            <label htmlFor="v_sku" className="block text-sm font-medium text-ui-secondary">
               {dict.admin?.products?.thSku ?? 'SKU'}
             </label>
             <input 
               id="v_sku"
               name="v_sku" 
               placeholder="SKU-001" 
-              className="w-full h-10 px-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors" 
+              className="w-full h-10 px-3 rounded-lg border border-ui-default dark:border-ui-subtle glass-surface text-ui-primary focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors" 
               required
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="v_priceCents" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+            <label htmlFor="v_priceCents" className="block text-sm font-medium text-ui-secondary">
               {(dict.admin?.products?.priceCentsWithCurrency ?? 'Price ({{currency}} cents)').replace('{{currency}}', product.currency)}
             </label>
             <input 
@@ -140,7 +140,7 @@ export function VariantsSection({ product, dict, addVariant, saveVariant, remove
               type="number" 
               defaultValue={0} 
               min={0} 
-              className="w-full h-10 px-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors" 
+              className="w-full h-10 px-3 rounded-lg border border-ui-default dark:border-ui-subtle glass-surface text-ui-primary focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors" 
               required
             />
           </div>

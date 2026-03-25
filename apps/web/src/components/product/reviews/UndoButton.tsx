@@ -1,6 +1,5 @@
-import { useTransition } from 'react';
+import { useState } from 'react';
 import { useI18n } from '../../providers/I18nProvider';
-import { showToast } from '../../../lib/ui/toast';
 
 interface UndoButtonProps {
   reviewId: string;
@@ -8,38 +7,20 @@ interface UndoButtonProps {
   onUndo: (reviewId: string) => void;
 }
 
-export function UndoButton({ reviewId, productId, onUndo }: UndoButtonProps) {
+export function UndoButton({ reviewId, onUndo }: UndoButtonProps) {
   const { t } = useI18n();
-  const [isPending, startTransition] = useTransition();
-
-  const handleUndo = () => {
-    startTransition(async () => {
-      const res = await fetch(`/api/reviews/${reviewId}/delete`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ action: 'undo' }),
-      });
-      if (res.ok) {
-        const r2 = await fetch(`/api/reviews?productId=${productId}`);
-        if (r2.ok) {
-          onUndo(reviewId);
-          if (typeof window !== 'undefined') localStorage.removeItem(`review-undo-${productId}`);
-          showToast(t('reviews.restored', 'Review restored'));
-        }
-      } else {
-        showToast(t('common.tryAgain', 'Try Again'));
-      }
-    });
-  };
+  const [pending, setPending] = useState(false);
 
   return (
     <button
-      onClick={handleUndo}
-      disabled={isPending}
-      className="rounded-full bg-black/90 text-white text-xs px-3 h-8 shadow"
+      onClick={() => {
+        setPending(true);
+        onUndo(reviewId);
+      }}
+      disabled={pending}
+      className="btn-primary rounded-xl px-4 h-9 text-sm font-medium shadow-lg disabled:opacity-50"
     >
-      {t('common.undo', 'Undo')}
+      {pending ? t('checkout.processing', 'Processing...') : t('common.undo', 'Undo')}
     </button>
   );
 }
-

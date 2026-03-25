@@ -38,7 +38,7 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
             "shadow-inner",
             isChecked 
               ? "bg-gradient-to-r from-cyan-500 to-blue-500" 
-              : "bg-slate-200 dark:bg-slate-700",
+              : "bg-slate-200 dark:bg-ui-inset",
             "disabled:cursor-not-allowed disabled:opacity-50",
             className
           )}
@@ -57,18 +57,18 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
           {/* Toggle knob */}
           <div className={cn(
             "absolute top-0.5 h-6 w-6 rounded-full transition-all duration-300 ease-in-out",
-            "bg-white dark:bg-slate-100 shadow-lg",
+            "bg-ui-elevated shadow-lg dark:bg-ui-inset",
             "flex items-center justify-center",
-            "border border-slate-200 dark:border-slate-300",
+            "border border-ui-default dark:border-ui-default",
             isChecked ? "translate-x-5" : "translate-x-0"
           )}>
             {/* Icons */}
             <X className={cn(
-              "h-3 w-3 text-slate-400 transition-opacity duration-200",
+              "h-3 w-3 text-ui-faint transition-opacity duration-200",
               isChecked ? "opacity-0" : "opacity-100"
             )} />
             <Check className={cn(
-              "h-3 w-3 text-cyan-600 absolute transition-opacity duration-200",
+              "h-3 w-3 text-cyan-600 dark:text-white absolute transition-opacity duration-200",
               isChecked ? "opacity-100" : "opacity-0"
             )} />
           </div>

@@ -14,19 +14,19 @@ export default async function AdminFaqPage() {
   const dict = await getDictionary(lang);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="bg-ui-inset dark:bg-ui-base">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8">
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">
+              <h1 className="text-2xl sm:text-3xl font-bold text-ui-primary">
                 {dict.faq?.admin?.title || 'FAQ Management'}
               </h1>
-              <p className="text-slate-600 dark:text-slate-400 mt-1 text-sm sm:text-base">
+              <p className="text-ui-muted dark:text-ui-faint mt-1 text-sm sm:text-base">
                 {dict.faq?.manageCategoriesAndQuestions || 'Manage FAQ categories and questions with multi-language support'}
               </p>
             </div>
-            <div className="flex items-center space-x-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            <div className="flex items-center space-x-2 text-xs sm:text-sm text-ui-faint dark:text-ui-faint">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span>{dict.common?.adminPanel || 'Admin Panel'}</span>
             </div>
@@ -38,7 +38,7 @@ export default async function AdminFaqPage() {
           <AdminNav lang={lang} dict={dict} activeSegment="faq" />
         </div>
 
-        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-4 sm:p-6">
+        <div className="glass-surface rounded-xl shadow-sm border border-ui-default dark:border-ui-subtle p-4 sm:p-6">
           <FaqManagementClient />
         </div>
       </div>

@@ -39,13 +39,13 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
   const dict = await getDictionary(lang);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="bg-ui-inset dark:bg-ui-base">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-10">
         <ToastOnQuery />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">{dict.admin?.products?.title ?? 'Products'}</h1>
-            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-1">{dict.admin?.products?.subtitle ?? 'Manage catalog, pricing, inventory and variants.'}</p>
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-ui-primary">{dict.admin?.products?.title ?? 'Products'}</h1>
+            <p className="text-sm sm:text-base text-ui-muted dark:text-ui-faint mt-1">{dict.admin?.products?.subtitle ?? 'Manage catalog, pricing, inventory and variants.'}</p>
           </div>
           <Link href={`/${lang}/admin/products/new`} className="rounded-2xl px-4 py-2 bg-cyan-600 text-white hover:opacity-90 transition text-sm sm:text-base font-medium">{dict.admin?.products?.new ?? 'New product'}</Link>
         </div>
@@ -60,7 +60,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
             name="q" 
             defaultValue={q} 
             placeholder={dict.admin?.products?.searchPlaceholder ?? 'Search by name or slug'} 
-            className="h-10 sm:h-11 w-full max-w-md rounded-xl border border-slate-300 dark:border-slate-600 px-3 text-sm sm:text-base bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-transparent" 
+            className="h-10 sm:h-11 w-full max-w-md rounded-xl border border-ui-default dark:border-ui-subtle px-3 text-sm sm:text-base glass-surface text-ui-primary placeholder:text-ui-faint dark:placeholder:text-ui-faint focus:ring-2 focus:ring-cyan-500 focus:border-transparent" 
           />
         </form>
 

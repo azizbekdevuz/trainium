@@ -73,7 +73,7 @@ export function FitnessCharacterIcons({
       case 'neutral':
         return 'text-green-500';
       default:
-        return 'text-gray-500';
+        return 'text-ui-faint';
     }
   };
 

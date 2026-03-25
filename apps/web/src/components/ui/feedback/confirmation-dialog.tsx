@@ -61,7 +61,7 @@ export function ConfirmationDialog({
               }`} />
             </div>
             <div>
-              <DialogTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              <DialogTitle className="text-lg font-semibold text-ui-primary">
                 {title}
               </DialogTitle>
             </div>
@@ -69,12 +69,12 @@ export function ConfirmationDialog({
         </DialogHeader>
         
         <div className="py-4">
-          <p className="text-sm text-slate-600 dark:text-slate-400">
+          <p className="text-sm text-ui-muted dark:text-ui-faint">
             {description}
           </p>
           {itemName && (
-            <div className="mt-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
-              <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+            <div className="mt-3 p-3 bg-ui-inset dark:bg-ui-elevated rounded-lg">
+              <p className="text-sm font-medium text-ui-primary">
                 &quot;{itemName}&quot;
               </p>
             </div>
@@ -87,7 +87,7 @@ export function ConfirmationDialog({
             variant="outline"
             onClick={handleCancel}
             disabled={loading}
-            className="transition-all duration-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+            className="transition-all duration-200 hover:bg-ui-inset dark:hover:bg-ui-elevated"
           >
             {cancelText}
           </Button>

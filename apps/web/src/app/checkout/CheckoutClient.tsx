@@ -55,7 +55,7 @@ export default function CheckoutClient({ cart }: { cart: CartDTO }) {
     return (
       <div className="mx-auto max-w-3xl px-6 py-10">
         <h1 className="font-display text-3xl">{t('checkout.title', 'Checkout')}</h1>
-        <p className="mt-3 text-gray-600">{t('checkout.preparing', 'Preparing secure payment…')}</p>
+        <p className="mt-3 text-ui-muted">{t('checkout.preparing', 'Preparing secure payment…')}</p>
       </div>
     );
   }
@@ -99,7 +99,7 @@ export default function CheckoutClient({ cart }: { cart: CartDTO }) {
         </Elements>
       ) : (
         <>
-          <div className="mb-3 rounded-xl border border-yellow-300 bg-yellow-50 dark:bg-slate-800 text-yellow-800 dark:text-yellow-300 px-4 py-3 text-sm">
+          <div className="mb-3 rounded-xl border border-yellow-300 bg-yellow-50 dark:bg-ui-elevated text-yellow-800 dark:text-yellow-300 px-4 py-3 text-sm">
             {t('checkout.testMode', 'TEST MODE: Payments are simulated for Toss. No real charges.')}
           </div>
           <TossPaymentWidget 

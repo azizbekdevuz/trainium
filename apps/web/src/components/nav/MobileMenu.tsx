@@ -9,7 +9,6 @@ import { useI18n } from '../providers/I18nProvider';
 import ThemeToggle from './ThemeToggle';
 import LanguageSwitcher from './LanguageSwitcher';
 import AuthLinks from './AuthLinks';
-import InteractiveBackground from '../background/InteractiveBackground';
 import { isAdmin } from '@/auth/rbac';
 
 interface MobileMenuProps {
@@ -51,28 +50,35 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
   return createPortal(
     <div className="fixed inset-0 z-50">
-      {/* Interactive Background */}
-      <InteractiveBackground />
-      
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-black/20 dark:bg-black/40 transition-opacity duration-200"
+        className="modal-backdrop fixed inset-0 transition-opacity duration-200"
         onClick={onClose}
       />
       
-      {/* Mobile Menu Content */}
-      <div className="fixed inset-0 z-10 flex flex-col bg-white dark:bg-slate-900 mobile-menu-container">
+      {/* Mobile Menu */}
+      <div
+        className="mobile-menu-container modal-surface fixed inset-x-0 bottom-0 top-[8vh] z-[90] flex max-h-[92dvh] flex-col rounded-t-[28px] sm:inset-x-3 sm:top-[10vh] sm:max-h-[90dvh] sm:rounded-t-[32px]"
+      >
+        <div
+          className="mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-[var(--border-strong)] opacity-60"
+          aria-hidden
+        />
         {/* Header with Close Button */}
-        <div className="flex flex-row items-center justify-between p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 glass flex-shrink-0">
-          <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100">
-            {dict.brand.name}<span className="text-cyan-600">.</span>
+        <div
+          className="flex shrink-0 flex-row items-center justify-between border-b border-[var(--border-subtle)] p-4 sm:p-6"
+        >
+          <h2 className="font-display text-lg font-extrabold tracking-[-0.03em] text-ui-primary sm:text-xl">
+            {dict.brand.name}
+            <span className="text-brand-dot">.</span>
           </h2>
-          <button 
+          <button
+            type="button"
             onClick={onClose}
-            className="p-2 sm:p-3 rounded-full bg-white dark:bg-slate-700 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95 border border-slate-200 dark:border-slate-600"
+            className="rounded-full border border-[var(--border-default)] p-2 transition-all duration-200 hover:bg-[var(--bg-inset)] active:scale-95 sm:p-3"
             aria-label="Close menu"
           >
-            <Icon name="cancel" className="w-5 h-5 sm:w-6 sm:h-6 text-slate-600 dark:text-slate-300" />
+            <Icon name="cancel" className="h-5 w-5 text-[var(--text-secondary)] sm:h-6 sm:w-6" />
           </button>
         </div>
         
@@ -82,16 +88,16 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             // Clean authenticated mobile menu
             <>
               {/* User Profile Section */}
-              <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 dark:border-slate-700">
+              <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-ui-default dark:border-ui-subtle">
                 <div className="flex items-center gap-3 p-3 sm:p-4 bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-slate-800 dark:to-slate-700 rounded-2xl">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 bg-cyan-600 rounded-full flex items-center justify-center flex-shrink-0">
                     <Icon name="user" className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-slate-900 dark:text-slate-100 text-sm sm:text-base truncate">
+                    <p className="font-semibold text-ui-primary text-sm sm:text-base truncate">
                       {session.user.name || session.user.email}
                     </p>
-                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">
+                    <p className="text-xs sm:text-sm text-ui-muted dark:text-ui-faint truncate">
                       {session.user.email}
                     </p>
                   </div>
@@ -104,7 +110,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   <Link 
                     key={item.href}
                     href={item.href}
-                    className="block py-3 sm:py-4 px-4 sm:px-6 text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-2xl transition-all duration-200 hover:shadow-md border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+                    className="block py-3 sm:py-4 px-4 sm:px-6 text-base sm:text-lg font-semibold text-ui-primary hover:bg-ui-inset dark:hover:bg-ui-elevated rounded-2xl transition-all duration-200 hover:shadow-md border border-transparent hover:border-ui-default dark:hover:border-ui-subtle"
                     onClick={onClose}
                   >
                     {item.label}
@@ -126,7 +132,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 <div className="space-y-2">
                   <Link 
                     href={`/${lang}/account`}
-                    className="block w-full text-center py-2 sm:py-3 px-4 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-600 font-medium text-sm sm:text-base"
+                    className="block w-full text-center py-2 sm:py-3 px-4 glass-surface text-ui-primary rounded-xl hover:bg-ui-inset dark:hover:bg-ui-inset transition-colors border border-ui-default dark:border-ui-subtle font-medium text-sm sm:text-base"
                     onClick={onClose}
                   >
                     {dict.nav?.myAccount || 'My Account'}
@@ -144,15 +150,15 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               </div>
 
               {/* Settings */}
-              <div className="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 glass space-y-3 sm:space-y-4">
-                <div className="flex items-center justify-between p-3 sm:p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-600">
-                  <span className="text-base sm:text-lg font-semibold text-slate-700 dark:text-slate-300">{dict.nav?.theme || 'Theme'}</span>
+              <div className="p-4 sm:p-6 border-t border-ui-default dark:border-ui-subtle glass space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between p-3 sm:p-4 glass-surface rounded-xl border border-ui-default dark:border-ui-subtle">
+                  <span className="text-base sm:text-lg font-semibold text-ui-secondary">{dict.nav?.theme || 'Theme'}</span>
                   <div className="scale-110 sm:scale-125">
                     <ThemeToggle />
                   </div>
                 </div>
-                <div className="flex items-center justify-between p-3 sm:p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-600">
-                  <span className="text-base sm:text-lg font-semibold text-slate-700 dark:text-slate-300">{dict.nav?.language || 'Language'}</span>
+                <div className="flex items-center justify-between p-3 sm:p-4 glass-surface rounded-xl border border-ui-default dark:border-ui-subtle">
+                  <span className="text-base sm:text-lg font-semibold text-ui-secondary">{dict.nav?.language || 'Language'}</span>
                   <div className="scale-110 sm:scale-125">
                     <LanguageSwitcher locale={lang as 'en' | 'ko' | 'uz'} />
                   </div>
@@ -168,7 +174,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   <Link 
                     key={item.href}
                     href={item.href}
-                    className="block py-3 sm:py-4 px-4 sm:px-6 text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-2xl transition-all duration-200 hover:shadow-md border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+                    className="block py-3 sm:py-4 px-4 sm:px-6 text-base sm:text-lg font-semibold text-ui-primary hover:bg-ui-inset dark:hover:bg-ui-elevated rounded-2xl transition-all duration-200 hover:shadow-md border border-transparent hover:border-ui-default dark:hover:border-ui-subtle"
                     onClick={onClose}
                   >
                     {item.label}
@@ -178,23 +184,23 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               
               {/* Priority Auth Section */}
               <div className="px-4 sm:px-6 pb-3 sm:pb-4">
-                <div className="p-3 sm:p-4 bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-slate-800 dark:to-slate-700 rounded-2xl border border-cyan-200 dark:border-slate-600">
+                <div className="p-3 sm:p-4 bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-slate-800 dark:to-slate-700 rounded-2xl border border-cyan-200 dark:border-ui-subtle">
                   <AuthLinks />
                 </div>
               </div>
               
               {/* Footer Settings */}
-              <div className="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 glass space-y-3 sm:space-y-4">
-                <div className="flex items-center justify-between p-3 sm:p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-600">
-                  <span className="text-base sm:text-lg font-semibold text-slate-700 dark:text-slate-300">
+              <div className="p-4 sm:p-6 border-t border-ui-default dark:border-ui-subtle glass space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between p-3 sm:p-4 glass-surface rounded-2xl shadow-sm border border-ui-default dark:border-ui-subtle">
+                  <span className="text-base sm:text-lg font-semibold text-ui-secondary">
                     {dict.nav?.theme || 'Theme'}
                   </span>
                   <div className="scale-110 sm:scale-125">
                     <ThemeToggle />
                   </div>
                 </div>
-                <div className="flex items-center justify-between p-3 sm:p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-600">
-                  <span className="text-base sm:text-lg font-semibold text-slate-700 dark:text-slate-300">
+                <div className="flex items-center justify-between p-3 sm:p-4 glass-surface rounded-2xl shadow-sm border border-ui-default dark:border-ui-subtle">
+                  <span className="text-base sm:text-lg font-semibold text-ui-secondary">
                     {dict.nav?.language || 'Language'}
                   </span>
                   <div className="scale-110 sm:scale-125">

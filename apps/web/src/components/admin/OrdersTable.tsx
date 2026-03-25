@@ -53,9 +53,9 @@ export function OrdersTable({ orders, dict, lang }: OrdersTableProps) {
       case 'CANCELED':
         return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
       case 'REFUNDED':
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300';
+        return 'bg-ui-inset text-ui-primary dark:bg-[color-mix(in_srgb,var(--bg-inset)_30%,transparent)] dark:text-ui-faint';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300';
+        return 'bg-ui-inset text-ui-primary dark:bg-[color-mix(in_srgb,var(--bg-inset)_30%,transparent)] dark:text-ui-faint';
     }
   };
 
@@ -68,7 +68,7 @@ export function OrdersTable({ orders, dict, lang }: OrdersTableProps) {
       case 'FAILED':
         return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300';
       default:
-        return 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300';
+        return 'bg-ui-inset text-ui-secondary dark:bg-[color-mix(in_srgb,var(--bg-inset)_30%,transparent)] dark:text-ui-faint';
     }
   };
 
@@ -81,7 +81,7 @@ export function OrdersTable({ orders, dict, lang }: OrdersTableProps) {
       case 'Preparing':
         return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300';
       default:
-        return 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300';
+        return 'bg-ui-inset text-ui-secondary dark:bg-[color-mix(in_srgb,var(--bg-inset)_30%,transparent)] dark:text-ui-faint';
     }
   };
 
@@ -96,7 +96,7 @@ export function OrdersTable({ orders, dict, lang }: OrdersTableProps) {
           return (
             <div
               key={order.id}
-              className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 hover:shadow-lg transition-all duration-200"
+              className="glass-surface rounded-2xl border border-ui-default dark:border-ui-subtle p-4 hover:shadow-lg transition-all duration-200"
             >
               <div className="space-y-3">
                 {/* Header Row */}
@@ -113,7 +113,7 @@ export function OrdersTable({ orders, dict, lang }: OrdersTableProps) {
                     </span>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    <p className="text-sm font-semibold text-ui-primary">
                       {formatCurrency(order.totalCents, order.currency)}
                     </p>
                   </div>
@@ -121,10 +121,10 @@ export function OrdersTable({ orders, dict, lang }: OrdersTableProps) {
                 
                 {/* Customer Info */}
                 <div>
-                  <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                  <p className="text-sm font-medium text-ui-primary">
                     {order.user?.name || order.shipping?.fullName || dict.admin?.orders?.guest || 'Guest'}
                   </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                  <p className="text-xs text-ui-faint dark:text-ui-faint">
                     {order.user?.email || dict.admin?.orders?.noEmail || 'No email'}
                   </p>
                 </div>
@@ -132,14 +132,14 @@ export function OrdersTable({ orders, dict, lang }: OrdersTableProps) {
                 {/* Order Details */}
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div>
-                    <span className="text-slate-500 dark:text-slate-400">{dict.admin?.orders?.itemsLabel || 'Items'}:</span>
-                    <span className="ml-1 font-medium text-slate-900 dark:text-slate-100">
+                    <span className="text-ui-faint dark:text-ui-faint">{dict.admin?.orders?.itemsLabel || 'Items'}:</span>
+                    <span className="ml-1 font-medium text-ui-primary">
                       {itemCount} {itemCount !== 1 ? (dict.admin?.orders?.itemsPlural ?? 'items') : (dict.admin?.orders?.items ?? 'item')}
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-500 dark:text-slate-400">{dict.admin?.orders?.dateLabel || 'Date'}:</span>
-                    <span className="ml-1 font-medium text-slate-900 dark:text-slate-100">
+                    <span className="text-ui-faint dark:text-ui-faint">{dict.admin?.orders?.dateLabel || 'Date'}:</span>
+                    <span className="ml-1 font-medium text-ui-primary">
                       <LocalTime date={order.createdAt} />
                     </span>
                   </div>
@@ -148,13 +148,13 @@ export function OrdersTable({ orders, dict, lang }: OrdersTableProps) {
                 {/* Status Row */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs text-slate-500 dark:text-slate-400">{dict.admin?.orders?.paymentLabel || 'Payment'}:</span>
+                    <span className="text-xs text-ui-faint dark:text-ui-faint">{dict.admin?.orders?.paymentLabel || 'Payment'}:</span>
                     <span className={`text-xs px-2 py-1 rounded ${getPaymentStatusColor(paymentStatus)}`}>
                       {paymentStatus}
                     </span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs text-slate-500 dark:text-slate-400">{dict.admin?.orders?.shippingLabel || 'Shipping'}:</span>
+                    <span className="text-xs text-ui-faint dark:text-ui-faint">{dict.admin?.orders?.shippingLabel || 'Shipping'}:</span>
                     <span className={`text-xs px-2 py-1 rounded ${getShippingStatusColor(shippingStatus)}`}>
                       {shippingStatus}
                     </span>
@@ -162,7 +162,7 @@ export function OrdersTable({ orders, dict, lang }: OrdersTableProps) {
                 </div>
                 
                 {/* Action Button */}
-                <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
+                <div className="pt-2 border-t border-ui-default dark:border-ui-subtle">
                   <Link 
                     href={`/${lang}/admin/orders/${order.id}`}
                     className="inline-flex items-center text-sm text-cyan-700 dark:text-cyan-400 hover:underline"
@@ -179,18 +179,18 @@ export function OrdersTable({ orders, dict, lang }: OrdersTableProps) {
   }
 
   return (
-    <div className="mt-4 sm:mt-6 overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+    <div className="mt-4 sm:mt-6 overflow-x-auto rounded-2xl border border-ui-default dark:border-ui-subtle glass-surface">
       <table className="min-w-full text-xs sm:text-sm">
-        <thead className="bg-slate-50 dark:bg-slate-800">
+        <thead className="bg-ui-inset dark:bg-ui-elevated">
           <tr>
-            <th className="px-3 sm:px-4 py-3 text-left font-medium text-slate-900 dark:text-slate-100">{dict.admin?.orders?.thOrderId ?? 'Order ID'}</th>
-            <th className="px-3 sm:px-4 py-3 text-left font-medium text-slate-900 dark:text-slate-100">{dict.admin?.orders?.thCustomer ?? 'Customer'}</th>
-            <th className="px-3 sm:px-4 py-3 text-left font-medium text-slate-900 dark:text-slate-100">{dict.admin?.orders?.thStatus ?? 'Status'}</th>
-            <th className="px-3 sm:px-4 py-3 text-left font-medium text-slate-900 dark:text-slate-100">{dict.admin?.orders?.thTotal ?? 'Total'}</th>
-            <th className="px-3 sm:px-4 py-3 text-left font-medium text-slate-900 dark:text-slate-100">{dict.admin?.orders?.thItems ?? 'Items'}</th>
-            <th className="px-3 sm:px-4 py-3 text-left font-medium text-slate-900 dark:text-slate-100">{dict.admin?.orders?.thDate ?? 'Date'}</th>
-            <th className="px-3 sm:px-4 py-3 text-left font-medium text-slate-900 dark:text-slate-100">{dict.admin?.orders?.thPayment ?? 'Payment'}</th>
-            <th className="px-3 sm:px-4 py-3 text-left font-medium text-slate-900 dark:text-slate-100">{dict.admin?.orders?.thShipping ?? 'Shipping'}</th>
+            <th className="px-3 sm:px-4 py-3 text-left font-medium text-ui-primary">{dict.admin?.orders?.thOrderId ?? 'Order ID'}</th>
+            <th className="px-3 sm:px-4 py-3 text-left font-medium text-ui-primary">{dict.admin?.orders?.thCustomer ?? 'Customer'}</th>
+            <th className="px-3 sm:px-4 py-3 text-left font-medium text-ui-primary">{dict.admin?.orders?.thStatus ?? 'Status'}</th>
+            <th className="px-3 sm:px-4 py-3 text-left font-medium text-ui-primary">{dict.admin?.orders?.thTotal ?? 'Total'}</th>
+            <th className="px-3 sm:px-4 py-3 text-left font-medium text-ui-primary">{dict.admin?.orders?.thItems ?? 'Items'}</th>
+            <th className="px-3 sm:px-4 py-3 text-left font-medium text-ui-primary">{dict.admin?.orders?.thDate ?? 'Date'}</th>
+            <th className="px-3 sm:px-4 py-3 text-left font-medium text-ui-primary">{dict.admin?.orders?.thPayment ?? 'Payment'}</th>
+            <th className="px-3 sm:px-4 py-3 text-left font-medium text-ui-primary">{dict.admin?.orders?.thShipping ?? 'Shipping'}</th>
             <th className="px-3 sm:px-4 py-3"></th>
           </tr>
         </thead>
@@ -201,7 +201,7 @@ export function OrdersTable({ orders, dict, lang }: OrdersTableProps) {
             const shippingStatus = order.shipping?.status || dict.admin?.orders?.notSet || 'Not set';
             
             return (
-              <tr key={order.id} className="border-t border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
+              <tr key={order.id} className="border-t border-ui-default dark:border-ui-subtle hover:bg-ui-inset dark:hover:bg-ui-elevated">
                 <td className="px-3 sm:px-4 py-3">
                   <Link 
                     href={`/${lang}/admin/orders/${order.id}`}
@@ -212,10 +212,10 @@ export function OrdersTable({ orders, dict, lang }: OrdersTableProps) {
                 </td>
                 <td className="px-3 sm:px-4 py-3">
                   <div>
-                    <div className="font-medium text-slate-900 dark:text-slate-100 text-xs sm:text-sm">
+                    <div className="font-medium text-ui-primary text-xs sm:text-sm">
                       {order.user?.name || order.shipping?.fullName || dict.admin?.orders?.guest || 'Guest'}
                     </div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400">
+                    <div className="text-xs text-ui-faint dark:text-ui-faint">
                       {order.user?.email || dict.admin?.orders?.noEmail || 'No email'}
                     </div>
                   </div>
@@ -225,13 +225,13 @@ export function OrdersTable({ orders, dict, lang }: OrdersTableProps) {
                     {order.status}
                   </span>
                 </td>
-                <td className="px-3 sm:px-4 py-3 font-medium text-slate-900 dark:text-slate-100 text-xs sm:text-sm">
+                <td className="px-3 sm:px-4 py-3 font-medium text-ui-primary text-xs sm:text-sm">
                   {formatCurrency(order.totalCents, order.currency)}
                 </td>
-                <td className="px-3 sm:px-4 py-3 text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
+                <td className="px-3 sm:px-4 py-3 text-ui-muted dark:text-ui-faint text-xs sm:text-sm">
                   {itemCount} {itemCount !== 1 ? (dict.admin?.orders?.itemsPlural ?? 'items') : (dict.admin?.orders?.items ?? 'item')}
                 </td>
-                <td className="px-3 sm:px-4 py-3 text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
+                <td className="px-3 sm:px-4 py-3 text-ui-muted dark:text-ui-faint text-xs sm:text-sm">
                   <LocalTime date={order.createdAt} />
                 </td>
                 <td className="px-3 sm:px-4 py-3">

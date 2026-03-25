@@ -1,4 +1,5 @@
 import * as React from "react"
+import { createPortal } from "react-dom"
 import { cn } from "@/lib/utils/format"
 
 export interface DropdownMenuProps {
@@ -8,34 +9,20 @@ export interface DropdownMenuProps {
 const DropdownMenuContext = React.createContext<{
   isOpen: boolean
   setIsOpen: (open: boolean) => void
+  triggerRef: React.RefObject<HTMLElement | null>
 }>({
   isOpen: false,
-  setIsOpen: () => {}
+  setIsOpen: () => {},
+  triggerRef: { current: null },
 })
 
 const DropdownMenu = ({ children }: DropdownMenuProps) => {
   const [isOpen, setIsOpen] = React.useState(false)
-  const dropdownRef = React.useRef<HTMLDivElement>(null)
-
-  React.useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false)
-      }
-    }
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isOpen])
+  const triggerRef = React.useRef<HTMLElement | null>(null)
 
   return (
-    <DropdownMenuContext.Provider value={{ isOpen, setIsOpen }}>
-      <div ref={dropdownRef} className="relative inline-block text-left">{children}</div>
+    <DropdownMenuContext.Provider value={{ isOpen, setIsOpen, triggerRef }}>
+      <div className="relative inline-block text-left">{children}</div>
     </DropdownMenuContext.Provider>
   )
 }
@@ -48,7 +35,12 @@ const DropdownMenuTrigger = React.forwardRef<
   HTMLButtonElement,
   DropdownMenuTriggerProps
 >(({ className, children, asChild = false, onClick, ...props }, ref) => {
-  const { isOpen, setIsOpen } = React.useContext(DropdownMenuContext)
+  const { isOpen, setIsOpen, triggerRef } = React.useContext(DropdownMenuContext)
+  const internalRef = React.useRef<HTMLElement>(null)
+
+  React.useEffect(() => {
+    triggerRef.current = internalRef.current
+  })
   
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     setIsOpen(!isOpen)
@@ -58,7 +50,11 @@ const DropdownMenuTrigger = React.forwardRef<
   const Comp = asChild ? "span" : "button"
   return (
     <Comp
-      ref={ref}
+      ref={(node: HTMLElement | null) => {
+        internalRef.current = node
+        if (typeof ref === 'function') ref(node as HTMLButtonElement | null)
+        else if (ref) (ref as React.MutableRefObject<HTMLButtonElement | null>).current = node as HTMLButtonElement | null
+      }}
       className={cn(className)}
       onClick={handleClick}
       {...props}
@@ -73,27 +69,40 @@ const DropdownMenuContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, children, ...props }, ref) => {
-  const { isOpen } = React.useContext(DropdownMenuContext)
+  const { isOpen, setIsOpen, triggerRef } = React.useContext(DropdownMenuContext)
+  const [pos, setPos] = React.useState<{ top: number; left: number }>({ top: 0, left: 0 })
+
+  React.useEffect(() => {
+    if (!isOpen || !triggerRef.current) return
+    const rect = triggerRef.current.getBoundingClientRect()
+    const menuWidth = 224
+    let left = rect.right - menuWidth
+    if (left < 8) left = 8
+    setPos({ top: rect.bottom + 8, left })
+  }, [isOpen, triggerRef])
   
-  if (!isOpen) return null
+  if (!isOpen || typeof document === 'undefined') return null
   
-  return (
-    <div
-      ref={ref}
-      className={cn(
-        "absolute right-0 z-50 mt-2 w-56 origin-top-right",
-        "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700",
-        "rounded-lg shadow-xl backdrop-blur-xl",
-        "ring-1 ring-black/5 dark:ring-white/10",
-        "animate-fade-up duration-200",
-        className
-      )}
-      {...props}
-    >
-      <div className="py-1" role="menu">
-        {children}
+  return createPortal(
+    <>
+      <div className="fixed inset-0 z-[98]" onClick={() => setIsOpen(false)} />
+      <div
+        ref={ref}
+        style={{ position: 'fixed', top: pos.top, left: pos.left }}
+        className={cn(
+          "z-[99] w-56 origin-top-right",
+          "frosted-panel rounded-[var(--radius-lg)]",
+          "animate-fade-up duration-200",
+          className
+        )}
+        {...props}
+      >
+        <div className="py-1" role="menu">
+          {children}
+        </div>
       </div>
-    </div>
+    </>,
+    document.body
   )
 })
 DropdownMenuContent.displayName = "DropdownMenuContent"
@@ -113,11 +122,9 @@ const DropdownMenuItem = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        "block px-4 py-2 text-sm cursor-pointer transition-colors duration-150",
-        "text-slate-700 dark:text-slate-200",
-        "hover:bg-slate-50 dark:hover:bg-slate-700",
-        "hover:text-slate-900 dark:hover:text-white",
-        "focus:bg-slate-50 dark:focus:bg-slate-700 focus:outline-none",
+        "block cursor-pointer px-4 py-2 text-sm transition-colors duration-150",
+        "text-ui-secondary hover:bg-ui-inset hover:text-ui-primary",
+        "focus:bg-ui-inset focus:outline-none dark:text-ui-muted dark:hover:text-ui-primary",
         className
       )}
       role="menuitem"

@@ -133,11 +133,11 @@ export function DashboardStatsCards({ stats, dict }: DashboardStatsCardsProps) {
           key={index}
           className={`
             group relative rounded-xl p-3 sm:p-4 
-            bg-white dark:bg-slate-900
-            border border-slate-200 dark:border-slate-700
+            glass-surface
+            border border-ui-default dark:border-ui-subtle
             hover:shadow-lg hover:shadow-slate-200/50 dark:hover:shadow-slate-900/50
             transition-shadow duration-200 ease-out
-            hover:border-slate-300 dark:hover:border-slate-600
+            hover:border-ui-default dark:hover:border-ui-subtle
             min-h-[100px] sm:min-h-[120px]
             overflow-hidden
           `}
@@ -157,13 +157,13 @@ export function DashboardStatsCards({ stats, dict }: DashboardStatsCardsProps) {
               <Icon name={card.icon as any} className={`w-5 h-5 sm:w-6 sm:h-6 ${card.color}`} />
             </div>
             <div className="text-right flex-1 min-w-0 ml-2 sm:ml-3">
-              <div className="text-sm sm:text-lg font-bold text-slate-900 dark:text-slate-100 break-words leading-tight">
+              <div className="text-sm sm:text-lg font-bold text-ui-primary break-words leading-tight">
                 {card.value}
               </div>
             </div>
           </div>
           
-          <h3 className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">
+          <h3 className="text-xs sm:text-sm font-medium text-ui-muted dark:text-ui-faint">
             {card.title}
           </h3>
         </div>

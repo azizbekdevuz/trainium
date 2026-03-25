@@ -123,9 +123,9 @@ export function NotificationClient({
       {/* Notifications List */}
       {filteredNotifications.length === 0 ? (
         <div className="text-center py-12">
-          <Bell className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 dark:text-slate-100 mb-2">{dict.notifications?.none ?? 'No notifications yet'}</h3>
-          <p className="text-gray-600 dark:text-slate-300">
+          <Bell className="h-12 w-12 text-ui-faint mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-ui-primary mb-2">{dict.notifications?.none ?? 'No notifications yet'}</h3>
+          <p className="text-ui-muted dark:text-ui-faint">
             {isConnected 
               ? (dict.notifications?.about ?? "We'll notify you about order updates, new products, and important announcements.")
               : (dict.notifications?.connecting ?? 'Connecting to real-time notifications...')

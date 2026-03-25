@@ -158,13 +158,13 @@ export const ContactFormEmail = ({
   );
 };
 
-// Brand Colors
-const primaryColor = '#0ea5e9'; // cyan-500
-const textDark = '#0f172a'; // slate-900
-const textMedium = '#475569'; // slate-600
-const textLight = '#64748b'; // slate-500
-const bgLight = '#f8fafc'; // slate-50
-const borderColor = '#e2e8f0'; // slate-200
+// Brand colors (aligned with web design tokens — inline for email clients)
+const primaryColor = '#0ea5e9';
+const textDark = '#0c1220';
+const textMedium = '#3d4a5c';
+const textLight = '#64748b';
+const bgLight = '#f0f4f8';
+const borderColor = 'rgba(203, 213, 225, 0.9)';
 
 // Base Styles
 const bodyStyle: React.CSSProperties = {
@@ -193,10 +193,10 @@ const mainTable: React.CSSProperties = {
   width: '600px',
   maxWidth: '100%',
   margin: '0 auto',
-  backgroundColor: '#ffffff',
-  borderRadius: '12px',
+  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+  borderRadius: '18px',
   overflow: 'hidden',
-  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)',
+  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
 };
 
 const headerCell: React.CSSProperties = {
@@ -308,7 +308,7 @@ const primaryButtonStyle: React.CSSProperties = {
   display: 'inline-block',
   padding: '14px 32px',
   backgroundColor: primaryColor,
-  color: '#ffffff',
+  color: '#020c16',
   fontSize: '15px',
   fontWeight: '600',
   textDecoration: 'none',

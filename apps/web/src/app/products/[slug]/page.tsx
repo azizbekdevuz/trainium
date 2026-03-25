@@ -184,7 +184,7 @@ export default async function ProductPage({ params }: Props) {
         }
         
                 return (
-            <div className="mt-1 text-xs text-gray-500">
+            <div className="mt-1 text-xs text-ui-faint">
                 {(dict.product?.stock?.inStock ?? '{{0}} in stock').replace('{{0}}', String(inStock))}
             </div>
         );
@@ -195,11 +195,11 @@ export default async function ProductPage({ params }: Props) {
             <script type="application/ld+json" suppressHydrationWarning
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
             <div className="grid gap-10 md:grid-cols-2">
-                <div className="aspect-[4/3] rounded-2xl bg-gray-100 dark:bg-slate-800 overflow-hidden relative">
+                <div className="aspect-[4/3] rounded-2xl bg-ui-inset dark:bg-ui-elevated overflow-hidden relative">
                     {primaryImage ? (
                         <SmartImage src={primaryImage} alt={product.name} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
                     ) : (
-                        <div className="h-full w-full grid place-items-center text-gray-400 text-sm">
+                        <div className="h-full w-full grid place-items-center text-ui-faint text-sm">
                             Image coming soon
                         </div>
                     )}
@@ -224,11 +224,11 @@ export default async function ProductPage({ params }: Props) {
 
                 <div>
                     <h1 className="font-display text-3xl">{product.name}</h1>
-                    <div className="mt-2 text-gray-500 dark:text-slate-400 text-sm">
+                    <div className="mt-2 text-ui-faint dark:text-ui-faint text-sm">
                         {product.categories.map((c) => getCategoryDisplayName(c, dict)).join(' · ')}
                     </div>
 
-                    <div className="mt-4">
+                    <div className="mt-4 font-semibold text-cyan-700 dark:text-cyan-300">
                         <PriceBlock
                             priceCents={product.variants[0]?.priceCents ?? product.priceCents}
                             currency={product.currency}
@@ -239,12 +239,12 @@ export default async function ProductPage({ params }: Props) {
                         />
                     </div>
 
-                    {product.summary && <p className="mt-6 text-gray-700 dark:text-slate-200">{product.summary}</p>}
+                    {product.summary && <p className="mt-6 text-ui-secondary">{product.summary}</p>}
                     {product.description && (
-                        <p className="mt-3 text-gray-600 dark:text-slate-300 text-sm leading-relaxed">{product.description}</p>
+                        <p className="mt-3 text-ui-muted dark:text-ui-faint text-sm leading-relaxed">{product.description}</p>
                     )}
 
-                    <div className="mt-6 text-sm text-gray-600 dark:text-slate-300 space-y-1">
+                    <div className="mt-6 text-sm text-ui-muted dark:text-ui-faint space-y-1">
                         <div>{dict.product?.stock?.shipping ?? 'Shipping: 2–4 business days (KR)'}</div>
                         <div>{dict.product?.stock?.returns ?? 'Returns: 14-day change-of-mind'}</div>
                         <div>{dict.product?.stock?.warranty ?? 'Warranty: 1 year limited warranty'}</div>
@@ -254,7 +254,7 @@ export default async function ProductPage({ params }: Props) {
                     <form className="mt-6 space-y-3" action={addToCartAction} id="add-to-cart-form">
                         <input type="hidden" name="productId" value={product.id} />
                         {product.variants.length > 0 ? (
-                            <label className="block text-sm text-gray-600 dark:text-slate-300">
+                            <label className="block text-sm text-ui-muted dark:text-ui-faint">
                                 Variant
                                 <select
                                     name="variantId"
@@ -369,7 +369,7 @@ export default async function ProductPage({ params }: Props) {
 
 function PriceBlock({ priceCents, currency }: { priceCents: number; currency: string }) {
     return (
-        <div className="text-2xl font-semibold text-cyan-700">
+        <div className="text-2xl font-semibold text-cyan-700 dark:text-cyan-300">
             {formatCurrency(priceCents, currency)}
         </div>
     );

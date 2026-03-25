@@ -96,24 +96,25 @@ export function AnalyticsClient({
     <div className="mt-6 space-y-6">
       <div className="flex items-center justify-end">
         <button
+          type="button"
           onClick={downloadCsv}
-          className="h-10 px-4 rounded-xl bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition"
+          className="btn-primary h-10 rounded-xl px-4 text-sm font-medium"
         >
           {t('admin.analytics.exportCsv', 'Export CSV')}
         </button>
       </div>
 
       {/* Daily chart */}
-      <div className="rounded-2xl border bg-white p-5">
+      <div className="glass-surface rounded-2xl border border-[var(--border-default)] p-5">
         <div className="mb-3 font-medium">{t('admin.analytics.dailyHeader', 'Orders & Revenue (daily)')}</div>
         <div className="w-full overflow-x-auto">
           <svg width={svgWidth} height={svgHeight} className="min-w-full">
             {/* axes */}
-            <line x1={padding.left} y1={padding.top} x2={padding.left} y2={padding.top + innerH} stroke="#E5E7EB" />
-            <line x1={padding.left} y1={padding.top + innerH} x2={padding.left + innerW} y2={padding.top + innerH} stroke="#E5E7EB" />
+            <line x1={padding.left} y1={padding.top} x2={padding.left} y2={padding.top + innerH} stroke="var(--chart-axis)" />
+            <line x1={padding.left} y1={padding.top + innerH} x2={padding.left + innerW} y2={padding.top + innerH} stroke="var(--chart-axis)" />
 
             {/* revenue line */}
-            <path d={revenuePath} fill="none" stroke="#6366F1" strokeWidth={2} />
+            <path d={revenuePath} fill="none" stroke="var(--chart-series-b)" strokeWidth={2} />
 
             {/* orders bars */}
             {points.map((p, i) => (
@@ -123,7 +124,7 @@ export function AnalyticsClient({
                 width={12}
                 y={p.ordersY}
                 height={padding.top + innerH - p.ordersY}
-                fill="#06B6D4"
+                fill="var(--chart-series-a)"
                 opacity={hoverIdx === i ? 1 : 0.85}
                 onMouseEnter={() => setHoverIdx(i)}
                 onMouseLeave={() => setHoverIdx(null)}
@@ -137,7 +138,7 @@ export function AnalyticsClient({
                 cx={p.x}
                 cy={p.revenueY}
                 r={hoverIdx === i ? 4 : 3}
-                fill="#6366F1"
+                fill="var(--chart-series-b)"
                 onMouseEnter={() => setHoverIdx(i)}
                 onMouseLeave={() => setHoverIdx(null)}
               />
@@ -146,13 +147,17 @@ export function AnalyticsClient({
         </div>
 
         {/* legend + tooltip */}
-        <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
+        <div className="mt-2 flex items-center justify-between text-xs text-ui-faint">
           <div className="flex items-center gap-4">
-            <span className="inline-flex items-center gap-1"><span className="w-3 h-3 rounded-sm bg-cyan-500 inline-block" /> {t('admin.analytics.legendOrders', 'Orders')}</span>
-            <span className="inline-flex items-center gap-1"><span className="w-3 h-3 rounded-sm bg-indigo-500 inline-block" /> {t('admin.analytics.legendRevenue', 'Revenue')}</span>
+            <span className="inline-flex items-center gap-1">
+              <span className="inline-block h-3 w-3 rounded-sm bg-[var(--chart-series-a)]" /> {t('admin.analytics.legendOrders', 'Orders')}
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <span className="inline-block h-3 w-3 rounded-sm bg-[var(--chart-series-b)]" /> {t('admin.analytics.legendRevenue', 'Revenue')}
+            </span>
           </div>
           {hoverIdx !== null && daily[hoverIdx] && (
-            <div className="px-2 py-1 rounded bg-gray-100 text-gray-700">
+            <div className="px-2 py-1 rounded bg-ui-inset text-ui-secondary">
               <span className="font-medium mr-2">{new Date(daily[hoverIdx].day).toLocaleDateString(lang)}</span>
               <span className="mr-2">{daily[hoverIdx].orders} {t('admin.analytics.orders', 'Orders').toLowerCase()}</span>
               <span>{formatCurrency(daily[hoverIdx].revenue, currency)}</span>
@@ -163,14 +168,17 @@ export function AnalyticsClient({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Orders by status */}
-        <div className="rounded-2xl border bg-white p-5">
+        <div className="glass-surface rounded-2xl border border-[var(--border-default)] p-5">
           <div className="mb-3 font-medium">{t('admin.analytics.ordersByStatus', 'Orders by Status')}</div>
           <div className="space-y-2">
             {byStatus.map((s) => (
               <div key={s.status} className="flex items-center gap-3">
-                <div className="w-28 text-sm text-gray-600">{s.status}</div>
-                <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-cyan-500 rounded-full" style={{ width: `${Math.min(100, (s._count._all / Math.max(1, maxStatus(byStatus))) * 100)}%` }} />
+                <div className="w-28 text-sm text-ui-muted">{s.status}</div>
+                <div className="flex-1 h-2 bg-ui-inset rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-[var(--chart-series-a)]"
+                    style={{ width: `${Math.min(100, (s._count._all / Math.max(1, maxStatus(byStatus))) * 100)}%` }}
+                  />
                 </div>
                 <div className="w-10 text-right text-sm font-medium">{s._count._all}</div>
               </div>
@@ -179,17 +187,20 @@ export function AnalyticsClient({
         </div>
 
         {/* Top products */}
-        <div className="rounded-2xl border bg-white p-5">
+        <div className="glass-surface rounded-2xl border border-[var(--border-default)] p-5">
           <div className="mb-3 font-medium">{t('admin.analytics.topProductsHeader', 'Top Products')}</div>
           <div className="space-y-3">
             {topProducts.map((p, i) => (
               <div key={`${p.id}-${i}`} className="space-y-1">
                 <div className="flex items-center justify-between">
                   <div className="text-sm font-medium truncate pr-2">{p.name}</div>
-                  <div className="text-xs text-gray-500 whitespace-nowrap">{p.units} {t('admin.analytics.units', 'units')} • {formatCurrency(p.revenue, currency)}</div>
+                  <div className="text-xs text-ui-faint whitespace-nowrap">{p.units} {t('admin.analytics.units', 'units')} • {formatCurrency(p.revenue, currency)}</div>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${Math.min(100, (p.revenue / Math.max(1, maxRevenueProducts(topProducts))) * 100)}%` }} />
+                <div className="h-2 bg-ui-inset rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-[var(--chart-series-b)]"
+                    style={{ width: `${Math.min(100, (p.revenue / Math.max(1, maxRevenueProducts(topProducts))) * 100)}%` }}
+                  />
                 </div>
               </div>
             ))}
@@ -199,18 +210,21 @@ export function AnalyticsClient({
 
       {/* Channel breakdown */}
       {providerBuckets && providerBuckets.length > 0 && (
-        <div className="rounded-2xl border bg-white p-5">
+        <div className="glass-surface rounded-2xl border border-[var(--border-default)] p-5">
           <div className="mb-3 font-medium">{t('admin.analytics.channelBreakdown', 'Channel Breakdown')}</div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Revenue */}
             <div>
-              <div className="text-sm text-gray-600 mb-2">{t('admin.analytics.revenue', 'Revenue')}</div>
+              <div className="text-sm text-ui-muted mb-2">{t('admin.analytics.revenue', 'Revenue')}</div>
               <div className="space-y-2">
                 {providerBuckets.map((b) => (
                   <div key={`rev-${b.provider}`} className="flex items-center gap-3">
-                    <div className="w-24 text-sm text-gray-600">{b.provider}</div>
-                    <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${scale(b.revenue, providerBuckets.map(p=>p.revenue))}%` }} />
+                    <div className="w-24 text-sm text-ui-muted">{b.provider}</div>
+                    <div className="flex-1 h-2 bg-ui-inset rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-[var(--chart-series-success)]"
+                        style={{ width: `${scale(b.revenue, providerBuckets.map((p) => p.revenue))}%` }}
+                      />
                     </div>
                     <div className="w-28 text-right text-sm font-medium">{formatCurrency(b.revenue, currency)}</div>
                   </div>
@@ -220,13 +234,16 @@ export function AnalyticsClient({
 
             {/* Orders count */}
             <div>
-              <div className="text-sm text-gray-600 mb-2">{t('admin.analytics.orders', 'Orders')}</div>
+              <div className="text-sm text-ui-muted mb-2">{t('admin.analytics.orders', 'Orders')}</div>
               <div className="space-y-2">
                 {providerBuckets.map((b) => (
                   <div key={`cnt-${b.provider}`} className="flex items-center gap-3">
-                    <div className="w-24 text-sm text-gray-600">{b.provider}</div>
-                    <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-cyan-500 rounded-full" style={{ width: `${scale(b.count, providerBuckets.map(p=>p.count))}%` }} />
+                    <div className="w-24 text-sm text-ui-muted">{b.provider}</div>
+                    <div className="flex-1 h-2 bg-ui-inset rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-[var(--chart-series-a)]"
+                        style={{ width: `${scale(b.count, providerBuckets.map((p) => p.count))}%` }}
+                      />
                     </div>
                     <div className="w-12 text-right text-sm font-medium">{b.count}</div>
                   </div>
@@ -239,7 +256,7 @@ export function AnalyticsClient({
           <div className="mt-4 text-right">
             <button
               onClick={() => downloadCsvProviders(providerBuckets)}
-              className="h-9 px-3 rounded-lg border text-sm hover:bg-gray-50"
+              className="h-9 px-3 rounded-lg border text-sm hover:bg-ui-inset"
             >
               {t('admin.analytics.exportChannelsCsv', 'Export Channels CSV')}
             </button>

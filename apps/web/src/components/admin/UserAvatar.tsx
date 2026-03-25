@@ -10,7 +10,7 @@ interface UserAvatarProps {
 
 export function UserAvatar({ image, name, email, className = "w-10 h-10" }: UserAvatarProps) {
   return (
-    <div className={`${className} rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800 flex-shrink-0`}>
+    <div className={`${className} rounded-full overflow-hidden bg-ui-inset dark:bg-ui-elevated flex-shrink-0`}>
       {image ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img

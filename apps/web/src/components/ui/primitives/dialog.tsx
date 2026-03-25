@@ -24,18 +24,13 @@ const Dialog = ({ open, onOpenChange, children }: DialogProps) => {
   if (!open) return null
 
   return createPortal(
-    <div className="fixed inset-0 z-[80]">
-      {/* Backdrop */}
-      <div 
-        className="fixed inset-0 z-[80] bg-black/20 transition-opacity duration-200"
-        onClick={() => onOpenChange?.(false)}
-      />
-      {/* Modal content container (isolated pointer events) */}
-      <div className="fixed inset-0 z-[90] flex items-center justify-center p-4 pointer-events-none">
-        <div className="pointer-events-auto">
-          {children}
-        </div>
-      </div>
+    <div
+      className="fixed inset-0 flex items-center justify-center p-4"
+      style={{ zIndex: 80 }}
+      onClick={() => onOpenChange?.(false)}
+    >
+      <div className="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm" style={{ zIndex: -1 }} aria-hidden />
+      {children}
     </div>,
     document.body
   )
@@ -58,21 +53,21 @@ DialogTrigger.displayName = "DialogTrigger"
 const DialogContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, children, ...props }, ref) => (
+>(({ className, children, onClick, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "fixed inset-0 z-[90] flex items-center justify-center p-4",
-      "sm:inset-auto sm:left-[50%] sm:top-[50%] sm:translate-x-[-50%] sm:translate-y-[-50%]",
-      "w-full max-w-lg",
-      "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700",
-      "shadow-2xl rounded-xl duration-300",
-      "ring-1 ring-black/5 dark:ring-white/10",
-      "dialog-content", // Apply crisp rendering
-      "max-h-[95vh] overflow-y-auto", // Ensure it fits in viewport
+      "relative w-full max-w-lg",
+      "modal-surface rounded-[var(--radius-xl)]",
+      "duration-300 dialog-content",
+      "max-h-[min(90dvh,720px)] overflow-y-auto overflow-x-hidden",
       className
     )}
     {...props}
+    onClick={(e) => {
+      onClick?.(e);
+      e.stopPropagation();
+    }}
   >
     <div className="w-full p-6">
       {children}
@@ -103,7 +98,7 @@ const DialogTitle = React.forwardRef<
   <h2
     ref={ref}
     className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
+      "text-lg font-semibold leading-none tracking-tight text-[var(--text-primary)]",
       className
     )}
     {...props}

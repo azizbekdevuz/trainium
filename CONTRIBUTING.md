@@ -135,7 +135,8 @@ CI runs these same checks on every push and pull request to `main`.
 
 ### File Organization
 
-- **Components**: `apps/web/src/components/` (grouped by feature: admin, cart, checkout, product, nav, ui)
+- **Components**: `apps/web/src/components/` (grouped by feature: admin, cart, checkout, product, nav, plus shared `ui/`, client `motion/`, `background/`, etc.)
+- **Styles**: `apps/web/src/styles/` (glass, components, admin layers); global tokens and `@import` chain in `apps/web/src/app/globals.css`
 - **API routes**: `apps/web/src/app/api/`
 - **Business logic**: `apps/web/src/lib/`
 - **Types**: `apps/web/src/types/`

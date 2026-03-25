@@ -63,10 +63,10 @@ export function TrackingResults({ trackingNumber }: TrackingResultsProps) {
 
   if (loading) {
     return (
-      <div className="rounded-2xl border bg-white dark:bg-slate-900 p-8">
+      <div className="rounded-2xl border glass-surface p-8">
         <div className="flex items-center justify-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-          <span className="ml-3 text-gray-600 dark:text-slate-400">{dict.track?.loading ?? 'Loading tracking information...'}</span>
+          <span className="ml-3 text-ui-muted dark:text-ui-faint">{dict.track?.loading ?? 'Loading tracking information...'}</span>
         </div>
       </div>
     );
@@ -74,7 +74,7 @@ export function TrackingResults({ trackingNumber }: TrackingResultsProps) {
 
   if (error) {
     return (
-      <div className="rounded-2xl border bg-white dark:bg-slate-900 p-8">
+      <div className="rounded-2xl border glass-surface p-8">
         <div className="text-center py-8">
           <div className="text-red-500 mb-4">⚠️ {dict.track?.form?.failed ?? 'Failed to track package'}</div>
           <button 
@@ -90,8 +90,8 @@ export function TrackingResults({ trackingNumber }: TrackingResultsProps) {
 
   if (!data) {
     return (
-      <div className="rounded-2xl border bg-white dark:bg-slate-900 p-8">
-        <div className="text-center py-8 text-gray-500 dark:text-slate-400">
+      <div className="rounded-2xl border glass-surface p-8">
+        <div className="text-center py-8 text-ui-faint dark:text-ui-faint">
           {dict.track?.noData ?? 'No tracking information found.'}
         </div>
       </div>
@@ -101,18 +101,18 @@ export function TrackingResults({ trackingNumber }: TrackingResultsProps) {
   return (
     <div className="space-y-6">
       {/* Tracking Summary */}
-      <div className="rounded-2xl border bg-white dark:bg-slate-900 p-6">
+      <div className="rounded-2xl border glass-surface p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <h3 className="text-sm font-medium text-gray-500 mb-1">{dict.orderPage?.trackingNumber ?? 'Tracking Number'}</h3>
+            <h3 className="text-sm font-medium text-ui-faint mb-1">{dict.orderPage?.trackingNumber ?? 'Tracking Number'}</h3>
             <p className="font-mono text-lg">{data.trackingNumber}</p>
           </div>
           <div>
-            <h3 className="text-sm font-medium text-gray-500 mb-1">{dict.orderPage?.carrier ?? 'Carrier'}</h3>
+            <h3 className="text-sm font-medium text-ui-faint mb-1">{dict.orderPage?.carrier ?? 'Carrier'}</h3>
             <p className="text-lg">{data.carrier}</p>
           </div>
           <div>
-            <h3 className="text-sm font-medium text-gray-500 mb-1">{dict.track?.lastUpdated ?? 'Last Updated'}</h3>
+            <h3 className="text-sm font-medium text-ui-faint mb-1">{dict.track?.lastUpdated ?? 'Last Updated'}</h3>
             <p className="text-lg">{new Date(data.lastUpdated).toLocaleString(lang, {
               year: 'numeric',
               month: '2-digit',
@@ -136,9 +136,9 @@ export function TrackingResults({ trackingNumber }: TrackingResultsProps) {
           createdAt={new Date(data.createdAt)}
         />
       ) : (
-        <div className="rounded-2xl border bg-white dark:bg-slate-900 p-5">
+        <div className="rounded-2xl border glass-surface p-5">
           <h2 className="font-medium mb-4">{dict.track?.resultsTitle ?? 'Package Tracking'}</h2>
-          <div className="text-center py-8 text-gray-500 dark:text-slate-400">
+          <div className="text-center py-8 text-ui-faint dark:text-ui-faint">
             {dict.track?.noOrderInfo ?? 'No order information available for this tracking number.'}
           </div>
         </div>
@@ -146,10 +146,10 @@ export function TrackingResults({ trackingNumber }: TrackingResultsProps) {
 
       {/* Order Link */}
       {data.orderId && (
-        <div className="rounded-2xl border bg-white dark:bg-slate-900 p-6">
+        <div className="rounded-2xl border glass-surface p-6">
           <div className="text-center">
             <h3 className="text-lg font-medium mb-2">{dict.track?.orderDetailsTitle ?? 'Order Details'}</h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-ui-muted mb-4">
               {dict.track?.orderDetailsDesc ?? 'View complete order information and manage your shipment.'}
             </p>
             <a 

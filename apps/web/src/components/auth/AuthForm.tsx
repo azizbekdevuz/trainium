@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-// import { useResponsive } from '../../hooks/useResponsive';
 import SocialAuthButtons from './SocialAuthButtons';
 import { useI18n } from '../providers/I18nProvider';
 
@@ -19,7 +18,6 @@ interface AuthFormProps {
 }
 
 export default function AuthForm({ mode }: AuthFormProps) {
-  // const { isMobile } = useResponsive();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -83,29 +81,32 @@ export default function AuthForm({ mode }: AuthFormProps) {
     }
   };
 
+  const inputClass =
+    'input-field w-full text-sm sm:text-base focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--accent)_35%,transparent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)]';
+
   return (
     <div className="space-y-4 sm:space-y-6">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
         {mode === 'signup' && (
           <div>
-            <label htmlFor="name" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="name" className="mb-1 block text-xs font-medium text-ui-secondary sm:text-sm">
               {dict.auth?.form?.nameLabel ?? 'Full Name'}
             </label>
             <input
               {...register('name', { required: mode === 'signup' ? (dict.auth?.form?.nameReq ?? 'Name is required') : false })}
               type="text"
               id="name"
-              className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              className={inputClass}
               placeholder={dict.auth?.form?.namePh ?? 'Enter your full name'}
             />
             {errors.name && (
-              <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+              <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>
             )}
           </div>
         )}
 
         <div>
-          <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="email" className="mb-1 block text-xs font-medium text-ui-secondary sm:text-sm">
             {dict.auth?.form?.emailLabel ?? 'Email Address'}
           </label>
           <input
@@ -118,16 +119,16 @@ export default function AuthForm({ mode }: AuthFormProps) {
             })}
             type="email"
             id="email"
-            className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+            className={inputClass}
             placeholder={dict.auth?.form?.emailPh ?? 'Enter your email'}
           />
           {errors.email && (
-            <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+            <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="password" className="mb-1 block text-xs font-medium text-ui-secondary sm:text-sm">
             {dict.auth?.form?.passwordLabel ?? 'Password'}
           </label>
           <input
@@ -140,16 +141,16 @@ export default function AuthForm({ mode }: AuthFormProps) {
             })}
             type="password"
             id="password"
-            className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+            className={inputClass}
             placeholder={dict.auth?.form?.passwordPh ?? 'Enter your password'}
           />
           {errors.password && (
-            <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+            <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
           )}
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          <div className="glass-surface rounded-[var(--radius-lg)] border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-200">
             {error}
           </div>
         )}
@@ -157,7 +158,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-cyan-600 text-white py-2 px-4 rounded-lg hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200 text-sm sm:text-base"
+          className="btn-primary w-full rounded-xl py-2.5 text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 sm:text-base"
         >
           {isLoading ? (dict.auth?.form?.loading ?? 'Loading...') : (mode === 'signup' ? (dict.auth?.form?.submitSignup ?? 'Create Account') : (dict.auth?.form?.submitSignin ?? 'Sign In'))}
         </button>
@@ -165,10 +166,10 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-300" />
+          <div className="w-full border-t border-ui-default" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500">Or continue with</span>
+          <span className="bg-ui-surface text-ui-muted px-2">Or continue with</span>
         </div>
       </div>
 

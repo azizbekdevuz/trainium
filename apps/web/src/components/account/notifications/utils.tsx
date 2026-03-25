@@ -19,13 +19,13 @@ export function getNotificationIcon(type: string): string {
 export function getNotificationColor(type: string): string {
   switch (type) {
     case 'ORDER_UPDATE':
-      return 'bg-blue-50 border-blue-200';
+      return 'bg-blue-100/70 border-l-4 border-l-blue-500 border-blue-200 dark:bg-blue-950/40 dark:border-l-blue-400 dark:border-blue-800/40';
     case 'PRODUCT_ALERT':
-      return 'bg-green-50 border-green-200';
+      return 'bg-emerald-100/70 border-l-4 border-l-emerald-500 border-emerald-200 dark:bg-emerald-950/40 dark:border-l-emerald-400 dark:border-emerald-800/40';
     case 'SYSTEM_ALERT':
-      return 'bg-yellow-50 border-yellow-200';
+      return 'bg-amber-100/70 border-l-4 border-l-amber-500 border-amber-200 dark:bg-amber-950/40 dark:border-l-amber-400 dark:border-amber-800/40';
     default:
-      return 'bg-gray-50 border-gray-200';
+      return 'bg-ui-inset border-l-4 border-l-[var(--accent)] border-ui-default dark:bg-ui-elevated/40 dark:border-l-[var(--accent)]';
   }
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { useResponsive } from '../../../hooks/useResponsive';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../primitives/dialog';
@@ -25,21 +25,50 @@ export function BottomSheet({
   className = '' 
 }: BottomSheetProps) {
   const { isMobile } = useResponsive();
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const startY = useRef(0);
+  const currentY = useRef(0);
+  const dragging = useRef(false);
 
-  // Prevent body scroll when modal is open
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
+      if (sheetRef.current) {
+        sheetRef.current.style.transform = 'translateY(0)';
+      }
     } else {
       document.body.style.overflow = 'unset';
     }
-    
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
+    return () => { document.body.style.overflow = 'unset'; };
   }, [open]);
 
-  // Use regular dialog for desktop
+  const handleDragStart = useCallback((clientY: number) => {
+    dragging.current = true;
+    startY.current = clientY;
+    currentY.current = clientY;
+  }, []);
+
+  const handleDragMove = useCallback((clientY: number) => {
+    if (!dragging.current || !sheetRef.current) return;
+    currentY.current = clientY;
+    const dy = Math.max(0, currentY.current - startY.current);
+    sheetRef.current.style.transition = 'none';
+    sheetRef.current.style.transform = `translateY(${dy}px)`;
+  }, []);
+
+  const handleDragEnd = useCallback(() => {
+    if (!dragging.current || !sheetRef.current) return;
+    dragging.current = false;
+    const dy = currentY.current - startY.current;
+    sheetRef.current.style.transition = 'transform 0.3s cubic-bezier(0.22, 1, 0.36, 1)';
+    if (dy > 80) {
+      sheetRef.current.style.transform = 'translateY(100%)';
+      setTimeout(() => onOpenChange(false), 300);
+    } else {
+      sheetRef.current.style.transform = 'translateY(0)';
+    }
+  }, [onOpenChange]);
+
   if (!isMobile) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -51,7 +80,7 @@ export function BottomSheet({
             {children}
           </div>
           {footer && (
-            <DialogFooter>
+            <DialogFooter className="mt-6 pt-4 border-t border-ui-default dark:border-ui-subtle">
               {footer}
             </DialogFooter>
           )}
@@ -60,47 +89,56 @@ export function BottomSheet({
     );
   }
 
-  // Use bottom sheet for mobile
   if (!open) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50">
-      {/* Backdrop */}
+    <div className="fixed inset-0 z-50" onClick={() => onOpenChange(false)}>
       <div 
-        className="absolute inset-0 bg-black/50" 
-        onClick={() => onOpenChange(false)}
+        className="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm"
+        style={{ zIndex: -1 }}
+        aria-hidden
       />
       
-      {/* Bottom Sheet */}
-      <div className="absolute bottom-0 left-0 right-0 bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl max-h-[90vh] flex flex-col">
-        {/* Handle */}
-        <div className="flex justify-center pt-3 pb-2">
-          <div className="w-12 h-1 bg-slate-300 dark:bg-slate-600 rounded-full" />
+      <div
+        ref={sheetRef}
+        className="absolute bottom-0 left-0 right-0 z-[90] modal-surface rounded-t-3xl max-h-[95vh] flex flex-col"
+        style={{ transition: 'transform 0.3s cubic-bezier(0.22, 1, 0.36, 1)' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Handle + Header — drag zone for swipe-to-close */}
+        <div
+          onTouchStart={(e) => handleDragStart(e.touches[0].clientY)}
+          onTouchMove={(e) => handleDragMove(e.touches[0].clientY)}
+          onTouchEnd={handleDragEnd}
+          className="touch-none"
+        >
+          <div className="flex justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing">
+            <div className="w-12 h-1.5 bg-[var(--border-strong)] rounded-full opacity-60" />
+          </div>
+          
+          <div className="flex items-center justify-between px-5 py-3 border-b border-ui-default dark:border-ui-subtle">
+            <h2 className="text-lg font-semibold text-ui-primary">
+              {title}
+            </h2>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onOpenChange(false)}
+              className="h-10 w-10 p-0 hover:bg-ui-inset dark:hover:bg-ui-elevated rounded-full"
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
         
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            {title}
-          </h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onOpenChange(false)}
-            className="h-8 w-8 p-0 hover:bg-slate-100 dark:hover:bg-slate-800"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
-        
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 mobile-menu-scrollable">
+        {/* Content — scrollable, not a drag target */}
+        <div className="flex-1 overflow-y-auto px-5 py-4">
           {children}
         </div>
         
         {/* Footer */}
         {footer && (
-          <div className="border-t border-slate-200 dark:border-slate-700 px-6 py-4">
+          <div className="border-t border-ui-default dark:border-ui-subtle px-5 py-4">
             {footer}
           </div>
         )}

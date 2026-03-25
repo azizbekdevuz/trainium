@@ -33,7 +33,10 @@ export function ToastContainer() {
   const node = (
     <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[2147483647] space-y-2">
       {toasts.map((t) => (
-        <div key={t.id} className="inline-block rounded-xl bg-white text-black shadow-2xl px-4 py-2 text-sm font-semibold tracking-wide border border-black/10">
+        <div
+          key={t.id}
+          className="glass-elevated inline-block rounded-xl border border-[var(--border-default)] px-4 py-2 text-sm font-semibold tracking-wide text-[var(--text-primary)] shadow-[var(--shadow-lg)]"
+        >
           {t.message}
         </div>
       ))}

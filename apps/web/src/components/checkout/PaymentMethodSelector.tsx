@@ -10,30 +10,30 @@ export function PaymentMethodSelector({ paymentMethod, onMethodChange }: Payment
   const { t } = useI18n();
 
   return (
-    <section className="rounded-2xl border bg-white dark:bg-slate-900 p-5">
+    <section className="rounded-2xl border glass-surface p-5">
       <h2 className="font-semibold mb-3">{t('checkout.method', 'Payment Method')}</h2>
       <div className="grid grid-cols-2 gap-3">
         <button
           onClick={() => onMethodChange('stripe')}
           className={`rounded-xl border-2 p-4 text-center transition ${
             paymentMethod === 'stripe'
-              ? 'border-cyan-600 bg-cyan-50 text-cyan-700 dark:bg-slate-900 dark:text-slate-100'
-              : 'border-gray-200 hover:border-gray-300 dark:border-slate-700 dark:hover:border-slate-600 dark:text-slate-300'
+              ? 'border-cyan-600 bg-cyan-50 text-cyan-700 dark:bg-ui-surface dark:text-slate-100'
+              : 'border-ui-default hover:border-ui-default dark:border-ui-subtle dark:hover:border-ui-subtle dark:text-ui-faint'
           }`}
         >
           <div className="font-medium">{t('checkout.intlPay', 'International Payment')}</div>
-          <div className="text-sm text-gray-500 dark:text-slate-300 mt-1">{t('checkout.stripe', 'Stripe (Cards & Global)')}</div>
+          <div className="text-sm text-ui-faint dark:text-ui-faint mt-1">{t('checkout.stripe', 'Stripe (Cards & Global)')}</div>
         </button>
         <button
           onClick={() => onMethodChange('toss')}
           className={`rounded-xl border-2 p-4 text-center transition ${
             paymentMethod === 'toss'
-              ? 'border-cyan-600 bg-cyan-50 text-cyan-700 dark:bg-slate-900 dark:text-slate-100'
-              : 'border-gray-200 hover:border-gray-300 dark:border-slate-700 dark:hover:border-slate-600 dark:text-slate-300'
+              ? 'border-cyan-600 bg-cyan-50 text-cyan-700 dark:bg-ui-surface dark:text-slate-100'
+              : 'border-ui-default hover:border-ui-default dark:border-ui-subtle dark:hover:border-ui-subtle dark:text-ui-faint'
           }`}
         >
           <div className="font-medium">{t('checkout.krPay', 'Korean Local Payment')}</div>
-          <div className="text-sm text-gray-500 dark:text-slate-300 mt-1">{t('checkout.toss', 'Toss Payments (KRW)')}</div>
+          <div className="text-sm text-ui-faint dark:text-ui-faint mt-1">{t('checkout.toss', 'Toss Payments (KRW)')}</div>
         </button>
       </div>
     </section>

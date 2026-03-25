@@ -14,7 +14,7 @@ export function ReviewsSection({ productId }: { productId: string }) {
   const [isPending, startTransition] = useTransition();
 
   const { items, setItems, cursor, setCursor, loaded, loadMore, loadReviews } = useReviews(productId);
-  const { pendingUndoId, saveUndoState, clearUndo, scheduleUndoExpiry } = useUndo(
+  const { pendingUndoId, setPendingUndoId, saveUndoState, clearUndo, scheduleUndoExpiry } = useUndo(
     productId,
     items,
     setItems,
@@ -33,7 +33,9 @@ export function ReviewsSection({ productId }: { productId: string }) {
         const index = items.findIndex((it) => it.id === review.id);
         saveUndoState(review, index < 0 ? 0 : index);
         setItems((prev) => prev.map((it) => (it.id === review.id ? { ...it, deletedLocal: true } : it)));
+        setPendingUndoId(review.id);
         scheduleUndoExpiry(review.id);
+        if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('review:created'));
         showToast(t('reviews.deleted', 'Review deleted. Undo available for 10 minutes.'));
       } else {
         showToast(t('common.tryAgain', 'Try Again'));
@@ -56,6 +58,7 @@ export function ReviewsSection({ productId }: { productId: string }) {
           setCursor(d2.nextCursor);
         }
         clearUndo();
+        if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('review:created'));
         showToast(t('reviews.restored', 'Review restored'));
       } else {
         showToast(t('common.tryAgain', 'Try Again'));
@@ -71,11 +74,12 @@ export function ReviewsSection({ productId }: { productId: string }) {
     <section id="reviews" className="mt-10">
       <h3 className="font-display text-2xl mb-3">{t('reviews.title', 'Reviews')}</h3>
       {!loaded ? null : items.length === 0 ? (
-        <div className="text-sm text-gray-600">{t('reviews.beFirst', 'Be the first to tell others about this product')}</div>
+        <div className="text-sm text-ui-muted">{t('reviews.beFirst', 'Be the first to tell others about this product')}</div>
+        
       ) : (
         <ul className="space-y-4">
           {items.map((r) => (
-            <li key={r.id} className="rounded-xl border p-4 bg-white">
+            <li key={r.id} className="glass-surface rounded-xl border border-[var(--border-default)] p-4">
               <ReviewItem
                 review={r}
                 productId={productId}
@@ -93,7 +97,7 @@ export function ReviewsSection({ productId }: { productId: string }) {
         {cursor && (
           <div className="mt-4">
             <button
-              className="rounded-xl border px-4 h-10 text-sm hover:bg-gray-50"
+              className="rounded-xl border px-4 h-10 text-sm hover:bg-ui-inset"
               onClick={loadMore}
               disabled={isPending}
             >
@@ -103,7 +107,7 @@ export function ReviewsSection({ productId }: { productId: string }) {
         )}
         {items.length > 10 && (
           <button
-            className="rounded-xl border px-4 h-10 text-sm hover:bg-gray-50"
+            className="rounded-xl border px-4 h-10 text-sm hover:bg-ui-inset"
             onClick={() => {
               if (!collapsed) {
                 setItems((prev) => prev.slice(0, 10));

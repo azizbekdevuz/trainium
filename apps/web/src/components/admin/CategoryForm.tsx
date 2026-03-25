@@ -74,7 +74,7 @@ export function CategoryForm({
         type="button" 
         variant="outline" 
         onClick={() => onOpenChange(false)}
-        className="flex-1 sm:flex-none transition-all duration-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+        className="flex-1 sm:flex-none transition-all duration-200 hover:bg-ui-inset dark:hover:bg-ui-elevated"
       >
         {t('faq.admin.cancel')}
       </Button>
@@ -112,7 +112,7 @@ export function CategoryForm({
       <form id={formId} onSubmit={onSubmit} className="space-y-4 sm:space-y-6">
         {/* Basic Information */}
         <div className="space-y-3 sm:space-y-4">
-          <h3 className="text-base sm:text-lg font-medium text-slate-900 dark:text-slate-100">
+          <h3 className="text-base sm:text-lg font-medium text-ui-primary">
             {t('common.basicInformation')}
           </h3>
           
@@ -177,14 +177,14 @@ export function CategoryForm({
         
         {/* Translations Section */}
         <div className="space-y-3 sm:space-y-4">
-          <h3 className="text-base sm:text-lg font-medium text-slate-900 dark:text-slate-100">
+          <h3 className="text-base sm:text-lg font-medium text-ui-primary">
             {t('faq.admin.translations')}
           </h3>
           
           <div className="space-y-3 sm:space-y-4">
             {formData.translations.map((translation, index) => (
-              <div key={translation.language} className="space-y-2 p-3 sm:p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
-                <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              <div key={translation.language} className="space-y-2 p-3 sm:p-4 border border-ui-default dark:border-ui-subtle rounded-lg">
+                <Label className="text-sm font-medium text-ui-secondary">
                   {t(`faq.admin.languages.${translation.language}`)} ({translation.language.toUpperCase()})
                 </Label>
                 <Input

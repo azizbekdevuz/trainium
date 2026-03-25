@@ -72,8 +72,23 @@ export default function ProductsTable({ items, dict, lang }: { items: ProductRow
   if (isMobile) {
     return (
       <div className="mt-6 space-y-4">
+        {selectedIds.length > 0 && (
+          <div className="sticky top-0 z-20 flex items-center justify-between gap-3 rounded-2xl border border-red-200 dark:border-red-800/40 bg-red-50 dark:bg-red-950/30 p-3">
+            <span className="text-sm font-medium text-red-700 dark:text-red-300">
+              {selectedIds.length} {dict?.admin?.products?.selected ?? 'selected'}
+            </span>
+            <button
+              type="button"
+              className="rounded-xl bg-red-600 text-white px-4 py-2 text-sm font-medium hover:bg-red-700 disabled:opacity-60"
+              onClick={onDelete}
+              disabled={deleting}
+            >
+              {dict?.admin?.products?.deleteSelected ?? 'Delete selected'}
+            </button>
+          </div>
+        )}
         {items.map(p => (
-          <div key={p.id} className="bg-white rounded-2xl border p-4 space-y-3">
+          <div key={p.id} className="glass-surface space-y-3 rounded-2xl border border-[var(--border-default)] p-4">
             <div className="flex items-start justify-between">
               <div className="flex items-center space-x-3">
                 <input
@@ -91,24 +106,24 @@ export default function ProductsTable({ items, dict, lang }: { items: ProductRow
             
             <div>
               <h3 className="font-medium text-sm">{p.name}</h3>
-              <p className="text-xs text-gray-500">{p.slug}</p>
+              <p className="text-xs text-ui-faint">{p.slug}</p>
             </div>
             
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div>
-                <span className="text-gray-500">{dict?.admin?.products?.priceLabel || 'Price'}:</span>
+                <span className="text-ui-faint">{dict?.admin?.products?.priceLabel || 'Price'}:</span>
                 <span className="ml-1 font-medium">{formatCurrency(p.priceCents, p.currency)}</span>
               </div>
               <div>
-                <span className="text-gray-500">{dict?.admin?.products?.stockLabel || 'Stock'}:</span>
+                <span className="text-ui-faint">{dict?.admin?.products?.stockLabel || 'Stock'}:</span>
                 <span className="ml-1 font-medium">{p.stock}</span>
               </div>
               <div>
-                <span className="text-gray-500">{dict?.admin?.products?.variantsLabel || 'Variants'}:</span>
+                <span className="text-ui-faint">{dict?.admin?.products?.variantsLabel || 'Variants'}:</span>
                 <span className="ml-1 font-medium">{p.variants}</span>
               </div>
               <div>
-                <span className="text-gray-500">{dict?.admin?.products?.statusLabel || 'Status'}:</span>
+                <span className="text-ui-faint">{dict?.admin?.products?.statusLabel || 'Status'}:</span>
                 <span className={`ml-1 font-medium ${p.active ? 'text-green-600' : 'text-red-600'}`}>
                   {p.active ? (dict?.admin?.products?.active || 'Active') : (dict?.admin?.products?.inactive || 'Inactive')}
                 </span>
@@ -121,9 +136,9 @@ export default function ProductsTable({ items, dict, lang }: { items: ProductRow
   }
 
   return (
-    <div className="mt-6 overflow-x-auto rounded-2xl border bg-white">
+    <div className="glass-surface mt-6 overflow-x-auto rounded-2xl border border-[var(--border-default)]">
       <table className="min-w-full text-sm">
-        <thead className="bg-gray-50">
+        <thead className="bg-ui-inset">
           <tr>
             <th className="px-3 sm:px-4 py-2">
               <input
@@ -158,12 +173,12 @@ export default function ProductsTable({ items, dict, lang }: { items: ProductRow
                 <ProductImage images={p.images} name={p.name} />
               </td>
               <td className="px-3 sm:px-4 py-2 text-xs sm:text-sm">{p.name}</td>
-              <td className="px-3 sm:px-4 py-2 text-gray-600 text-xs sm:text-sm hidden sm:table-cell">{p.slug}</td>
+              <td className="px-3 sm:px-4 py-2 text-ui-muted text-xs sm:text-sm hidden sm:table-cell">{p.slug}</td>
               <td className="px-3 sm:px-4 py-2 text-xs sm:text-sm">{formatCurrency(p.priceCents, p.currency)}</td>
               <td className="px-3 sm:px-4 py-2 text-xs sm:text-sm hidden md:table-cell">{p.variants}</td>
               <td className="px-3 sm:px-4 py-2 text-xs sm:text-sm">{p.stock}</td>
               <td className="px-3 sm:px-4 py-2">
-                <span className={`rounded-full px-2 py-0.5 text-xs ${p.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>{p.active ? (dict?.admin?.products?.active || 'Active') : (dict?.admin?.products?.inactive || 'Inactive')}</span>
+                <span className={`rounded-full px-2 py-0.5 text-xs ${p.active ? 'bg-green-100 text-green-700' : 'bg-ui-inset text-ui-muted'}`}>{p.active ? (dict?.admin?.products?.active || 'Active') : (dict?.admin?.products?.inactive || 'Inactive')}</span>
               </td>
               <td className="px-3 sm:px-4 py-2 text-right">
                 <Link href={`/${lang}/admin/products/${p.id}/edit`} className="text-cyan-700 hover:underline text-xs sm:text-sm">{dict?.admin?.products?.edit ?? 'Edit'}</Link>
@@ -172,7 +187,7 @@ export default function ProductsTable({ items, dict, lang }: { items: ProductRow
           ))}
         </tbody>
       </table>
-      <div className="p-3 sm:p-4 border-t bg-gray-50 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0">
+      <div className="p-3 sm:p-4 border-t bg-ui-inset flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0">
         <button
           type="button"
           className="rounded-lg bg-red-600 text-white px-3 sm:px-4 py-2 text-xs sm:text-sm hover:bg-red-700 disabled:opacity-60"

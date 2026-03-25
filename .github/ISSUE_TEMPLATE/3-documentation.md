@@ -1,6 +1,6 @@
 ---
 name: Documentation
-description: Report a documentation issue or suggest improvements
+about: Report a documentation issue or suggest improvements
 title: "[Docs]: "
 labels: ["documentation", "triage"]
 assignees: []

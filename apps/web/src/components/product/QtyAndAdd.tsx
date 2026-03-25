@@ -50,7 +50,7 @@ export default function QtyAndAdd({ available, formId = 'add-to-cart-form' }: { 
 
   const toastNode = toast ? (
     <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[2147483647] pointer-events-none" role="status" aria-live="polite">
-      <div className="inline-block rounded-xl bg-white text-black shadow-2xl px-4 py-2 text-sm font-semibold tracking-wide border border-black/10">
+      <div className="glass-elevated inline-block rounded-xl border border-[var(--border-default)] px-4 py-2 text-sm font-semibold tracking-wide text-[var(--text-primary)] shadow-[var(--shadow-lg)]">
         {toast}
       </div>
     </div>
@@ -59,7 +59,7 @@ export default function QtyAndAdd({ available, formId = 'add-to-cart-form' }: { 
   return (
     <>
       <div className="flex items-center gap-3">
-        <label className="text-sm text-gray-600">
+        <label className="text-sm text-ui-muted">
           {dict.product?.qtyLabel ?? 'Qty'}
           <input
             name="qty"

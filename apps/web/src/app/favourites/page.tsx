@@ -14,7 +14,7 @@ export default async function FavouritesPage() {
     return (
       <div className="mx-auto max-w-7xl px-6 py-10">
         <h1 className="font-display text-3xl">{dict?.favorites?.title ?? 'Favorites'}</h1>
-        <p className="text-gray-600 dark:text-slate-400 mt-2">{dict?.favorites?.signin ?? 'Please sign in to view your favorites.'}</p>
+        <p className="text-ui-muted dark:text-ui-faint mt-2">{dict?.favorites?.signin ?? 'Please sign in to view your favorites.'}</p>
       </div>
     )
   }

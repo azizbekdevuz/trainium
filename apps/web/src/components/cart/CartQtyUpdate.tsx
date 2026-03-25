@@ -65,7 +65,7 @@ export default function CartQtyUpdate({ itemId, currentQty, available }: CartQty
 
   const toastNode = toast ? (
     <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[2147483647] pointer-events-none" role="status" aria-live="polite">
-      <div className="inline-block rounded-xl bg-white text-black shadow-2xl px-4 py-2 text-sm font-semibold tracking-wide border border-black/10">
+      <div className="glass-elevated inline-block rounded-xl border border-[var(--border-default)] px-4 py-2 text-sm font-semibold tracking-wide text-[var(--text-primary)] shadow-[var(--shadow-lg)]">
         {toast}
       </div>
     </div>

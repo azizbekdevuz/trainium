@@ -119,7 +119,7 @@ export function MultiSelect({
 
   return (
     <div className="relative">
-      <span className="mb-1 block text-xs font-medium text-gray-600">{label}</span>
+      <span className="mb-1 block text-xs font-medium text-ui-muted">{label}</span>
       {/* Hidden inputs for form submission */}
       {selected.map((v) => (
         <input key={v} type="hidden" name={name} value={v} />
@@ -161,17 +161,17 @@ export function MultiSelect({
                   isMobile 
                     ? 'rounded-2xl border-2 shadow-2xl mobile-menu-scrollable' 
                     : 'mt-2 w-64 rounded-xl border shadow-xl'
-                } overflow-y-auto overflow-x-hidden bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 focus:outline-none`}
+                } overflow-y-auto overflow-x-hidden glass-surface border-ui-default dark:border-ui-subtle focus:outline-none`}
                 style={{
                   ...dropdownStyle,
                   zIndex: 9999, // Ensure it's above everything including header
                 }}
               >
-              <div className={`sticky top-0 z-10 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-3 sm:px-2 py-2 sm:py-1.5 flex flex-wrap sm:flex-nowrap items-center gap-2 ${isMobile ? 'rounded-t-2xl' : ''}`}>
+              <div className={`sticky top-0 z-10 glass-surface border-b border-ui-default dark:border-ui-subtle px-3 sm:px-2 py-2 sm:py-1.5 flex flex-wrap sm:flex-nowrap items-center gap-2 ${isMobile ? 'rounded-t-2xl' : ''}`}>
                 <button
                   type="button"
                   onClick={() => setSelected(options.map(o => o.value))}
-                  className="text-xs sm:text-[11px] rounded-lg border border-slate-300 dark:border-slate-600 px-2 py-1.5 sm:py-1 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
+                  className="text-xs sm:text-[11px] rounded-lg border border-ui-default dark:border-ui-subtle px-2 py-1.5 sm:py-1 hover:bg-ui-inset dark:hover:bg-ui-elevated transition-colors"
                   aria-label={(dict.common?.multiSelect?.selectAllAria ?? 'Select all {{0}}').replace('{{0}}', label)}
                 >
                   {dict.common?.multiSelect?.selectAll ?? 'Select all'}
@@ -179,12 +179,12 @@ export function MultiSelect({
                 <button
                   type="button"
                   onClick={() => setSelected([])}
-                  className="text-xs sm:text-[11px] rounded-lg border border-slate-300 dark:border-slate-600 px-2 py-1.5 sm:py-1 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
+                  className="text-xs sm:text-[11px] rounded-lg border border-ui-default dark:border-ui-subtle px-2 py-1.5 sm:py-1 hover:bg-ui-inset dark:hover:bg-ui-elevated transition-colors"
                   aria-label={(dict.common?.multiSelect?.deselectAllAria ?? 'Deselect all {{0}}').replace('{{0}}', label)}
                 >
                   {dict.common?.multiSelect?.deselectAll ?? 'Deselect all'}
                 </button>
-                <span className="ml-auto text-xs sm:text-[11px] text-gray-500 dark:text-slate-400">{
+                <span className="ml-auto text-xs sm:text-[11px] text-ui-faint dark:text-ui-faint">{
                   (dict.common?.multiSelect?.selectedCount ?? '{{0}}/{{1}} selected')
                     .replace('{{0}}', String(selected.length))
                     .replace('{{1}}', String(options.length))
@@ -198,7 +198,7 @@ export function MultiSelect({
                     className={({ active, selected }) =>
                       `relative cursor-pointer select-none py-2.5 sm:py-2 pl-10 pr-4 text-sm ${
                         active ? 'bg-cyan-50 dark:bg-cyan-900/20' : ''
-                      } ${selected ? 'text-cyan-700 dark:text-cyan-400 font-medium' : 'text-gray-800 dark:text-slate-200'}`
+                      } ${selected ? 'text-cyan-700 dark:text-cyan-400 font-medium' : 'text-ui-primary dark:text-slate-200'}`
                     }
                   >
                     {({ selected }) => (

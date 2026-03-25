@@ -9,9 +9,9 @@ export function useStripeAppearance(theme: 'light' | 'dark', lang: string): Appe
       variables: isDark
         ? {
             colorPrimary: '#06b6d4',        // cyan-500
-            colorText: '#e2e8f0',           // slate-200
+            colorText: '#EDF2F7',
             colorTextSecondary: '#94a3b8',  // slate-400
-            colorBackground: '#0f172a',     // slate-900
+            colorBackground: '#06080F',
             colorIcon: '#94a3b8',
             colorDanger: '#ef4444',         // red-500
             colorSuccess: '#10b981',         // green-500
@@ -23,9 +23,9 @@ export function useStripeAppearance(theme: 'light' | 'dark', lang: string): Appe
           }
         : {
             colorPrimary: '#0891b2',        // cyan-600
-            colorText: '#0b1220',
+            colorText: '#0C1220',
             colorTextSecondary: '#64748b',  // slate-500
-            colorBackground: '#ffffff',
+            colorBackground: '#FFFFFF',
             colorIcon: '#64748b',
             colorDanger: '#ef4444',         // red-500
             colorSuccess: '#10b981',         // green-500
@@ -39,9 +39,9 @@ export function useStripeAppearance(theme: 'light' | 'dark', lang: string): Appe
         ? {
             '.Label': { color: '#cbd5e1', fontSize: '14px', fontWeight: '500' },                // slate-300
             '.Input': { 
-              backgroundColor: '#0f172a', 
+              backgroundColor: '#06080F', 
               borderColor: '#334155', 
-              color: '#e2e8f0',
+              color: '#EDF2F7',
               borderRadius: '12px',
               padding: '12px',
               fontSize: '16px',
@@ -50,9 +50,9 @@ export function useStripeAppearance(theme: 'light' | 'dark', lang: string): Appe
               borderColor: '#06b6d4',
               boxShadow: '0 0 0 3px rgba(6, 182, 212, 0.1)',
             },
-            '.Block': { backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px' },
+            '.Block': { backgroundColor: '#06080F', borderColor: '#334155', borderRadius: '12px' },
             '.Tab': { 
-              backgroundColor: '#0f172a', 
+              backgroundColor: '#06080F', 
               borderColor: '#334155', 
               color: '#cbd5e1',
               borderRadius: '8px',
@@ -62,7 +62,7 @@ export function useStripeAppearance(theme: 'light' | 'dark', lang: string): Appe
             '.Tab--selected': { color: '#f1f5f9', borderColor: '#06b6d4', backgroundColor: '#1e293b' },
             '.Link': { color: '#22d3ee' },                  // cyan-400
             '.Error': { color: '#ef4444', fontSize: '14px' },
-            '.Text': { color: '#e2e8f0' },
+            '.Text': { color: '#EDF2F7' },
           }
         : {
             '.Label': { color: '#0f172a', fontSize: '14px', fontWeight: '500' },

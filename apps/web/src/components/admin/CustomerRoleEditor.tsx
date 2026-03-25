@@ -52,7 +52,7 @@ export default function CustomerRoleEditor({ userId, initialRole }: Props) {
       >
         {saving ? 'Saving…' : 'Save'}
       </button>
-      {message && <span className="text-xs text-gray-600">{message}</span>}
+      {message && <span className="text-xs text-ui-muted">{message}</span>}
     </div>
   );
 }

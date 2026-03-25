@@ -29,7 +29,7 @@ export function FavoriteButton({ productId, initiallyFavorited = false, initialC
       onClick={onClick}
       className={`inline-flex items-center justify-center rounded-full ${showCount ? 'px-3 h-8' : 'h-9 w-9'} border text-sm shadow-sm backdrop-blur transition-colors ${favorited 
         ? 'border-red-500 bg-red-50 text-red-600 hover:bg-red-100 dark:border-red-400 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30' 
-        : 'border-gray-300 bg-white/80 text-gray-700 hover:bg-white dark:border-gray-600 dark:bg-gray-800/80 dark:text-gray-300 dark:hover:bg-gray-800'}`}
+        : 'border-ui-strong bg-ui-elevated text-ui-primary shadow-[0_1px_3px_rgba(0,0,0,0.08)] hover:bg-ui-inset dark:border-white/25 dark:bg-black/45 dark:text-white/90 dark:shadow-[0_2px_12px_rgba(0,0,0,0.45)] dark:hover:bg-black/55'}`}
       disabled={isPending}
       title={favorited ? t('favorites.added', 'Favorited') : t('favorites.add', 'Favorite')}
     >

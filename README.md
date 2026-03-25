@@ -41,9 +41,14 @@ For a comprehensive overview of the system architecture, design patterns, and im
   - URL-based locale routing
   - Translated email notifications
 
+- **Presentation & UX**
+  - Design-token CSS (globals plus `styles/glass.css`, `components.css`, `admin.css`) with light/dark theming
+  - Glass-morphism surfaces, consistent overlays via portals, scroll-reveal and heading motion helpers
+  - Interactive background with cursor-responsive blob (Framer Motion)
+
 ## 🛠️ Tech Stack
 
-- **Frontend**: Next.js 15.5, React 19, TypeScript, Tailwind CSS
+- **Frontend**: Next.js 15.5, React 19, TypeScript, Tailwind CSS, Framer Motion (UI/background motion)
 - **Backend**: Next.js API Routes, Express.js
 - **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: NextAuth.js 5.0
@@ -58,7 +63,7 @@ For a comprehensive overview of the system architecture, design patterns, and im
 ```
 trainium/
 ├── apps/
-│   ├── web/              # Next.js web application
+│   ├── web/              # Next.js web application (see architecture.md for src layout: styles/, motion/, ui/, …)
 │   └── socket/            # Socket.IO server
 ├── prisma/                # Database schema
 ├── scripts/               # Build and utility scripts
@@ -230,7 +235,8 @@ The platform includes a real-time notification system powered by Socket.IO:
 ## 🧪 Development
 
 ### Code Structure
-- **Components**: Reusable React components in `apps/web/src/components/`
+- **Components**: Reusable React components in `apps/web/src/components/` (feature folders, `ui/`, `motion/`, `background/`, etc.)
+- **Styles**: Shared CSS in `apps/web/src/styles/`; global tokens and imports in `apps/web/src/app/globals.css`
 - **API Routes**: Next.js API routes in `apps/web/src/app/api/`
 - **Business Logic**: Core logic in `apps/web/src/lib/`
 - **Types**: TypeScript definitions in `apps/web/src/types/`

@@ -124,23 +124,23 @@ export default async function AdminDashboardPage() {
   const data = await getDashboardData();
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="bg-ui-inset dark:bg-ui-base">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-10">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-2">
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">
+              <h1 className="text-2xl sm:text-3xl font-bold text-ui-primary">
                 {dict.admin?.dashboard?.title || 'Admin Dashboard'}
               </h1>
-              <p className="text-slate-600 dark:text-slate-400 text-base sm:text-lg">
+              <p className="text-ui-muted dark:text-ui-faint text-base sm:text-lg">
                 {dict.admin?.dashboard?.welcome || 'Welcome back'}, {session.user.name || 'Admin'}
               </p>
-              <p className="text-slate-500 dark:text-slate-500 text-sm">
+              <p className="text-ui-faint dark:text-ui-faint text-sm">
                 {dict.admin?.dashboard?.subtitle || 'Here\'s what\'s happening with your business today'}
               </p>
             </div>
-            <div className="flex items-center space-x-2 text-sm text-slate-500 dark:text-slate-400">
+            <div className="flex items-center space-x-2 text-sm text-ui-faint dark:text-ui-faint">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
               <span>{dict.common?.adminPanel || 'Admin Panel'}</span>
             </div>
@@ -174,14 +174,14 @@ export default async function AdminDashboardPage() {
           <RecentProductsPreview products={data.recent.products} dict={dict} lang={lang} />
 
           {/* Recent Customers */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-4 sm:p-6 hover:shadow-lg transition-all duration-300">
+          <div className="glass-surface rounded-2xl shadow-sm border border-ui-default dark:border-ui-subtle p-4 sm:p-6 hover:shadow-lg transition-all duration-300">
             <div className="flex items-center justify-between mb-4 sm:mb-6">
-              <h3 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-100">
+              <h3 className="text-lg sm:text-xl font-semibold text-ui-primary">
                 {dict.admin?.dashboard?.recent?.customers || 'New Customers'}
               </h3>
               <Link
                 href={`/${lang}/admin/customers`}
-                className="text-xs sm:text-sm text-cyan-600 hover:text-cyan-700 font-medium transition-colors"
+                className="text-xs sm:text-sm text-accent hover:opacity-80 font-medium transition-colors"
               >
                 {dict.admin?.dashboard?.viewAll || 'View All'} <Icon name="arrowRight" className="w-3 h-3 inline ml-1" />
               </Link>
@@ -192,33 +192,33 @@ export default async function AdminDashboardPage() {
                 data.recent.customers.map((customer) => (
                   <div
                     key={customer.id}
-                    className="flex items-center justify-between p-3 sm:p-4 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-200 group"
+                    className="flex items-center justify-between p-3 sm:p-4 rounded-xl glass-surface border border-ui-default dark:border-ui-subtle hover:shadow-md transition-all duration-200 group"
                   >
                     <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center text-white font-semibold text-xs sm:text-sm flex-shrink-0">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[linear-gradient(135deg,var(--accent),var(--accent-lo))] flex items-center justify-center text-[var(--on-accent-ink)] font-semibold text-xs sm:text-sm flex-shrink-0">
                         {customer.name?.charAt(0)?.toUpperCase() || customer.email.charAt(0).toUpperCase()}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="font-medium text-slate-900 dark:text-slate-100 text-sm sm:text-base truncate">
+                        <p className="font-medium text-ui-primary text-sm sm:text-base truncate">
                           {customer.name || 'Guest User'}
                         </p>
-                        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 truncate">
+                        <p className="text-xs sm:text-sm text-ui-faint dark:text-ui-faint truncate">
                           {customer.email}
                         </p>
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0 ml-2">
-                      <p className="text-xs sm:text-sm font-medium text-slate-900 dark:text-slate-100">
+                      <p className="text-xs sm:text-sm font-medium text-ui-primary">
                         {customer._count.orders} {dict.admin?.dashboard?.recent?.ordersCount || 'orders'}
                       </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                      <p className="text-xs text-ui-faint dark:text-ui-faint">
                         {customer.createdAt.toLocaleDateString()}
                       </p>
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="text-center py-6 sm:py-8 text-slate-500 dark:text-slate-400 text-sm sm:text-base">
+                <div className="text-center py-6 sm:py-8 text-ui-faint dark:text-ui-faint text-sm sm:text-base">
                   {dict.admin?.dashboard?.noData || 'No data available'}
                 </div>
               )}

@@ -32,13 +32,13 @@ export async function CategoryTiles() {
           <Tilt key={c.id} className="rounded-2xl">
             <Link
               href={`/products?q=&category=${c.slug}&inStock=1&min=0&max=50000000&sort=new`}
-              className="rounded-2xl border bg-white p-3 sm:p-4 text-center block"
+              className="glass-surface rounded-2xl border border-[var(--border-default)] p-3 sm:p-4 text-center block"
             >
               <div className="aspect-square rounded-xl bg-[rgba(var(--color-muted))] mb-2 sm:mb-3 flex items-center justify-center">
                 {(() => {
                   const Icon = getIconForCategory(c.slug);
                   return (
-                    <Icon aria-hidden className="h-7 w-7 sm:h-8 sm:w-8 text-gray-700" />
+                    <Icon aria-hidden className="h-7 w-7 sm:h-8 sm:w-8 text-ui-secondary" />
                   );
                 })()}
               </div>

@@ -34,7 +34,7 @@ export function CustomersTable({ customers, dict, lang }: CustomersTableProps) {
       case 'STAFF':
         return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300';
       default:
-        return 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300';
+        return 'bg-ui-inset text-ui-secondary dark:bg-[color-mix(in_srgb,var(--bg-inset)_30%,transparent)] dark:text-ui-faint';
     }
   };
 
@@ -44,7 +44,7 @@ export function CustomersTable({ customers, dict, lang }: CustomersTableProps) {
         {customers.map((customer) => (
           <div
             key={customer.id}
-            className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 hover:shadow-lg transition-all duration-200"
+            className="glass-surface rounded-2xl border border-ui-default dark:border-ui-subtle p-4 hover:shadow-lg transition-all duration-200"
           >
             <div className="space-y-3">
               {/* Header Row */}
@@ -52,10 +52,10 @@ export function CustomersTable({ customers, dict, lang }: CustomersTableProps) {
                 <div className="flex items-center space-x-3">
                   <UserAvatar image={customer.image} name={customer.name} email={customer.email} size="sm" />
                   <div>
-                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                    <p className="text-sm font-medium text-ui-primary">
                       {customer.name ?? '—'}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[200px]">
+                    <p className="text-xs text-ui-faint dark:text-ui-faint truncate max-w-[200px]">
                       {customer.email}
                     </p>
                   </div>
@@ -68,21 +68,21 @@ export function CustomersTable({ customers, dict, lang }: CustomersTableProps) {
               {/* Customer Details */}
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div>
-                  <span className="text-slate-500 dark:text-slate-400">{dict.admin?.customers?.ordersLabel || 'Orders'}:</span>
-                  <span className="ml-1 font-medium text-slate-900 dark:text-slate-100">
+                  <span className="text-ui-faint dark:text-ui-faint">{dict.admin?.customers?.ordersLabel || 'Orders'}:</span>
+                  <span className="ml-1 font-medium text-ui-primary">
                     {customer._count.orders}
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-500 dark:text-slate-400">{dict.admin?.customers?.joinedLabel || 'Joined'}:</span>
-                  <span className="ml-1 font-medium text-slate-900 dark:text-slate-100">
+                  <span className="text-ui-faint dark:text-ui-faint">{dict.admin?.customers?.joinedLabel || 'Joined'}:</span>
+                  <span className="ml-1 font-medium text-ui-primary">
                     <LocalTime date={customer.createdAt} />
                   </span>
                 </div>
               </div>
               
               {/* Action Button */}
-              <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
+              <div className="pt-2 border-t border-ui-default dark:border-ui-subtle">
                 <Link 
                   href={`/${lang}/admin/customers/${customer.id}`}
                   className="inline-flex items-center text-sm text-cyan-700 dark:text-cyan-400 hover:underline"
@@ -98,32 +98,32 @@ export function CustomersTable({ customers, dict, lang }: CustomersTableProps) {
   }
 
   return (
-    <div className="mt-4 sm:mt-6 overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+    <div className="mt-4 sm:mt-6 overflow-x-auto rounded-2xl border border-ui-default dark:border-ui-subtle glass-surface">
       <table className="min-w-full text-xs sm:text-sm">
-        <thead className="bg-slate-50 dark:bg-slate-800">
+        <thead className="bg-ui-inset dark:bg-ui-elevated">
           <tr>
-            <th className="px-3 sm:px-4 py-3 text-left font-medium text-slate-900 dark:text-slate-100">{dict.admin?.customers?.thAvatar ?? 'Avatar'}</th>
-            <th className="px-3 sm:px-4 py-3 text-left font-medium text-slate-900 dark:text-slate-100">{dict.admin?.customers?.thName ?? 'Name'}</th>
-            <th className="px-3 sm:px-4 py-3 text-left font-medium text-slate-900 dark:text-slate-100">{dict.admin?.customers?.thEmail ?? 'Email'}</th>
-            <th className="px-3 sm:px-4 py-3 text-left font-medium text-slate-900 dark:text-slate-100">{dict.admin?.customers?.thRole ?? 'Role'}</th>
-            <th className="px-3 sm:px-4 py-3 text-left font-medium text-slate-900 dark:text-slate-100">{dict.admin?.customers?.thOrders ?? 'Orders'}</th>
-            <th className="px-3 sm:px-4 py-3 text-left font-medium text-slate-900 dark:text-slate-100">{dict.admin?.customers?.thJoined ?? 'Joined'}</th>
+            <th className="px-3 sm:px-4 py-3 text-left font-medium text-ui-primary">{dict.admin?.customers?.thAvatar ?? 'Avatar'}</th>
+            <th className="px-3 sm:px-4 py-3 text-left font-medium text-ui-primary">{dict.admin?.customers?.thName ?? 'Name'}</th>
+            <th className="px-3 sm:px-4 py-3 text-left font-medium text-ui-primary">{dict.admin?.customers?.thEmail ?? 'Email'}</th>
+            <th className="px-3 sm:px-4 py-3 text-left font-medium text-ui-primary">{dict.admin?.customers?.thRole ?? 'Role'}</th>
+            <th className="px-3 sm:px-4 py-3 text-left font-medium text-ui-primary">{dict.admin?.customers?.thOrders ?? 'Orders'}</th>
+            <th className="px-3 sm:px-4 py-3 text-left font-medium text-ui-primary">{dict.admin?.customers?.thJoined ?? 'Joined'}</th>
             <th className="px-3 sm:px-4 py-3"></th>
           </tr>
         </thead>
         <tbody>
           {customers.map((customer) => (
-            <tr key={customer.id} className="border-t border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
+            <tr key={customer.id} className="border-t border-ui-default dark:border-ui-subtle hover:bg-ui-inset dark:hover:bg-ui-elevated">
               <td className="px-3 sm:px-4 py-3">
                 <UserAvatar image={customer.image} name={customer.name} email={customer.email} />
               </td>
-              <td className="px-3 sm:px-4 py-3 text-slate-900 dark:text-slate-100 text-xs sm:text-sm">{customer.name ?? '—'}</td>
-              <td className="px-3 sm:px-4 py-3 text-slate-700 dark:text-slate-300 text-xs sm:text-sm">{customer.email}</td>
+              <td className="px-3 sm:px-4 py-3 text-ui-primary text-xs sm:text-sm">{customer.name ?? '—'}</td>
+              <td className="px-3 sm:px-4 py-3 text-ui-secondary text-xs sm:text-sm">{customer.email}</td>
               <td className="px-3 sm:px-4 py-3">
                 <span className={`rounded-full px-2 py-0.5 text-xs ${getRoleColor(customer.role)}`}>{customer.role}</span>
               </td>
-              <td className="px-3 sm:px-4 py-3 text-slate-900 dark:text-slate-100 text-xs sm:text-sm">{customer._count.orders}</td>
-              <td className="px-3 sm:px-4 py-3 text-slate-600 dark:text-slate-400 text-xs sm:text-sm"><LocalTime date={customer.createdAt} /></td>
+              <td className="px-3 sm:px-4 py-3 text-ui-primary text-xs sm:text-sm">{customer._count.orders}</td>
+              <td className="px-3 sm:px-4 py-3 text-ui-muted dark:text-ui-faint text-xs sm:text-sm"><LocalTime date={customer.createdAt} /></td>
               <td className="px-3 sm:px-4 py-3 text-right">
                 <Link 
                   href={`/${lang}/admin/customers/${customer.id}`}

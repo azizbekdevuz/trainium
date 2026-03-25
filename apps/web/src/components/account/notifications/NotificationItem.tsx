@@ -26,10 +26,10 @@ export function NotificationItem({
 
   return (
     <div
-      className={`p-3 sm:p-4 border rounded-lg transition-colors ${
+      className={`p-3 sm:p-4 rounded-lg transition-colors ${
         notification.read 
-          ? 'bg-white dark:bg-slate-900 border-gray-200' 
-          : `${getNotificationColor(notification.type)} dark:bg-slate-900 border-l-4 dark:border-l-4 dark:border-cyan-700`
+          ? 'glass-surface border border-ui-default' 
+          : getNotificationColor(notification.type)
       }`}
     >
       <div className="flex items-start gap-3">
@@ -40,13 +40,13 @@ export function NotificationItem({
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <h3 className={`font-medium text-sm sm:text-base ${notification.read ? 'text-gray-900 dark:text-slate-500' : 'text-gray-900 dark:text-slate-100'}`}>
+              <h3 className={`font-medium text-sm sm:text-base ${notification.read ? 'text-ui-primary dark:text-ui-faint' : 'text-ui-primary'}`}>
                 {tr(notification.title)}
               </h3>
-              <p className={`mt-1 text-xs sm:text-sm ${notification.read ? 'text-gray-600 dark:text-slate-500' : 'text-gray-700 dark:text-slate-100'}`}>
+              <p className={`mt-1 text-xs sm:text-sm ${notification.read ? 'text-ui-muted dark:text-ui-faint' : 'text-ui-secondary dark:text-slate-100'}`}>
                 {tr(notification.message)}
               </p>
-              <p className={`text-xs sm:text-sm mt-2 ${notification.read ? 'text-gray-500 dark:text-slate-500' : 'text-gray-500 dark:text-slate-300'}`}>
+              <p className={`text-xs sm:text-sm mt-2 ${notification.read ? 'text-ui-faint dark:text-ui-faint' : 'text-ui-faint dark:text-ui-faint'}`}>
                 <LocalTime date={notification.createdAt} />
               </p>
               
@@ -60,7 +60,7 @@ export function NotificationItem({
               <button
                 onClick={() => onMarkAsRead(notification._dedupIds ?? [notification.id])}
                 disabled={loading}
-                className="ml-2 sm:ml-3 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 disabled:opacity-50"
+                className="ml-2 sm:ml-3 p-1 text-ui-faint hover:text-ui-muted dark:hover:text-slate-200 disabled:opacity-50"
                 title={dict.notifications?.markAsRead ?? 'Mark as read'}
               >
                 <Check className="h-4 w-4" />

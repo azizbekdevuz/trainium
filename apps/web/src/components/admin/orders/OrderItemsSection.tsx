@@ -9,19 +9,19 @@ interface OrderItemsSectionProps {
 
 export function OrderItemsSection({ order, dict }: OrderItemsSectionProps) {
   return (
-    <section className="rounded-2xl border bg-white p-6">
+    <section className="glass-surface rounded-2xl border border-[var(--border-default)] p-6">
       <h2 className="text-lg font-semibold mb-4">{dict.admin?.orders?.detail?.itemsHeader ?? 'Order Items'}</h2>
       <div className="space-y-3">
         {order.items.map((item) => (
           <div key={item.id} className="flex items-center justify-between py-3 border-b last:border-b-0">
             <div>
               <div className="font-medium">{item.name}</div>
-              {item.sku && <div className="text-sm text-gray-500">SKU: {item.sku}</div>}
-              <div className="text-sm text-gray-500">{(dict.admin?.orders?.detail?.qty ?? 'Qty')}: {item.qty}</div>
+              {item.sku && <div className="text-sm text-ui-faint">SKU: {item.sku}</div>}
+              <div className="text-sm text-ui-faint">{(dict.admin?.orders?.detail?.qty ?? 'Qty')}: {item.qty}</div>
             </div>
             <div className="text-right">
               <div className="font-medium">{formatCurrency(item.priceCents * item.qty, order.currency)}</div>
-              <div className="text-sm text-gray-500">{formatCurrency(item.priceCents, order.currency)} {(dict.admin?.orders?.detail?.each ?? 'each')}</div>
+              <div className="text-sm text-ui-faint">{formatCurrency(item.priceCents, order.currency)} {(dict.admin?.orders?.detail?.each ?? 'each')}</div>
             </div>
           </div>
         ))}

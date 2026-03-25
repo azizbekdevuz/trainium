@@ -88,7 +88,7 @@ export function StripePaymentBox({
   }
 
   return (
-    <div className={`rounded-2xl border p-5 space-y-4 ${theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-white border-gray-200'}`}>
+    <div className="glass-surface space-y-4 rounded-2xl border border-[var(--border-default)] p-5">
       {/* Test Mode Banner */}
       {isTestMode && (
         <StripeTestCards 

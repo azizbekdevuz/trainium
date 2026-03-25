@@ -50,10 +50,10 @@ export function TrackingForm() {
   };
 
   return (
-    <div className="rounded-2xl border bg-white p-8">
+    <div className="glass-surface rounded-2xl border border-[var(--border-default)] p-8">
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="trackingNumber" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="trackingNumber" className="block text-sm font-medium text-ui-secondary mb-2">
             {t('track.form.trackingNumber', 'Tracking Number')}
           </label>
           <input
@@ -62,13 +62,13 @@ export function TrackingForm() {
             value={trackingNumber}
             onChange={(e) => setTrackingNumber(e.target.value)}
             placeholder={t('track.form.trackingPlaceholder', 'Enter your tracking number')}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-ui-default rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             required
           />
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="email" className="block text-sm font-medium text-ui-secondary mb-2">
             {t('track.form.email', 'Email Address')}
           </label>
           <input
@@ -77,7 +77,7 @@ export function TrackingForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={t('track.form.emailPlaceholder', 'Enter your email address')}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-ui-default rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             required
           />
         </div>
@@ -105,8 +105,8 @@ export function TrackingForm() {
       </form>
 
       <div className="mt-6 pt-6 border-t">
-        <h3 className="text-sm font-medium text-gray-700 mb-3">{t('track.help.title', 'Need Help?')}</h3>
-        <div className="text-sm text-gray-600 space-y-2">
+        <h3 className="text-sm font-medium text-ui-secondary mb-3">{t('track.help.title', 'Need Help?')}</h3>
+        <div className="text-sm text-ui-muted space-y-2">
           <p>• {t('track.help.t1', 'Make sure you enter the tracking number exactly as provided')}</p>
           <p>• {t('track.help.t2', 'Use the same email address used for your order')}</p>
           <p>• {t('track.help.t3', "Contact support if you're having trouble tracking your package")}</p>

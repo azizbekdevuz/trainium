@@ -14,9 +14,19 @@ export function ReviewForm({ productId }: { productId: string }) {
   const [error, setError] = useState<string | null>(null)
   const [existing, setExisting] = useState<{ id: string; createdAt: string; status: string } | null>(null)
   const [isChecking, setIsChecking] = useState(true)
+  const [undoPending, setUndoPending] = useState(false)
 
-  // Pre-check for existing review; update when variant filter changes
-  useEffect(() => {
+  const checkExisting = () => {
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem(`review-undo-${productId}`) : null
+      if (raw) {
+        const data = JSON.parse(raw) as { expiresAt: number }
+        setUndoPending(data.expiresAt > Date.now())
+      } else {
+        setUndoPending(false)
+      }
+    } catch { setUndoPending(false) }
+
     const params = new URLSearchParams({ productId })
     ;(async () => {
       setIsChecking(true)
@@ -35,6 +45,18 @@ export function ReviewForm({ productId }: { productId: string }) {
         setIsChecking(false)
       }
     })()
+  }
+
+  useEffect(() => {
+    checkExisting()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productId])
+
+  useEffect(() => {
+    const handler = () => checkExisting()
+    window.addEventListener('review:created', handler)
+    return () => window.removeEventListener('review:created', handler)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId])
 
   // const toggleVariant = (_id: string) => {}
@@ -75,26 +97,38 @@ export function ReviewForm({ productId }: { productId: string }) {
   }
 
   return (
-    <div className="rounded-2xl border bg-white p-5 shadow-sm">
+    <div className="glass-surface rounded-2xl border border-[var(--border-default)] p-5 shadow-sm">
       <h3 className="font-display text-xl mb-3">{t('reviews.write', 'Write a review')}</h3>
       {isChecking ? (
-        <div className="h-24 rounded-xl bg-gray-50 border animate-pulse" />
+        <div className="h-24 rounded-xl bg-ui-inset border animate-pulse" />
+      ) : undoPending ? (
+        <div className="text-sm text-ui-muted flex items-center gap-2">
+          {t('reviews.undoPending', 'Your review was deleted. You can click refresh button below or try refreshing the page to restore it.')}
+          <button
+            onClick={() => {
+              window.location.reload()
+            }}
+            className="btn-primary rounded-xl px-4 h-9 text-sm font-medium shadow-lg disabled:opacity-50"
+          >
+            {t('common.refresh', 'Refresh')}
+          </button>
+        </div>
       ) : existing && existing.status !== 'DELETED' ? (
-        <div className="text-sm text-gray-700">
+        <div className="text-sm text-ui-secondary">
           {t('reviews.already', "You already reviewed this product. Edit your review or add an update.")}
         </div>
       ) : (
       <>
       {/* Variant selection removed */}
       <div className="grid gap-3">
-        <label className="text-sm text-gray-700">
+        <label className="text-sm text-ui-secondary">
           {t('reviews.rating', 'Rating')}
           <div className="mt-1 inline-flex gap-1">
             {[1,2,3,4,5].map((r) => (
               <button
                 key={r}
                 type="button"
-                className={`h-8 w-8 rounded-full border ${r <= rating ? 'bg-yellow-100 border-yellow-300' : 'hover:bg-gray-50'}`}
+                className={`h-8 w-8 rounded-full border ${r <= rating ? 'bg-yellow-100 border-yellow-300' : 'hover:bg-ui-inset'}`}
                 onClick={() => setRating(r)}
                 aria-label={`${r}`}
                 title={`${r}`}
@@ -104,7 +138,7 @@ export function ReviewForm({ productId }: { productId: string }) {
             ))}
           </div>
         </label>
-        <label className="text-sm text-gray-700">
+        <label className="text-sm text-ui-secondary">
           {t('reviews.titleLabel', 'Title (optional)')}
           <input
             value={title}
@@ -113,7 +147,7 @@ export function ReviewForm({ productId }: { productId: string }) {
             placeholder={t('reviews.titlePh', 'e.g. Solid quality, quiet drive')}
           />
         </label>
-        <label className="text-sm text-gray-700">
+        <label className="text-sm text-ui-secondary">
           {t('reviews.bodyLabel', 'Your review')}
           <textarea
             value={content}

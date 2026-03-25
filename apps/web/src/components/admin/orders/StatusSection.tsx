@@ -27,13 +27,13 @@ export function StatusSection({
   const currentStatusConfig = statusOptions.find(s => s.value === currentStatus);
 
   return (
-    <section className="rounded-2xl border bg-white p-6">
+    <section className="glass-surface rounded-2xl border border-[var(--border-default)] p-6">
       <h2 className="text-lg font-semibold mb-4">{dict.admin?.orders?.detail?.statusHeader ?? 'Order Status'}</h2>
       <div className="flex items-center gap-4 mb-4">
         <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${currentStatusConfig?.color}`}>
           {currentStatusConfig?.label}
         </span>
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-ui-faint">
           {(dict.admin?.orders?.detail?.updated ?? 'Updated')} <LocalTime date={updatedAt} />
         </span>
       </div>

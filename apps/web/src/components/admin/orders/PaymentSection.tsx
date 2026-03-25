@@ -10,7 +10,7 @@ interface PaymentSectionProps {
 
 export function PaymentSection({ payments, dict }: PaymentSectionProps) {
   return (
-    <section className="rounded-2xl border bg-white p-6">
+    <section className="glass-surface rounded-2xl border border-[var(--border-default)] p-6">
       <h2 className="text-lg font-semibold mb-4">{dict.admin?.orders?.detail?.paymentHeader ?? 'Payment Information'}</h2>
       {payments.length > 0 ? (
         <div className="space-y-3">
@@ -22,27 +22,27 @@ export function PaymentSection({ payments, dict }: PaymentSectionProps) {
                   payment.status === 'SUCCEEDED' ? 'bg-green-100 text-green-700' :
                   payment.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
                   payment.status === 'FAILED' ? 'bg-red-100 text-red-700' :
-                  'bg-gray-100 text-gray-700'
+                  'bg-ui-inset text-ui-secondary'
                 }`}>
                   {payment.status}
                 </span>
               </div>
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-ui-muted">
                 {(dict.admin?.orders?.detail?.amount ?? 'Amount')}: {formatCurrency(payment.amountCents, payment.currency)}
               </div>
               {payment.providerRef && (
-                <div className="text-xs text-gray-500 font-mono">
+                <div className="text-xs text-ui-faint font-mono">
                   {(dict.admin?.orders?.detail?.ref ?? 'Ref')}: {payment.providerRef}
                 </div>
               )}
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-ui-faint">
                 <LocalTime date={payment.createdAt} />
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <div className="text-sm text-gray-500">{dict.admin?.orders?.detail?.noPayment ?? 'No payment information available'}</div>
+        <div className="text-sm text-ui-faint">{dict.admin?.orders?.detail?.noPayment ?? 'No payment information available'}</div>
       )}
     </section>
   );
