@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import SmartImage from '../ui/media/SmartImage';
 import { formatCurrency } from '../../lib/utils/format';
@@ -30,6 +31,8 @@ export default function MiniCart() {
   const [subtotal, setSubtotal] = useState(0);
   const [currency, setCurrency] = useState('KRW');
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const [mobilePanelStyle, setMobilePanelStyle] = useState<CSSProperties>({});
 
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
@@ -78,6 +81,47 @@ export default function MiniCart() {
     };
   }, [open]);
 
+  useLayoutEffect(() => {
+    if (!open || !isMobile) {
+      setMobilePanelStyle({});
+      return undefined;
+    }
+    const el = triggerRef.current;
+    if (!el) return undefined;
+    const place = () => {
+      const rect = el.getBoundingClientRect();
+      const margin = 12;
+      const vw = window.innerWidth;
+      const maxPanel = Math.min(320, vw - margin * 2);
+      const widthIfRightAligned = Math.min(maxPanel, Math.max(0, rect.right - margin));
+      if (widthIfRightAligned >= 220) {
+        setMobilePanelStyle({
+          position: 'fixed',
+          top: rect.bottom + 8,
+          right: vw - rect.right,
+          width: widthIfRightAligned,
+          maxHeight: 'min(70dvh, 520px)',
+        });
+      } else {
+        setMobilePanelStyle({
+          position: 'fixed',
+          top: rect.bottom + 8,
+          left: margin,
+          right: margin,
+          width: 'auto',
+          maxHeight: 'min(70dvh, 520px)',
+        });
+      }
+    };
+    place();
+    window.addEventListener('resize', place);
+    window.addEventListener('scroll', place, true);
+    return () => {
+      window.removeEventListener('resize', place);
+      window.removeEventListener('scroll', place, true);
+    };
+  }, [open, isMobile, loading, items.length]);
+
   const isEmpty = !loading && items.length === 0;
   const emptyClick = (e: React.MouseEvent) => {
     if (!isEmpty) return;
@@ -88,13 +132,23 @@ export default function MiniCart() {
 
   return (
     <div ref={containerRef} className="relative">
-      <button onClick={openCart} className="relative hover:opacity-90 transition text-sm" aria-label={dict.cart?.button ?? 'Cart'}>
+      <button
+        ref={triggerRef}
+        type="button"
+        onClick={openCart}
+        className="relative hover:opacity-90 transition text-sm"
+        aria-label={dict.cart?.button ?? 'Cart'}
+        aria-expanded={open}
+      >
         <ShoppingCart className="inline-block h-5 w-5" />
         <CartCount />
       </button>
 
       {open && (
-        <div className={`absolute right-0 mt-2 ${isMobile ? 'w-[280px]' : 'w-[320px]'} rounded-2xl frosted-panel overflow-hidden z-[90]`}>
+        <div
+          className={`rounded-2xl frosted-panel overflow-hidden z-[90] shadow-lg ${isMobile ? '' : 'absolute right-0 mt-2 w-[320px]'}`}
+          style={isMobile ? mobilePanelStyle : undefined}
+        >
           <div className="p-3 sm:p-4 border-b font-medium text-sm sm:text-base">{dict.cart?.minicart?.title ?? 'Your cart'}</div>
           <div className="max-h-60 sm:max-h-80 overflow-auto">
             {loading ? (
