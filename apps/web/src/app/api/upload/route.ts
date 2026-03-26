@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '../../../auth'
-import { writeFile, mkdir } from 'fs/promises'
+import { mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
+import { processUploadedImage } from '@/lib/image/image-processor'
 
 export const runtime = 'nodejs'
 
@@ -23,27 +24,28 @@ export async function POST(request: NextRequest) {
     const file = form.get('file') as File | null
     if (!file) return NextResponse.json({ success: false, error: 'No file uploaded' }, { status: 400 })
 
-    // Prefer saving to /public/uploads so frontend can reference a stable URL
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    // Store under storage/uploads and serve via dynamic route to avoid static file-server caching
     const uploadsDir = join(process.cwd(), 'storage', 'uploads')
     if (!existsSync(uploadsDir)) await mkdir(uploadsDir, { recursive: true })
 
     const ext = file.name.includes('.') ? file.name.split('.').pop() : ''
     const base = file.name.replace(/\.[^.]+$/, '')
     const unique = `${sanitizeFileName(base)}_${Date.now()}.` + (ext || 'bin')
-    const filePath = join(uploadsDir, unique)
 
-    await writeFile(filePath, buffer)
+    const processed = await processUploadedImage(buffer, unique, uploadsDir)
+
     const url = `/uploads/${unique}`
-    const res = NextResponse.json({ success: true, url, filename: unique })
-    // Prevent caching so new files are immediately visible
+    const res = NextResponse.json({ 
+      success: true, 
+      url, 
+      filename: unique,
+      variants: processed.variants 
+    })
     res.headers.set('Cache-Control', 'no-store, max-age=0')
     return res
   } catch {
-    // Fallback: return data URL so UI can still preview without breaking other flows
     try {
       const form = await request.formData()
       const file = form.get('file') as File | null
