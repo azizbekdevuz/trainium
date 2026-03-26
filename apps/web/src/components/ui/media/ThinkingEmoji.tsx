@@ -19,7 +19,7 @@ export function ThinkingEmoji({ className = '', size = 'md' }: ThinkingEmojiProp
         const nextIndex = (currentIndex + 1) % emojis.length;
         return emojis[nextIndex];
       });
-    }, 1500);
+    }, 3000);
     
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps

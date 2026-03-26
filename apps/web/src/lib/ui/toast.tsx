@@ -24,7 +24,7 @@ export function ToastContainer() {
       setToasts((prev) => [...prev, { id, message }]);
       setTimeout(() => {
         setToasts((prev) => prev.filter((t) => t.id !== id));
-      }, 2500);
+      }, 5000);
     };
     window.addEventListener('toast:show', onShow);
     return () => window.removeEventListener('toast:show', onShow);

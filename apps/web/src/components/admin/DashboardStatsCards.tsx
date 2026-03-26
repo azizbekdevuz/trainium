@@ -30,7 +30,7 @@ export function DashboardStatsCards({ stats, dict }: DashboardStatsCardsProps) {
 
   useEffect(() => {
     const animateNumbers = () => {
-      const duration = 2000; // 2 seconds
+      const duration = 3000; // 3 seconds
       const steps = 60;
       const stepDuration = duration / steps;
 

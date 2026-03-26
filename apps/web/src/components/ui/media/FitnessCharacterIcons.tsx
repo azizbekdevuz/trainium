@@ -33,7 +33,7 @@ export function FitnessCharacterIcons({
       setTimeout(() => {
         setIsAnimating(false);
       }, 600);
-    }, 1500);
+    }, 3000);
 
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps

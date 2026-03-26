@@ -31,7 +31,7 @@ export default function AccountProfileEditor({ initialName, initialImage, initia
 
   useEffect(() => {
     if (!copied) return undefined;
-    const t = setTimeout(() => setCopied(false), 1500);
+    const t = setTimeout(() => setCopied(false), 3000);
     return () => clearTimeout(t);
   }, [copied]);
 
