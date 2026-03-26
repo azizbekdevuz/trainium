@@ -15,8 +15,8 @@ export function HeroBento() {
       <div className="relative z-10">
         <motion.div
           initial={reduce ? false : { opacity: 0, y: 10 }}
-          whileInView={reduce ? {} : { opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.5 }}
+          animate={reduce ? {} : { opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
           className="hero-bento-pill mb-6 inline-flex items-center gap-2 rounded-full border px-3 py-1.5"
         >
           <div className="live-dot" />
@@ -26,10 +26,9 @@ export function HeroBento() {
         </motion.div>
 
         <motion.h1
-          initial={reduce ? false : { y: 18, opacity: 0 }}
-          whileInView={reduce ? {} : { y: 0, opacity: 1 }}
-          viewport={{ once: true, amount: 0.6 }}
-          transition={{ type: "spring", stiffness: 90, damping: 16 }}
+          initial={reduce ? false : { y: 10 }}
+          animate={reduce ? {} : { y: 0 }}
+          transition={{ type: "spring", stiffness: 120, damping: 20 }}
           className="font-display mb-4 text-[44px] font-extrabold leading-[1.05] tracking-[-0.04em] text-ui-primary sm:text-[56px]"
         >
           {t("home.hero.title.part1", "Train Without")}
@@ -40,10 +39,9 @@ export function HeroBento() {
         </motion.h1>
 
         <motion.p
-          initial={reduce ? false : { y: 10, opacity: 0 }}
-          whileInView={reduce ? {} : { y: 0, opacity: 1 }}
-          viewport={{ once: true, amount: 0.6 }}
-          transition={{ delay: 0.05 }}
+          initial={reduce ? false : { y: 8, opacity: 0 }}
+          animate={reduce ? {} : { y: 0, opacity: 1 }}
+          transition={{ delay: 0.04, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           className="mb-7 max-w-[390px] text-[15px] leading-[1.72] text-ui-muted"
         >
           {t(
