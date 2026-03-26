@@ -260,6 +260,38 @@
     }
   }
 
+  /* Mobile: simplify product-card for better scroll performance */
+  @media (max-width: 768px), (hover: none), (pointer: coarse) {
+    .product-card {
+      backdrop-filter: blur(8px) saturate(140%);
+      -webkit-backdrop-filter: blur(8px) saturate(140%);
+      transition:
+        transform 0.12s ease-out,
+        box-shadow 0.12s ease-out;
+    }
+    
+    .product-card:hover {
+      transform: none;
+    }
+    
+    .product-card::after {
+      display: none;
+    }
+
+    /* Press feedback (no hover on touch): transform + shadow only — compositor-friendly */
+    .product-card:active {
+      transform: translateY(-4px) scale(1.008);
+      box-shadow: var(--shadow-md), inset 0 0 0 1px var(--border-glass-top);
+    }
+
+    .dark .product-card:active {
+      box-shadow:
+        0 20px 48px rgba(0, 0, 0, 0.55),
+        0 8px 20px rgba(14, 165, 233, 0.1),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+  }
+
   .product-card:hover {
     transform: translateY(-8px) scale(1.012);
     box-shadow: var(--shadow-lg), inset 0 0 0 1px var(--border-glass-top);

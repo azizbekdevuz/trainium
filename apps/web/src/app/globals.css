@@ -54,6 +54,24 @@
 }
 
 /* =========================================
+   1B. MOBILE PERFORMANCE OPTIMIZATIONS
+   Reduce expensive effects on touch/mobile devices
+========================================= */
+@media (max-width: 768px), (hover: none), (pointer: coarse) {
+  :root {
+    --blur-sm: blur(8px) saturate(140%);
+    --blur-md: blur(12px) saturate(150%);
+    --blur-lg: blur(16px) saturate(160%);
+  }
+  
+  .dark {
+    --blur-sm: blur(8px) saturate(140%);
+    --blur-md: blur(12px) saturate(150%);
+    --blur-lg: blur(16px) saturate(160%);
+  }
+}
+
+/* =========================================
    2. DESIGN TOKENS (semantic + legacy RGB bridge)
 ========================================= */
 :root {
@@ -319,6 +337,13 @@ body {
   background-attachment: fixed;
 }
 
+/* Mobile: disable fixed background (causes jank on scroll) */
+@media (max-width: 768px), (hover: none), (pointer: coarse) {
+  .dark body {
+    background-attachment: scroll;
+  }
+}
+
 html:not(.dark) body {
   background: var(--bg-base);
 }
@@ -326,6 +351,14 @@ html:not(.dark) body {
 /* ---- Interactive ambient (Framer layer uses transform only; paints defined here) ---- */
 .interactive-bg-static {
   background: radial-gradient(ellipse 92% 72% at 50% 34%, var(--interactive-static-a), transparent 64%);
+}
+
+/* Touch / coarse pointer: stronger ambient read (CSS-only, no scroll listeners, no filter blur) */
+.interactive-bg-touch {
+  background:
+    radial-gradient(ellipse 125% 88% at 48% 30%, var(--interactive-static-a), transparent 58%),
+    radial-gradient(ellipse 95% 72% at 82% 68%, color-mix(in srgb, var(--spectral-violet) 42%, transparent), transparent 62%),
+    radial-gradient(ellipse 88% 65% at 12% 78%, color-mix(in srgb, var(--spectral-rose) 36%, transparent), transparent 60%);
 }
 
 .interactive-bg-aurora {
@@ -427,6 +460,14 @@ html:not(.dark) .body-grid::before {
     linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
   opacity: 0.8;
+}
+
+/* Mobile: reduce body-grid impact (fixed positioning causes extra compositing) */
+@media (max-width: 768px), (hover: none), (pointer: coarse) {
+  .body-grid::before {
+    position: absolute;
+    opacity: 0.3;
+  }
 }
 
 /* Back-compat: surfaces using legacy `.glass` utility */

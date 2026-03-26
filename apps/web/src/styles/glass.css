@@ -127,6 +127,21 @@
     border-bottom: 1px solid var(--border-default);
   }
 
+  /* Mobile: reduce nav blur for better scroll performance */
+  @media (max-width: 768px), (hover: none), (pointer: coarse) {
+    .glass-nav {
+      background: rgba(6, 10, 25, 0.92);
+      backdrop-filter: blur(12px) saturate(150%);
+      -webkit-backdrop-filter: blur(12px) saturate(150%);
+    }
+    
+    html:not(.dark) .glass-nav {
+      background: rgba(248, 250, 253, 0.95);
+      backdrop-filter: blur(12px) saturate(150%);
+      -webkit-backdrop-filter: blur(12px) saturate(150%);
+    }
+  }
+
   /* BENTO GRID CONTAINERS */
   .bento-grid {
     @apply grid gap-2.5;
