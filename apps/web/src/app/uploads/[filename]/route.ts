@@ -3,6 +3,7 @@ import { resolve, relative, parse } from 'path'
 import { readFile } from 'fs/promises'
 import { existsSync } from 'fs'
 import { sanitizeFilename } from '@/lib/utils/path-safety'
+import { getUploadsRoot } from '@/lib/storage/upload-paths'
 
 export const runtime = 'nodejs'
 
@@ -58,7 +59,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const safe = sanitizeFilename(filename)
   if (!safe) return NextResponse.json({ ok: false }, { status: 400 })
 
-  const uploadsDir = resolve(process.cwd(), 'storage', 'uploads')
+  const uploadsDir = getUploadsRoot()
   
   const acceptHeader = request.headers.get('accept') || ''
   const acceptsWebp = acceptHeader.includes('image/webp')

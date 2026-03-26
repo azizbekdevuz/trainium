@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '../../../auth'
 import { mkdir } from 'fs/promises'
-import { join } from 'path'
+import { getUploadsRoot } from '@/lib/storage/upload-paths'
 import { existsSync } from 'fs'
 import { processUploadedImage } from '@/lib/image/image-processor'
 
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    const uploadsDir = join(process.cwd(), 'storage', 'uploads')
+    const uploadsDir = getUploadsRoot()
     if (!existsSync(uploadsDir)) await mkdir(uploadsDir, { recursive: true })
 
     const ext = file.name.includes('.') ? file.name.split('.').pop() : ''

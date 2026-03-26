@@ -8,6 +8,7 @@ import { negotiateLocale, getDictionary } from '../../../../../lib/i18n/i18n';
 import { priceToMinorUnits } from '../../../../../lib/product/product-utils';
 import fs from 'fs/promises';
 import path from 'path';
+import { getUploadsRoot } from '@/lib/storage/upload-paths';
 
 async function requireAdmin() {
   const session = await auth();
@@ -86,7 +87,7 @@ export async function uploadImage(formData: FormData) {
 
   const buf = Buffer.from(await file.arrayBuffer());
   const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
-  const uploadsDir = path.join(process.cwd(), 'storage', 'uploads');
+  const uploadsDir = getUploadsRoot();
   await fs.mkdir(uploadsDir, { recursive: true });
   const filename = `${id}-${Date.now()}.${ext}`;
   const filePath = path.join(uploadsDir, filename);

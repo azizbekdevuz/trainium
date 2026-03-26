@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '../../../../../auth'
 import { prisma } from '../../../../../lib/database/db'
-import { writeFile, mkdir } from 'fs/promises'
+import { writeFile, mkdir, unlink } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
+import { getUploadsRoot, resolveLocalUploadFilePath } from '@/lib/storage/upload-paths'
 
 export const runtime = 'nodejs'
 
@@ -18,8 +19,7 @@ export async function POST(request: NextRequest) {
 
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
-  // Store under storage/uploads and serve via dynamic route to avoid static file-server caching
-  const uploadsDir = join(process.cwd(), 'storage', 'uploads')
+    const uploadsDir = getUploadsRoot()
     if (!existsSync(uploadsDir)) await mkdir(uploadsDir, { recursive: true })
 
     const ext = file.name.includes('.') ? file.name.split('.').pop() : ''
@@ -29,7 +29,6 @@ export async function POST(request: NextRequest) {
     await writeFile(filePath, buffer)
     const url = `/uploads/${unique}`
 
-    // Persist on user immediately to avoid a second call
     const updated = await prisma.user.update({
       where: { id: session.user.id },
       data: { image: url },
@@ -52,11 +51,10 @@ export async function DELETE() {
   try {
     const user = await prisma.user.findUnique({ where: { id: session.user.id }, select: { image: true } })
     const current = user?.image || ''
-    if (current && current.startsWith('/uploads/')) {
-      const filePath = join(process.cwd(), 'storage', current)
+    const filePath = resolveLocalUploadFilePath(current)
+    if (filePath) {
       try {
-        // Optional cleanup – ignore errors if file already gone
-        await import('fs/promises').then(m => m.unlink(filePath)).catch(() => {})
+        await unlink(filePath).catch(() => {})
       } catch (e) {
         console.error('Avatar delete failed', e)
       }
@@ -72,5 +70,3 @@ export async function DELETE() {
     return NextResponse.json({ success: false, error: 'Failed to remove avatar' }, { status: 500 })
   }
 }
-
-

@@ -232,6 +232,7 @@ The storefront and admin UIs share a **token-based** presentation layer: CSS var
 
 ### Admin uploads and `/uploads` delivery
 
+- **`apps/web/src/lib/storage/upload-paths.ts`**: Single place for `storage/uploads` resolution from `process.cwd()` and for mapping stored public URLs (`/uploads/…`) to absolute filesystem paths. Avoids POSIX `path.join(cwd, 'storage', '/uploads/…')` treating `/uploads/…` as an absolute path (which broke avatar file deletion on Linux). Run the Next process with **cwd = `apps/web`** (or the standalone layout equivalent) so `storage/uploads` sits next to the app.
 - **`apps/web/src/lib/image/image-processor.ts`**: On upload, when **Sharp** is available, writes WebP variants beside the original (`{basename}_256.webp`, `_512`, `_768`, `_1024`). Non-images or missing Sharp still persist the original bytes only.
 - **`apps/web/src/app/api/upload/route.ts`**: Accepts admin uploads, runs the processor, returns JSON including a `variants` map when generated.
 - **`apps/web/src/app/uploads/[filename]/route.ts`**: Serves files from the uploads directory. For raster originals (`jpg`, `png`, `gif`) and clients sending `Accept: image/webp`, may serve a matching `.webp` variant; optional `?w=` selects the smallest variant width ≥ requested. Responses use `Vary: Accept`; variant files use long cache, originals stay effectively uncached for freshness.
@@ -801,7 +802,7 @@ PENDING → PAID → FULFILLING → SHIPPED → DELIVERED
 - Multi-stage builds
 - Health checks
 - Environment variable injection
-- Volume mounts for uploads
+- Volume mounts for uploads (mount persistent storage at `apps/web/storage/uploads` in the container, or the path your runtime’s `cwd` uses — see `upload-paths.ts` above)
 
 ### Environment Variables
 
