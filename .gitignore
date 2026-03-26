@@ -66,4 +66,7 @@ prisma/ERDs/
 prisma/schema.prisma.backup
 
 # local upload artifacts (user-generated, not for version control)
+# Canonical store: apps/web/storage/uploads (served via /uploads/* route)
 **/storage/uploads/*
+# Legacy / mistaken drops next to static assets — ignore if present
+**/public/uploads/*
