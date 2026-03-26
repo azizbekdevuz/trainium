@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { updateQtyAction } from '../../app/actions/cart';
-import { emitCartChanged } from '../../lib/cart/cart-events';
+import { refreshCartCountFromServer } from '../../lib/cart/cart-events';
 import { showToast } from '../../lib/ui/toast';
 import { useI18n } from '../providers/I18nProvider';
 
@@ -26,11 +26,14 @@ export default function CartQtyUpdate({ itemId, currentQty, available }: CartQty
       return;
     }
 
-    // If quantity is 0 or less, remove the item
+    // If quantity is 0 or less, server treats qty <= 0 as delete (see updateItemQty)
     if (qty <= 0) {
       const formData = new FormData();
       formData.set('itemId', itemId);
+      formData.set('qty', '0');
       await updateQtyAction(formData);
+      await refreshCartCountFromServer();
+      showToast(t('cart.updated', 'Cart updated'));
       return;
     }
 
@@ -39,25 +42,14 @@ export default function CartQtyUpdate({ itemId, currentQty, available }: CartQty
     formData.set('itemId', itemId);
     formData.set('qty', qty.toString());
     await updateQtyAction(formData);
-    // After server mutation completes, refresh mini-cart/count on the client
-    try {
-      const res = await fetch('/api/cart/mini', { cache: 'no-store' });
-      if (res.ok) {
-        const j = await res.json();
-        emitCartChanged({ count: j.count });
-      } else {
-        emitCartChanged({});
-      }
-    } catch {
-      emitCartChanged({});
-    }
+    await refreshCartCountFromServer();
     showToast(t('cart.updated', 'Cart updated'));
   };
 
   // Auto-hide toast after 2.5 seconds
   useEffect(() => {
     if (toast) {
-      const timer = setTimeout(() => setToast(null), 2500);
+      const timer = setTimeout(() => setToast(null), 5000);
       return () => clearTimeout(timer);
     }
     return undefined;

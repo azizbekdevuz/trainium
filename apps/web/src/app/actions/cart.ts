@@ -1,7 +1,6 @@
 'use server';
 
 import { addToCart, updateItemQty, removeItem } from '../../lib/cart/cart';
-// import { redirect } from 'next/navigation';
 import { setCartId } from '../../lib/utils/cookies';
 
 export async function addToCartAction(formData: FormData) {
@@ -15,7 +14,7 @@ export async function addToCartAction(formData: FormData) {
 
   try {
     await addToCart(productId, variantId || '', qty);
-    // No redirect; client UI handles feedback and mini-cart update
+    // Mini-cart / badge: client emits via QtyAndAdd (fetch /api/cart/mini + emitCartChanged)
   } catch (e) {
     const msg = String(e instanceof Error ? e.message : e);
     const m = msg.match(/^STOCK_EXCEEDED:(\d+)/);

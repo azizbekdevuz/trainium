@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { emitCartChanged } from '../../lib/cart/cart-events';
+import { refreshCartCountFromServer } from '../../lib/cart/cart-events';
 import { showToast } from '../../lib/ui/toast';
 import { useI18n } from '../providers/I18nProvider';
 
@@ -19,19 +19,9 @@ export default function QtyAndAdd({ available, formId = 'add-to-cart-form' }: { 
     }
     const form = document.getElementById(formId) as HTMLFormElement | null;
     if (form) {
-      const handle = async () => {
-        setTimeout(async () => {
-          try {
-            const res = await fetch('/api/cart/mini', { cache: 'no-store' });
-            if (res.ok) {
-              const j = await res.json();
-              emitCartChanged({ count: j.count });
-            } else {
-              emitCartChanged({});
-            }
-          } catch {
-            emitCartChanged({});
-          }
+      const handle = () => {
+        setTimeout(() => {
+          void refreshCartCountFromServer();
         }, 50);
       };
       form.requestSubmit();
@@ -42,7 +32,7 @@ export default function QtyAndAdd({ available, formId = 'add-to-cart-form' }: { 
 
   useEffect(() => {
     if (toast) {
-      const timer = setTimeout(() => setToast(null), 2500);
+      const timer = setTimeout(() => setToast(null), 5000);
       return () => clearTimeout(timer);
     }
     return undefined;

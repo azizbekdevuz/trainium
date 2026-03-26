@@ -2,7 +2,7 @@
 
 import { useTransition } from 'react';
 import { removeItemAction } from '../../app/actions/cart';
-import { emitCartChanged } from '../../lib/cart/cart-events';
+import { refreshCartCountFromServer } from '../../lib/cart/cart-events';
 import { showToast } from '../../lib/ui/toast';
 import { useI18n } from '../providers/I18nProvider';
 
@@ -15,17 +15,7 @@ export default function CartRemoveButton({ itemId }: { itemId: string }) {
       const formData = new FormData();
       formData.set('itemId', itemId);
       await removeItemAction(formData);
-      try {
-        const res = await fetch('/api/cart/mini', { cache: 'no-store' });
-        if (res.ok) {
-          const j = await res.json();
-          emitCartChanged({ count: j.count });
-        } else {
-          emitCartChanged({});
-        }
-      } catch {
-        emitCartChanged({});
-      }
+      await refreshCartCountFromServer();
       showToast(t('cart.removed', 'Item removed from cart'));
     });
   };
