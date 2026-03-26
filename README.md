@@ -44,7 +44,7 @@ For a comprehensive overview of the system architecture, design patterns, and im
 - **Presentation & UX**
   - Design-token CSS (globals plus `styles/glass.css`, `components.css`, `admin.css`) with light/dark theming
   - Glass-morphism surfaces, consistent overlays via portals, scroll-reveal and heading motion helpers
-  - Interactive background with cursor-responsive blob (Framer Motion)
+  - **Desktop**: interactive background with a cursor-driven blob (Framer Motion). **Touch / coarse pointer**: CSS-only ambient layer (no scroll-bound motion) and lighter blur on nav and cards for smoother scrolling
 
 ## 🛠️ Tech Stack
 

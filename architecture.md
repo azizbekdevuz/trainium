@@ -31,7 +31,7 @@ Trainium is a modern, full-stack e-commerce platform built for selling high-tech
 - **Product Recommendations**: AI-powered recommendation engine
 - **Social Features**: Reviews, ratings, favorites, and likes
 - **Inventory Management**: Stock tracking with low-stock alerts
-- **Presentation Layer**: Token-based light/dark UI, glass-morphism surfaces, motion micro-interactions (scroll reveal, kinetic headings), and a cursor-responsive background layer
+- **Presentation Layer**: Token-based light/dark UI, glass-morphism surfaces, motion micro-interactions (scroll reveal, kinetic headings on fine pointers), touch-aware static background, and reduced glass/blur cost on mobile
 
 ---
 
@@ -217,7 +217,7 @@ The storefront and admin UIs share a **token-based** presentation layer: CSS var
 
 | Location | Role |
 | -------- | ---- |
-| `apps/web/src/app/globals.css` | Global layout (e.g. body grid), design tokens, utility classes such as `glass-surface` and `frosted-panel`, modal/backdrop layering, motion-related variables and classes (`reveal-init` / `reveal-visible`), and `.cursor-blob` styles for the interactive background |
+| `apps/web/src/app/globals.css` | Global layout (e.g. body grid), design tokens, utility classes such as `glass-surface` and `frosted-panel`, modal/backdrop layering, motion-related variables and classes (`reveal-init` / `reveal-visible`), `.cursor-blob` / interactive background styles, and `.interactive-bg-touch` for coarse-pointer devices |
 | `apps/web/src/styles/glass.css` | Glass-morphism surfaces and specular highlights |
 | `apps/web/src/styles/components.css` | Product cards and shared component-level patterns |
 | `apps/web/src/styles/admin.css` | Admin-specific presentation |
@@ -227,8 +227,15 @@ The storefront and admin UIs share a **token-based** presentation layer: CSS var
 ### Motion and background
 
 - **`apps/web/src/components/motion/ScrollReveal.tsx`**: Client component that uses `IntersectionObserver` to add reveal classes to main sections (skips nodes under `[data-no-reveal]`).
-- **`apps/web/src/components/motion/KineticHeadings.tsx`**: Applies a subtle scroll-linked horizontal shift to `h1` / `h2` inside `main`.
-- **`apps/web/src/components/background/InteractiveBackground.tsx`**: Framer Motion–driven background layer, including a **cursor-following blob** (`.cursor-blob`); respects reduced-motion preferences where applicable.
+- **`apps/web/src/components/motion/KineticHeadings.tsx`**: Applies a subtle scroll-linked horizontal shift to `h1` / `h2` inside `main` on **fine pointer + hover** devices; skipped on touch/coarse layouts to avoid scroll-time work.
+- **`apps/web/src/components/background/InteractiveBackground.tsx`**: On **desktop**, Framer Motion–driven layer with a **cursor-following blob** (`.cursor-blob`). On **touch / coarse pointer** (via `matchMedia`), renders a fixed **CSS-only** `.interactive-bg-touch` layer instead—no global scroll listeners. Respects reduced-motion preferences.
+
+### Admin uploads and `/uploads` delivery
+
+- **`apps/web/src/lib/image/image-processor.ts`**: On upload, when **Sharp** is available, writes WebP variants beside the original (`{basename}_256.webp`, `_512`, `_768`, `_1024`). Non-images or missing Sharp still persist the original bytes only.
+- **`apps/web/src/app/api/upload/route.ts`**: Accepts admin uploads, runs the processor, returns JSON including a `variants` map when generated.
+- **`apps/web/src/app/uploads/[filename]/route.ts`**: Serves files from the uploads directory. For raster originals (`jpg`, `png`, `gif`) and clients sending `Accept: image/webp`, may serve a matching `.webp` variant; optional `?w=` selects the smallest variant width ≥ requested. Responses use `Vary: Accept`; variant files use long cache, originals stay effectively uncached for freshness.
+- **`apps/web/src/components/ui/media/SmartImage.tsx`**: For `src` paths under `/uploads/`, uses Next.js `Image` in **unoptimized** mode with a custom **`loader`** and width-based `srcset` so the browser requests `?w=` URLs the route understands.
 
 ### Overlays and portals
 
@@ -257,6 +264,7 @@ Modal dialogs, the shared account `Form` overlay, mobile bottom sheets, and some
 - `apps/web/src/auth.ts`: NextAuth configuration
 - `apps/web/src/auth/rbac.ts`: Role-based access control
 - `apps/web/src/auth/providers/kakao.ts`: Custom Kakao provider
+- `apps/web/src/components/providers/SessionProviderWrapper.tsx`: Wraps `SessionProvider` with a `key` tied to session identity (`id` / `email` / `role`) and `refetchOnWindowFocus` so client UI (e.g. navbar) catches server session changes after sign-in redirects
 
 **Features**:
 - Multi-provider authentication
@@ -278,6 +286,7 @@ Modal dialogs, the shared account `Form` overlay, mobile bottom sheets, and some
 **Key Files**:
 - `apps/web/src/lib/cart/cart.ts`: Cart operations
 - `apps/web/src/lib/cart/cart-merge.ts`: Cart merging logic (enforces inventory limits)
+- `apps/web/src/lib/cart/cart-events.ts`: Client-only `cart:changed` / `cart:cleared` events; `refreshCartCountFromServer()` refetches `/api/cart/mini` once after server actions so the header badge and open mini-cart stay aligned (avoid duplicate “relay” emitters).
 - `apps/web/src/lib/utils/cookies.ts`: Cookie management
 
 **Features**:
@@ -895,6 +904,7 @@ Runs on push/PR to `main`: lint (web + socket), typecheck (web), test (web). No 
 - Size limits
 - Secure file storage
 - Path traversal prevention via `sanitizeFilename()` (`lib/utils/path-safety.ts`)
+- Generated WebP variants share the same sanitized basename prefix and live in the same uploads directory as the original
 
 ---
 
@@ -902,7 +912,7 @@ Runs on push/PR to `main`: lint (web + socket), typecheck (web), test (web). No 
 
 ### Frontend
 - Next.js App Router for optimal rendering
-- Image optimization (WebP, AVIF)
+- Remote/standard images: Next.js image optimization where enabled. **Local `/uploads/`**: Sharp-generated WebP variants + `SmartImage` srcset and upload-route negotiation (see *Admin uploads and `/uploads` delivery* above)
 - Code splitting
 - Static generation where possible
 - Client-side caching
