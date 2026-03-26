@@ -1,11 +1,29 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const MAX_SHIFT = 6;
 
-export default function KineticHeadings() {
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(false);
+  
   useEffect(() => {
+    const mq = window.matchMedia('(hover: hover) and (pointer: fine)');
+    setIsDesktop(mq.matches);
+    
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+  
+  return isDesktop;
+}
+
+export default function KineticHeadings() {
+  const isDesktop = useIsDesktop();
+  
+  useEffect(() => {
+    if (!isDesktop) return undefined;
     if (typeof IntersectionObserver === 'undefined') return undefined;
 
     const headings = document.querySelectorAll<HTMLElement>('main h1, main h2');
@@ -64,7 +82,7 @@ export default function KineticHeadings() {
         h.style.transition = '';
       }
     };
-  }, []);
+  }, [isDesktop]);
 
   return null;
 }

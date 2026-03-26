@@ -3,14 +3,32 @@
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { useI18n } from '../providers/I18nProvider';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
+
+function useIsTouchDevice() {
+  const [isTouch, setIsTouch] = useState(false);
+  
+  useEffect(() => {
+    const mq = window.matchMedia('(hover: none) or (pointer: coarse)');
+    setIsTouch(mq.matches);
+    
+    const handler = (e: MediaQueryListEvent) => setIsTouch(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+  
+  return isTouch;
+}
 
 export default function ParallaxGallery() {
   const { t } = useI18n();
   const reduce = useReducedMotion();
+  const isTouch = useIsTouchDevice();
   const { scrollYProgress } = useScroll({ offset: ['start end', 'end start'] });
 
-  const y1 = useTransform(scrollYProgress, [0, 1], [reduce ? 0 : -20, reduce ? 0 : 20]);
-  const y2 = useTransform(scrollYProgress, [0, 1], [reduce ? 0 : 20, reduce ? 0 : -20]);
+  const disableParallax = reduce || isTouch;
+  const y1 = useTransform(scrollYProgress, [0, 1], [disableParallax ? 0 : -20, disableParallax ? 0 : 20]);
+  const y2 = useTransform(scrollYProgress, [0, 1], [disableParallax ? 0 : 20, disableParallax ? 0 : -20]);
 
   return (
     <section className="mx-auto max-w-7xl px-6 py-16">

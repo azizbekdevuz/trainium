@@ -17,10 +17,26 @@ const scaleSpring = { stiffness: 200, damping: 14, mass: 0.6 };
 const BLOB_SIZE = 600;
 const BLOB_HALF = BLOB_SIZE / 2;
 
+function useIsTouchDevice() {
+  const [isTouch, setIsTouch] = useState(false);
+  
+  useEffect(() => {
+    const mq = window.matchMedia('(hover: none) or (pointer: coarse)');
+    setIsTouch(mq.matches);
+    
+    const handler = (e: MediaQueryListEvent) => setIsTouch(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+  
+  return isTouch;
+}
+
 export default function InteractiveBackground() {
   const [mounted, setMounted] = useState(false);
   const reduceMotion = useReducedMotion();
-  const isTouchDevice = useRef(false);
+  const isTouchDevice = useIsTouchDevice();
+  const isTouchRef = useRef(false);
 
   const blobX = useMotionValue(typeof window !== 'undefined' ? window.innerWidth / 2 : 500);
   const blobY = useMotionValue(typeof window !== 'undefined' ? window.innerHeight / 2 : 400);
@@ -57,12 +73,11 @@ export default function InteractiveBackground() {
   }, [blobX, blobY, blobOpacity, normX, normY]);
 
   useEffect(() => {
-    if (!mounted || reduceMotion) return undefined;
+    if (!mounted || reduceMotion || isTouchDevice) return undefined;
 
     let raf = 0;
     let latestX = 0;
     let latestY = 0;
-    let scrollTimer: ReturnType<typeof setTimeout> | null = null;
 
     const flush = () => {
       raf = 0;
@@ -75,69 +90,39 @@ export default function InteractiveBackground() {
       if (!raf) raf = requestAnimationFrame(flush);
     };
 
-    // --- Desktop: mouse move ---
+    // --- Desktop only: mouse move ---
     const onMouse = (e: MouseEvent) => {
-      if (isTouchDevice.current) return;
+      if (isTouchRef.current) return;
       enqueue(e.clientX, e.clientY);
     };
 
-    // --- Desktop: click pulse ---
+    // --- Desktop only: click pulse ---
     const onMouseDown = (e: MouseEvent) => {
-      if (isTouchDevice.current) return;
+      if (isTouchRef.current) return;
       enqueue(e.clientX, e.clientY);
       blobScale.set(1.45);
     };
     const onMouseUp = () => {
-      if (isTouchDevice.current) return;
+      if (isTouchRef.current) return;
       blobScale.set(1);
     };
 
-    // --- Desktop: mouse leave ---
+    // --- Desktop only: mouse leave ---
     const onLeave = () => {
-      if (isTouchDevice.current) return;
+      if (isTouchRef.current) return;
       blobOpacity.set(0);
     };
 
-    // --- Mobile: touch ---
-    const onTouchStart = (e: TouchEvent) => {
-      isTouchDevice.current = true;
-      const t = e.touches[0];
-      if (t) {
-        blobX.jump(t.clientX);
-        blobY.jump(t.clientY);
-        blobOpacity.set(1);
-        blobScale.set(1.3);
-      }
-    };
-    const onTouchMove = (e: TouchEvent) => {
-      const t = e.touches[0];
-      if (t) enqueue(t.clientX, t.clientY);
-    };
-    const onTouchEnd = () => {
-      blobScale.set(1);
-      blobOpacity.set(0);
-    };
-
-    // --- Mobile: scroll ---
-    const onScroll = () => {
-      if (!isTouchDevice.current) return;
-      const vw = window.innerWidth || 1;
-      const vh = window.innerHeight || 1;
-      enqueue(vw / 2, vh / 2);
-      blobOpacity.set(0.7);
-      if (scrollTimer) clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(() => blobOpacity.set(0), 600);
+    // Detect if touch event fires (hybrid devices)
+    const onTouchStart = () => {
+      isTouchRef.current = true;
     };
 
     window.addEventListener('mousemove', onMouse, { passive: true });
     window.addEventListener('mousedown', onMouseDown, { passive: true });
     window.addEventListener('mouseup', onMouseUp, { passive: true });
     document.documentElement.addEventListener('mouseleave', onLeave);
-
-    window.addEventListener('touchstart', onTouchStart, { passive: true });
-    window.addEventListener('touchmove', onTouchMove, { passive: true });
-    window.addEventListener('touchend', onTouchEnd, { passive: true });
-    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('touchstart', onTouchStart, { passive: true, once: true });
 
     return () => {
       window.removeEventListener('mousemove', onMouse);
@@ -145,13 +130,9 @@ export default function InteractiveBackground() {
       window.removeEventListener('mouseup', onMouseUp);
       document.documentElement.removeEventListener('mouseleave', onLeave);
       window.removeEventListener('touchstart', onTouchStart);
-      window.removeEventListener('touchmove', onTouchMove);
-      window.removeEventListener('touchend', onTouchEnd);
-      window.removeEventListener('scroll', onScroll);
       if (raf) cancelAnimationFrame(raf);
-      if (scrollTimer) clearTimeout(scrollTimer);
     };
-  }, [mounted, reduceMotion, moveTo, blobOpacity, blobScale, blobX, blobY]);
+  }, [mounted, reduceMotion, isTouchDevice, moveTo, blobOpacity, blobScale]);
 
   if (!mounted) return null;
 
@@ -165,6 +146,17 @@ export default function InteractiveBackground() {
     );
   }
 
+  if (isTouchDevice) {
+    return (
+      <div
+        className="interactive-bg-touch pointer-events-none fixed inset-0"
+        style={{ zIndex: 1 }}
+        aria-hidden
+      />
+    );
+  }
+
+  // Full interactive background for desktop only
   return (
     <div
       className="pointer-events-none fixed inset-0 overflow-hidden"
