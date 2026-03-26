@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
   },
   compress: true,
   poweredByHeader: false,
-  serverExternalPackages: ['bcrypt'],
+  serverExternalPackages: ['bcrypt', 'sharp'],
   async headers() {
     return [
       {
