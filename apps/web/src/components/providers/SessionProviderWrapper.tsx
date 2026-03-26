@@ -4,6 +4,12 @@ import { SessionProvider } from 'next-auth/react';
 import type { Session } from 'next-auth';
 import { ReactNode, useEffect } from 'react';
 
+function sessionSyncKey(session: Session | null | undefined): string {
+  const u = session?.user as { id?: string; email?: string | null; role?: string } | undefined;
+  if (!u) return 'anon';
+  return [u.id ?? '', u.email ?? '', u.role ?? ''].join(':');
+}
+
 export default function SessionProviderWrapper({ children, initialSession }: { children: ReactNode; initialSession?: Session | null }) {
   // Pause animations when tab is hidden
   useEffect(() => {
@@ -16,10 +22,13 @@ export default function SessionProviderWrapper({ children, initialSession }: { c
     return () => document.removeEventListener('visibilitychange', onVisibility);
   }, []);
 
+  const providerKey = sessionSyncKey(initialSession ?? null);
+
   return (
     <SessionProvider
-      session={initialSession as any}
-      refetchOnWindowFocus={false}
+      key={providerKey}
+      session={initialSession as Session | null}
+      refetchOnWindowFocus
       refetchWhenOffline={false}
       refetchInterval={0}
     >
