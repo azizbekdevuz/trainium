@@ -82,7 +82,7 @@ export function FaqSection({ items }: { items?: FaqItem[] }) {
         setLoading(true);
         const response = await fetch(`/api/faq?lang=${lang}`);
         if (!response.ok) throw new Error('Failed to load FAQs');
-        
+
         const data = await response.json();
         setDbFaqs(data.categories || []);
       } catch (err) {
@@ -103,12 +103,12 @@ export function FaqSection({ items }: { items?: FaqItem[] }) {
   // Convert database FAQs to the format expected by the UI
   const dbFaqItems = useMemo(() => {
     const faqItems: FaqItem[] = [];
-    
+
     dbFaqs.forEach(category => {
       // Get the translated category name or fallback to default name
       const categoryTranslation = category.translations[0];
       const categoryName = categoryTranslation?.name || category.name;
-      
+
       category.faqs.forEach(faq => {
         // Get the first available translation (preferably current language)
         const translation = faq.translations[0];
@@ -121,25 +121,25 @@ export function FaqSection({ items }: { items?: FaqItem[] }) {
         }
       });
     });
-    
+
     return faqItems;
   }, [dbFaqs]);
 
   const categories = useMemo(() => {
     const set = new Set<string>();
-    
+
     // Add categories from database FAQs
     dbFaqItems.forEach(item => {
       if (item.category) set.add(item.category);
     });
-    
+
     // Add categories from fallback FAQs if no database FAQs
     if (dbFaqItems.length === 0) {
       (items ?? DEFAULT_FAQ).forEach(item => {
         if (item.category) set.add(item.category);
       });
     }
-    
+
     return [allLabel, ...Array.from(set).sort((a, b) => a.localeCompare(b))];
   }, [dbFaqItems, items, DEFAULT_FAQ, allLabel]);
 
@@ -149,11 +149,11 @@ export function FaqSection({ items }: { items?: FaqItem[] }) {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    
+
     // Use database FAQs if available, otherwise fallback to provided items or default
     const base = dbFaqItems.length > 0 ? dbFaqItems : (items ?? DEFAULT_FAQ);
     const byCategory = activeCategory === allLabel ? base : base.filter(i => (i.category || 'Other') === activeCategory);
-    
+
     if (!q) return byCategory;
     return byCategory.filter(i => i.q.toLowerCase().includes(q) || i.a.toLowerCase().includes(q));
   }, [dbFaqItems, items, DEFAULT_FAQ, activeCategory, query, allLabel]);
@@ -162,7 +162,18 @@ export function FaqSection({ items }: { items?: FaqItem[] }) {
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-center py-8">
-          <div className="text-sm text-ui-faint">{dict.faq?.loading || 'Loading FAQs...'}</div>
+          <div
+            className="flex items-center justify-center py-10"
+          >
+            <div className="flex items-center gap-2 text-xs" style={{ color: 'var(--text-faint)' }}>
+              <span
+                className="w-1.5 h-1.5 rounded-full animate-bounce-soft"
+                style={{ background: 'var(--accent)', opacity: 0.6 }}
+                aria-hidden
+              />
+              {dict.faq?.loading || 'Loading FAQs...'}
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -205,7 +216,11 @@ export function FaqSection({ items }: { items?: FaqItem[] }) {
           </div>
           <div className="divide-y">
             {filtered.map((item, idx) => (
-              <div key={`${item.q}-${idx}`} className="py-3">
+              <div
+                key={`${item.q}-${idx}`}
+                className="py-3 sm:py-3.5"
+                style={{ borderBottom: '1px solid var(--border-subtle)' }}
+              >
                 <button
                   className="w-full text-left flex items-center justify-between"
                   onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
@@ -215,8 +230,9 @@ export function FaqSection({ items }: { items?: FaqItem[] }) {
                   <span className="text-ui-faint">{openIdx === idx ? '−' : '+'}</span>
                 </button>
                 {openIdx === idx && (
-                  <div 
-                    className="mt-2 text-ui-secondary text-sm"
+                  <div
+                    className="mt-2.5 text-xs sm:text-sm leading-relaxed"
+                    style={{ color: 'var(--text-secondary)' }}
                     dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.a) }}
                   />
                 )}
@@ -244,14 +260,23 @@ export function FaqSection({ items }: { items?: FaqItem[] }) {
   return (
     <div className="space-y-3 sm:space-y-4">
       <div className="overflow-x-auto">
-        <div className="inline-flex gap-1 sm:gap-2 rounded-xl border p-1 bg-ui-inset">
+        <div
+          className="inline-flex gap-1 sm:gap-2 rounded-[14px] p-1"
+          style={{ background: 'var(--bg-inset)', border: '1px solid var(--border-subtle)' }}
+        >
           {categories.map((cat) => {
             const isActive = activeCategory === cat;
             return (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`whitespace-nowrap rounded-lg px-2 sm:px-3 py-1.5 text-xs sm:text-sm transition-colors ${isActive ? 'glass-surface border border-[var(--border-default)] text-ui-primary shadow-sm' : 'text-ui-muted hover:text-ui-primary'}`}
+                className="whitespace-nowrap rounded-[10px] px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs font-medium transition-all duration-150"
+                style={{
+                  background: isActive ? 'var(--bg-elevated)' : 'transparent',
+                  color: isActive ? 'var(--text-primary)' : 'var(--text-muted)',
+                  border: isActive ? '1px solid var(--border-default)' : '1px solid transparent',
+                  boxShadow: isActive ? 'var(--shadow-sm)' : 'none',
+                }}
                 aria-pressed={isActive}
               >
                 {cat}
@@ -265,7 +290,7 @@ export function FaqSection({ items }: { items?: FaqItem[] }) {
           placeholder={dict.faq?.searchPlaceholder || 'Search FAQs...'}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="h-10 sm:h-11 w-full rounded-xl border px-3 text-sm sm:text-base"
+          className="input-field w-full text-sm"
           aria-label={dict.faq?.searchPlaceholder || 'Search FAQs...'}
         />
       </div>
@@ -273,15 +298,31 @@ export function FaqSection({ items }: { items?: FaqItem[] }) {
         {filtered.map((item, idx) => (
           <div key={`${item.q}-${idx}`} className="py-3">
             <button
-              className="w-full text-left flex items-center justify-between"
+              className="w-full text-left flex items-center justify-between gap-3 py-0.5"
               onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
               aria-expanded={openIdx === idx}
             >
-              <span className="font-medium text-sm sm:text-base">{item.q}</span>
-              <span className="text-ui-faint text-lg">{openIdx === idx ? '−' : '+'}</span>
+              <span
+                className="font-medium text-sm sm:text-[13.5px] leading-snug flex-1"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                {item.q}
+              </span>
+              <span
+                className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-sm font-bold transition-transform duration-150"
+                style={{
+                  background: openIdx === idx ? 'color-mix(in srgb, var(--accent) 14%, var(--bg-surface))' : 'var(--bg-surface)',
+                  border: '1px solid var(--border-subtle)',
+                  color: openIdx === idx ? 'var(--accent)' : 'var(--text-faint)',
+                  transform: openIdx === idx ? 'rotate(45deg)' : 'rotate(0deg)',
+                }}
+                aria-hidden
+              >
+                +
+              </span>
             </button>
             {openIdx === idx && (
-              <div 
+              <div
                 className="mt-2 text-ui-secondary text-xs sm:text-sm"
                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.a) }}
               />
