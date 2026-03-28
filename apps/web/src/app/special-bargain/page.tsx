@@ -36,7 +36,7 @@ export default async function SpecialBargain() {
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10 space-y-8">
-      <header>
+      <header className="animate-fade-up">
         <h1 className="font-display text-3xl mb-2">{dict.pages.special.title}</h1>
         <p className="text-ui-muted dark:text-ui-faint">{dict.pages.special.welcome}, {session.user?.name ?? session.user?.email}.</p>
       </header>

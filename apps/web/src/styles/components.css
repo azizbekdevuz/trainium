@@ -134,6 +134,28 @@
     box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.12);
   }
 
+  /* FORM LABEL */
+  .form-label {
+    @apply block text-[11px] font-semibold uppercase tracking-[.06em] mb-1.5;
+    color: var(--text-faint);
+  }
+
+  /* SECTION LABEL PILL — used on page headers (about, contact, special-bargain) */
+  .section-pill {
+    @apply inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-[.09em];
+    background: color-mix(in srgb, var(--accent) 14%, var(--bg-elevated));
+    border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--border-default));
+    color: color-mix(in srgb, var(--accent) 78%, var(--text-primary));
+  }
+
+  /* STATUS MESSAGE — for form success/error feedback */
+  .status-msg-success {
+    color: #34d399; /* var(--chart-series-success) equivalent */
+  }
+  .status-msg-error {
+    color: var(--status-stock-out);
+  }
+
   /* STATUS BADGES */
   .badge {
     @apply inline-flex items-center gap-1 rounded-full text-[10.5px] font-bold tracking-wide;
