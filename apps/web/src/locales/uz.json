@@ -902,6 +902,7 @@
   "pages": {
     "about": {
       "faqExcerpt": "Ko'p beriladigan savollar",
+      "faqCta": "Ko'p beriladigan savollar →",
       "faqList": [
         "Yetkazib berish qancha vaqt oladi? Ko'p hollarda 1–3 ish kuni.",
         "Buyurtmani qanday kuzataman? Kuzatish havolasi yoki hisob sahifasi orqali.",
