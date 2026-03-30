@@ -34,6 +34,8 @@ export function ProductPagination({
         brand={params.brand}
         brands={params.brandsSelected}
         categories={params.categoriesSelected}
+        currency={params.currency}
+        withVar={params.withVar ? '1' : '0'}
         lang={lang}
       >
         {dict.pages.products.prev}
@@ -54,6 +56,8 @@ export function ProductPagination({
         brand={params.brand}
         brands={params.brandsSelected}
         categories={params.categoriesSelected}
+        currency={params.currency}
+        withVar={params.withVar ? '1' : '0'}
         lang={lang}
       >
         {dict.pages.products.next}
@@ -75,6 +79,8 @@ function PageLinkCursor({
   brand,
   brands,
   categories,
+  currency,
+  withVar,
   lang,
   children,
 }: {
@@ -90,6 +96,8 @@ function PageLinkCursor({
   brand?: string;
   brands?: string[];
   categories?: string[];
+  currency?: string;
+  withVar?: '1' | '0';
   lang: string;
   children: React.ReactNode;
 }) {
@@ -105,6 +113,8 @@ function PageLinkCursor({
   if (inStock) params.set('inStock', inStock);
   if (brand) params.set('brand', brand);
   if (Array.isArray(brands)) brands.forEach((b) => params.append('brands', b));
+  if (currency) params.set('currency', currency);
+  if (withVar) params.set('withVar', withVar);
 
   return disabled ? (
     <span className="px-3 py-1 text-ui-faint">{children}</span>
