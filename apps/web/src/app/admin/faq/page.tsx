@@ -1,7 +1,6 @@
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { getDictionary, negotiateLocale } from '@/lib/i18n/i18n';
-import { AdminNav } from '@/components/admin/AdminNav';
 import { FaqManagementClient } from '@/components/admin/FaqManagementClient';
 
 export default async function AdminFaqPage() {
@@ -31,11 +30,6 @@ export default async function AdminFaqPage() {
               <span>{dict.common?.adminPanel || 'Admin Panel'}</span>
             </div>
           </div>
-        </div>
-
-        {/* Admin Navigation */}
-        <div className="mb-4 sm:mb-6">
-          <AdminNav lang={lang} dict={dict} activeSegment="faq" />
         </div>
 
         <div className="glass-surface rounded-xl shadow-sm border border-ui-default dark:border-ui-subtle p-4 sm:p-6">
