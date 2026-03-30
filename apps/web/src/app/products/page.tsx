@@ -3,6 +3,7 @@ import { auth } from '../../auth';
 import { normalizeMulti } from './filters';
 import { getProductsPageData, getProductInteractionData } from './data';
 import { MerchandisingZones } from './MerchandisingZones';
+import { CatalogLayout } from './CatalogLayout';
 import { ProductFilters } from './ProductFilters';
 import { ProductGrid } from './ProductGrid';
 import { ProductPagination } from './ProductPagination';
@@ -94,7 +95,7 @@ export default async function ProductsPage({ searchParams }: Props) {
   );
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-10">
+    <div className="w-full py-6 sm:py-10">
       {/* JSON-LD ItemList for visible products */}
       <script
         type="application/ld+json"
@@ -111,14 +112,42 @@ export default async function ProductsPage({ searchParams }: Props) {
           }),
         }}
       />
-      <div className="flex flex-col gap-4 md:gap-6">
-        <div>
-          <h2 className="font-display text-3xl">{dict.pages.products.title}</h2>
-          <p className="text-ui-muted">{dict.pages.products.subtitle}</p>
-        </div>
-
-        <MerchandisingZones lang={lang} dict={dict} />
-
+      <CatalogLayout
+        filtersLabel={dict.pages.products.openFilters ?? 'Filters'}
+        closeLabel={dict.common.close ?? 'Close'}
+        sidebarExpandLabel={dict.pages.products.expandFilters ?? 'Show filter sidebar'}
+        sidebarCollapseLabel={dict.pages.products.collapseFilters ?? 'Hide filter sidebar'}
+        header={
+          <div>
+            <h2 className="font-display text-2xl sm:text-3xl">{dict.pages.products.title}</h2>
+            <p className="mt-1 text-sm text-ui-muted sm:text-base">{dict.pages.products.subtitle}</p>
+            <p className="mt-2 text-sm font-medium text-ui-secondary">
+              {products.length} {dict.pages.products.shown}
+            </p>
+          </div>
+        }
+        main={
+          <>
+            <MerchandisingZones lang={lang} dict={dict} />
+            <ProductGrid
+              products={products}
+              favCountById={favCountById}
+              likeCountById={likeCountById}
+              userFavSet={userFavSet}
+              userLikeSet={userLikeSet}
+              dict={dict}
+            />
+            <ProductPagination
+              lang={lang}
+              dict={dict}
+              params={params}
+              nextCursor={nextCursor}
+              prevCursor={prevCursor}
+              productCount={products.length}
+            />
+          </>
+        }
+      >
         <ProductFilters
           lang={lang}
           dict={dict}
@@ -127,24 +156,7 @@ export default async function ProductsPage({ searchParams }: Props) {
           currencyOptions={currencyOptions}
           params={params}
         />
-      </div>
-
-      <ProductGrid
-        products={products}
-        favCountById={favCountById}
-        likeCountById={likeCountById}
-        userFavSet={userFavSet}
-        userLikeSet={userLikeSet}
-      />
-
-      <ProductPagination
-        lang={lang}
-        dict={dict}
-        params={params}
-        nextCursor={nextCursor}
-        prevCursor={prevCursor}
-        productCount={products.length}
-      />
+      </CatalogLayout>
     </div>
   );
 }

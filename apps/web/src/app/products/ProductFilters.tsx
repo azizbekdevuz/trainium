@@ -22,8 +22,8 @@ export function ProductFilters({
   params,
 }: ProductFiltersProps) {
   return (
-    <form className="glass rounded-2xl p-4 lg:sticky lg:top-16 lg:z-20">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-8 gap-3">
+    <form className="glass rounded-2xl p-4 lg:!rounded-none lg:!border-0 lg:!bg-transparent lg:!p-0 lg:!shadow-none lg:!backdrop-blur-none dark:lg:!bg-transparent">
+      <div className="flex flex-col gap-4">
         <label className="block">
           <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.pages.products.searchLabel ?? 'Search'}</span>
           <input
@@ -36,7 +36,7 @@ export function ProductFilters({
           <span className="mt-1 block text-[11px] text-ui-faint">{dict.pages.products.searchInEnglish ?? ''}</span>
         </label>
 
-        <div className="lg:col-span-2">
+        <div>
           <MultiSelect
             name="categories"
             label={dict.admin?.products?.categories ?? 'Categories'}
@@ -46,7 +46,7 @@ export function ProductFilters({
         </div>
 
         {brands.length > 0 && (
-          <div className="lg:col-span-2">
+          <div>
             <MultiSelect
               name="brands"
               label={dict.pages.products.brands ?? 'Brands'}
@@ -56,6 +56,7 @@ export function ProductFilters({
           </div>
         )}
 
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {currencyOptions.length > 0 && (
           <label className="block">
             <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.pages.products.currency ?? 'Currency'}</span>
@@ -98,7 +99,9 @@ export function ProductFilters({
             <option value="1">{dict.pages.products.onlyWithVariants ?? 'Only with variants'}</option>
           </select>
         </label>
+        </div>
 
+        <div className="grid grid-cols-2 gap-3">
         <label className="block">
           <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.pages.products.minPrice ?? 'Min price (₩)'}</span>
           <input
@@ -124,6 +127,7 @@ export function ProductFilters({
             className="h-11 w-full rounded-xl border px-3"
           />
         </label>
+        </div>
 
         <label className="block">
           <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.pages.products.sortBy ?? 'Sort by'}</span>
