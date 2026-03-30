@@ -1,6 +1,5 @@
 import { auth } from '../../../auth';
 import { redirect } from 'next/navigation';
-import { AdminNav } from '../../../components/admin/AdminNav';
 import { NotificationClient } from '../../../components/admin/NotificationClient';
 import { negotiateLocale, getDictionary } from '../../../lib/i18n/i18n';
 
@@ -18,14 +17,13 @@ export default async function AdminNotificationsPage() {
   return (
     <div className="bg-ui-inset dark:bg-ui-base">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-10">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-ui-primary">{dict.admin?.notifications?.title ?? 'Notification Management'}</h1>
-            <p className="text-ui-muted dark:text-ui-faint mt-1 text-sm sm:text-base">{dict.admin?.notifications?.subtitle ?? 'Send system-wide notifications to all users'}</p>
-          </div>
-
-          {/* Admin Navigation */}
-          <AdminNav lang={lang} dict={dict} activeSegment="notifications" />
+        <div className="mb-6">
+          <h1 className="font-display text-2xl font-bold text-ui-primary sm:text-3xl">
+            {dict.admin?.notifications?.title ?? 'Notification Management'}
+          </h1>
+          <p className="mt-1 text-sm text-ui-muted dark:text-ui-faint sm:text-base">
+            {dict.admin?.notifications?.subtitle ?? 'Send system-wide notifications to all users'}
+          </p>
         </div>
 
         <NotificationClient />
