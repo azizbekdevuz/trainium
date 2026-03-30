@@ -4,10 +4,9 @@ import { prisma } from '../../../lib/database/db';
 import { notFound } from 'next/navigation';
 import { formatCurrency } from '../../../lib/utils/format';
 import { getStockBadgeConfig } from '../../../lib/product/inventory-utils';
-import SmartImage from '../../../components/ui/media/SmartImage';
 import { getDictionary, negotiateLocale } from '../../../lib/i18n/i18n';
 import { getCategoryDisplayName } from '../../../lib/product/category-utils';
-import { Icon } from '../../../components/ui/media/Icon';
+import { Icon, PackageIcon } from '../../../components/ui/media/Icon';
 import { auth } from '../../../auth';
 import { FavoriteButton } from '../../../components/product/FavoriteButton';
 import { ProductLikeButton } from '../../../components/product/LikeButton';
@@ -15,6 +14,10 @@ import { ReviewsSection } from '../../../components/product/ReviewsSection';
 import { ProductCard } from '../../../components/product/ProductCard';
 import { ReviewForm } from '../../../components/product/ReviewForm';
 import { RecommendedProducts } from '../../../components/recommendations/RecommendedProducts';
+import { ProductImageGallery } from '../../../components/product/ProductImageGallery';
+import { ProductDetailTabs } from '../../../components/product/ProductDetailTabs';
+import { BentoPanel } from '../../../components/product/BentoPanel';
+import { ProductDetailBreadcrumb } from '../../../components/product/ProductDetailBreadcrumb';
 import type { Metadata } from 'next';
 
 type Props = {
@@ -83,8 +86,13 @@ export default async function ProductPage({ params }: Props) {
 
     if (!product || !product.active) return notFound();
 
-    const primaryImage =
-        (Array.isArray(product.images) && (product.images as { src: string }[])[0]?.src) || '';
+    const imageUrls = Array.isArray(product.images)
+        ? (product.images as { src?: string }[])
+              .map((i) => i?.src)
+              .filter((s): s is string => typeof s === 'string' && s.length > 0)
+        : [];
+
+    const primaryImage = imageUrls[0] ?? '';
 
     const firstVariant = product.variants[0];
     const badgeConfig = getStockBadgeConfig(product.inventory?.inStock ?? 0, product.inventory?.lowStockAt);
@@ -169,20 +177,20 @@ export default async function ProductPage({ params }: Props) {
             return (
                 <div className="mt-2 flex items-center gap-2">
                     <div className="text-sm font-medium text-red-600">{dict.product?.stock?.outOfStock ?? 'Out of Stock'}</div>
-                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                    <div className="h-2 w-2 rounded-full bg-red-500"></div>
                 </div>
             );
         }
-        
+
         if (lowStockAt !== null && lowStockAt !== undefined && inStock <= lowStockAt) {
             return (
                 <div className="mt-2 flex items-center gap-2">
                     <div className="text-sm font-medium text-orange-600">{(dict.product?.stock?.onlyLeft ?? 'Only {{0}} left in stock').replace('{{0}}', String(inStock))}</div>
-                    <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                    <div className="h-2 w-2 animate-pulse rounded-full bg-orange-500"></div>
                 </div>
             );
         }
-        
+
                 return (
             <div className="mt-1 text-xs text-ui-faint">
                 {(dict.product?.stock?.inStock ?? '{{0}} in stock').replace('{{0}}', String(inStock))}
@@ -190,178 +198,290 @@ export default async function ProductPage({ params }: Props) {
         );
     }
 
+    const breadcrumbCategories = product.categories.map((c) => ({
+        slug: c.slug,
+        label: getCategoryDisplayName(c, dict),
+    }));
+
+    const breadcrumbJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+            {
+                '@type': 'ListItem',
+                position: 1,
+                name: dict.pages?.products?.title ?? 'Shop',
+                item: `https://trainium.shop/${lang}/products`,
+            },
+            ...(breadcrumbCategories.length > 0
+                ? [
+                      {
+                          '@type': 'ListItem',
+                          position: 2,
+                          name: breadcrumbCategories.map((c) => c.label).join(' · '),
+                          item: `https://trainium.shop/${lang}/products?${breadcrumbCategories.map((c) => `categories=${encodeURIComponent(c.slug)}`).join('&')}`,
+                      },
+                  ]
+                : []),
+            {
+                '@type': 'ListItem',
+                position: breadcrumbCategories.length > 0 ? 3 : 2,
+                name: product.name,
+                item: `https://trainium.shop/${lang}/products/${encodeURIComponent(product.slug)}`,
+            },
+        ],
+    };
+    const hasDescription = typeof product.description === 'string' && product.description.trim().length > 0;
+    const hasSummary = typeof product.summary === 'string' && product.summary.trim().length > 0;
+
+    const stockBadge =
+        badgeConfig.show ? (
+            <div className={badgeConfig.className}>
+                {badgeConfig.text === 'lowStock'
+                  ? (dict.product?.badges?.lowStock ?? 'Low Stock').replace('{{0}}', String(product.inventory?.inStock ?? 0))
+                  : badgeConfig.text === 'outOfStock'
+                  ? (dict.product?.badges?.outOfStock ?? 'Out of Stock')
+                  : ''}
+            </div>
+        ) : null;
+
+    const tabLabels = {
+        description: dict.product?.tabDescription ?? 'Description',
+        summary: dict.product?.tabSummary ?? 'Summary',
+        reviews: dict.product?.tabReviews ?? 'Reviews',
+        related: dict.product?.tabRelated ?? 'Related & recommended',
+    };
+
+    const relatedRecommendedPanel = (
+        <div className="space-y-8">
+            {relatedProducts.length > 0 && (
+                <section>
+                    <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-ui-muted">
+                        {dict.product?.sections?.related ?? 'Related products'}
+                    </h3>
+                    <div className="grid gap-4 sm:grid-cols-2 items-stretch">
+                        {relatedProducts.slice(0, 5).map((p) => (
+                            <ProductCard
+                                key={p.id}
+                                slug={p.slug}
+                                name={p.name}
+                                priceCents={p.variants[0]?.priceCents ?? p.priceCents}
+                                currency={p.currency}
+                                imageSrc={(Array.isArray(p.images) && (p.images as { src: string }[])[0]?.src) || undefined}
+                                inStock={p.inventory?.inStock ?? undefined}
+                                lowStockAt={p.inventory?.lowStockAt ?? undefined}
+                                productId={p.id}
+                            />
+                        ))}
+                    </div>
+                    {relatedProducts.length > 5 && (
+                        <details className="mt-3">
+                            <summary className="cursor-pointer text-sm text-cyan-700 hover:underline dark:text-cyan-400">
+                                {dict.common?.showAll ?? 'Show all'}
+                            </summary>
+                            <div className="mt-3 grid gap-4 sm:grid-cols-2 items-stretch">
+                                {relatedProducts.slice(5).map((p) => (
+                                    <ProductCard
+                                        key={p.id}
+                                        slug={p.slug}
+                                        name={p.name}
+                                        priceCents={p.variants[0]?.priceCents ?? p.priceCents}
+                                        currency={p.currency}
+                                        imageSrc={(Array.isArray(p.images) && (p.images as { src: string }[])[0]?.src) || undefined}
+                                        inStock={p.inventory?.inStock ?? undefined}
+                                        lowStockAt={p.inventory?.lowStockAt ?? undefined}
+                                        productId={p.id}
+                                    />
+                                ))}
+                            </div>
+                        </details>
+                    )}
+                </section>
+            )}
+
+            {seeMoreProducts.length > 0 && (
+                <section>
+                    <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-ui-muted">
+                        {dict.product?.sections?.seeMore ?? 'See more products'}
+                    </h3>
+                    <div className="grid gap-4 sm:grid-cols-2 items-stretch">
+                        {seeMoreProducts.map((p) => (
+                            <ProductCard
+                                key={p.id}
+                                slug={p.slug}
+                                name={p.name}
+                                priceCents={p.variants[0]?.priceCents ?? p.priceCents}
+                                currency={p.currency}
+                                imageSrc={(Array.isArray(p.images) && (p.images as { src: string }[])[0]?.src) || undefined}
+                                inStock={p.inventory?.inStock ?? undefined}
+                                lowStockAt={p.inventory?.lowStockAt ?? undefined}
+                                productId={p.id}
+                            />
+                        ))}
+                    </div>
+                    <div className="mt-3">
+                        <a
+                            href={`/${lang}/products?brand=${encodeURIComponent(product.brand ?? '')}`}
+                            className="text-sm text-cyan-700 hover:underline dark:text-cyan-400"
+                        >
+                            {dict.pages?.products?.learnMore ?? 'Learn more'}{' '}
+                            <Icon name="arrowRight" className="ml-1 inline h-3 w-3" />
+                        </a>
+                    </div>
+                </section>
+            )}
+
+            <RecommendedProducts
+                context="product"
+                currentProductId={product.id}
+                initialLimit={5}
+                showTitle={true}
+                embedded
+            />
+        </div>
+    );
+
     return (
-        <div className="mx-auto max-w-6xl px-6 py-10">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
             <script type="application/ld+json" suppressHydrationWarning
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
-            <div className="grid gap-10 md:grid-cols-2">
-                <div className="aspect-[4/3] rounded-2xl bg-ui-inset dark:bg-ui-elevated overflow-hidden relative">
-                    {primaryImage ? (
-                        <SmartImage src={primaryImage} alt={product.name} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
-                    ) : (
-                        <div className="h-full w-full grid place-items-center text-ui-faint text-sm">
-                            Image coming soon
-                        </div>
-                    )}
-                    {/* Favorite overlay moved away from stock badge */}
-                    <div className="absolute top-4 right-4 flex items-center gap-2">
-                        {/* Keep some space under badges; move icon to left side of image footer */}
+            <script type="application/ld+json" suppressHydrationWarning
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+            <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 lg:items-center">
+                <div className="min-w-0 max-w-full overflow-x-clip lg:flex lg:justify-center">
+                    <div className="w-full min-w-0 max-w-xl lg:max-w-none">
+                        <ProductDetailBreadcrumb
+                            lang={lang}
+                            productsLabel={dict.pages?.products?.title ?? 'Shop'}
+                            categories={breadcrumbCategories}
+                            productName={product.name}
+                        />
+                        <ProductImageGallery images={imageUrls} alt={product.name} badge={stockBadge} />
                     </div>
-                    
-                    {/* Stock Status Badge */}
-                    {badgeConfig.show && (
-                        <div className="absolute top-4 right-4">
-                            <div className={badgeConfig.className}>
-                                {badgeConfig.text === 'lowStock' 
-                                  ? (dict.product?.badges?.lowStock ?? 'Low Stock').replace('{{0}}', String(product.inventory?.inStock ?? 0))
-                                  : badgeConfig.text === 'outOfStock' 
-                                  ? (dict.product?.badges?.outOfStock ?? 'Out of Stock') 
-                                  : ''}
-                            </div>
-                        </div>
-                    )}
                 </div>
 
-                <div>
-                    <h1 className="font-display text-3xl">{product.name}</h1>
-                    <div className="mt-2 text-ui-faint dark:text-ui-faint text-sm">
-                        {product.categories.map((c) => getCategoryDisplayName(c, dict)).join(' · ')}
-                    </div>
+                <div className="flex min-w-0 flex-col gap-4">
+                    <BentoPanel>
+                        <h1 className="font-display text-2xl sm:text-3xl">{product.name}</h1>
+                        {reviewCount > 0 && avgRating != null ? (
+                            <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-ui-secondary">
+                                <span className="text-amber-500" aria-hidden>
+                                    {'★'.repeat(Math.min(5, Math.round(avgRating)))}
+                                    {'☆'.repeat(Math.max(0, 5 - Math.round(avgRating)))}
+                                </span>
+                                <span>
+                                    {avgRating.toFixed(1)} — {reviewCount} {dict.reviews?.title ?? 'Reviews'}
+                                </span>
+                            </div>
+                        ) : null}
+                        <div className="mt-4">
+                            <PriceBlock
+                                priceCents={product.variants[0]?.priceCents ?? product.priceCents}
+                                currency={product.currency}
+                            />
+                        </div>
+                    </BentoPanel>
 
-                    <div className="mt-4 font-semibold text-cyan-700 dark:text-cyan-300">
-                        <PriceBlock
-                            priceCents={product.variants[0]?.priceCents ?? product.priceCents}
-                            currency={product.currency}
-                        />
-                        <StockInfo 
+                    <BentoPanel>
+                        <StockInfo
                             inStock={product.inventory?.inStock ?? 0}
                             lowStockAt={product.inventory?.lowStockAt}
                         />
-                    </div>
-
-                    {product.summary && <p className="mt-6 text-ui-secondary">{product.summary}</p>}
-                    {product.description && (
-                        <p className="mt-3 text-ui-muted dark:text-ui-faint text-sm leading-relaxed">{product.description}</p>
-                    )}
-
-                    <div className="mt-6 text-sm text-ui-muted dark:text-ui-faint space-y-1">
-                        <div>{dict.product?.stock?.shipping ?? 'Shipping: 2–4 business days (KR)'}</div>
-                        <div>{dict.product?.stock?.returns ?? 'Returns: 14-day change-of-mind'}</div>
-                        <div>{dict.product?.stock?.warranty ?? 'Warranty: 1 year limited warranty'}</div>
-                    </div>
-
-                    {/* Add to cart */}
-                    <form className="mt-6 space-y-3" action={addToCartAction} id="add-to-cart-form">
-                        <input type="hidden" name="productId" value={product.id} />
-                        {product.variants.length > 0 ? (
-                            <label className="block text-sm text-ui-muted dark:text-ui-faint">
-                                Variant
-                                <select
-                                    name="variantId"
-                                    defaultValue={firstVariant?.id}
-                                    className="mt-1 h-10 w-full rounded-xl border px-3"
-                                >
-                                    {product.variants.map((v) => (
-                                        <option key={v.id} value={v.id}>
-                                            {v.name} — {formatCurrency(v.priceCents, product.currency)}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
-                        ) : (
-                            <input type="hidden" name="variantId" value="" />
-                        )}
-
-                        <div className="flex items-center gap-3">
-                            <QtyAndAdd available={product.inventory?.inStock ?? 0} />
-                            <div className="flex items-center gap-2">
-                                <FavoriteButton productId={product.id} initiallyFavorited={initiallyFavorited} initialCount={favCount} showCount={true} />
-                                <ProductLikeButton productId={product.id} initialLiked={initialLiked} initialCount={likeCount} showCount={true} />
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            {/* Reviews & Related */}
-            <div className="mt-12 grid gap-10">
-                <ReviewForm productId={product.id} />
-                <ReviewsSection productId={product.id} />
-                {relatedProducts.length > 0 && (
-                    <section>
-                        <h3 className="font-display text-2xl mb-4">{dict.product?.sections?.related ?? 'Related products'}</h3>
-                        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 items-stretch">
-                            {relatedProducts.slice(0,5).map((p) => (
-                                <ProductCard
-                                    key={p.id}
-                                    slug={p.slug}
-                                    name={p.name}
-                                    priceCents={p.variants[0]?.priceCents ?? p.priceCents}
-                                    currency={p.currency}
-                                    imageSrc={(Array.isArray(p.images) && (p.images as { src: string }[])[0]?.src) || undefined}
-                                    inStock={p.inventory?.inStock ?? undefined}
-                                    lowStockAt={p.inventory?.lowStockAt ?? undefined}
-                                    productId={p.id}
-                                />
-                            ))}
-                        </div>
-                        {relatedProducts.length > 5 && (
-                            <div className="mt-4 text-right">
-                                <details>
-                                    <summary className="cursor-pointer text-sm text-cyan-700 hover:underline">{dict.common?.showAll ?? 'Show all'}</summary>
-                                    <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 items-stretch">
-                                        {relatedProducts.slice(5).map((p) => (
-                                            <ProductCard
-                                                key={p.id}
-                                                slug={p.slug}
-                                                name={p.name}
-                                                priceCents={p.variants[0]?.priceCents ?? p.priceCents}
-                                                currency={p.currency}
-                                                imageSrc={(Array.isArray(p.images) && (p.images as { src: string }[])[0]?.src) || undefined}
-                                                inStock={p.inventory?.inStock ?? undefined}
-                                                lowStockAt={p.inventory?.lowStockAt ?? undefined}
-                                                productId={p.id}
-                                            />
+                        <form className="mt-4 space-y-4" action={addToCartAction} id="add-to-cart-form">
+                            <input type="hidden" name="productId" value={product.id} />
+                            {product.variants.length > 0 ? (
+                                <fieldset>
+                                    <legend className="text-sm font-medium text-ui-muted dark:text-ui-faint">
+                                        Variant
+                                    </legend>
+                                    <div className="mt-2 flex flex-wrap gap-2">
+                                        {product.variants.map((v) => (
+                                            <label
+                                                key={v.id}
+                                                className="cursor-pointer"
+                                            >
+                                                <input
+                                                    type="radio"
+                                                    name="variantId"
+                                                    value={v.id}
+                                                    defaultChecked={v.id === firstVariant?.id}
+                                                    className="peer sr-only"
+                                                />
+                                                <span className="inline-flex flex-wrap items-baseline gap-x-1.5 rounded-full border border-ui-subtle px-3 py-2 text-sm transition peer-checked:border-cyan-500 peer-checked:bg-cyan-500/10 peer-checked:text-cyan-800 dark:peer-checked:text-cyan-200">
+                                                    <span className="font-medium">{v.name}</span>
+                                                    <span className="text-ui-muted dark:text-ui-faint">
+                                                        {formatCurrency(v.priceCents, product.currency)}
+                                                    </span>
+                                                </span>
+                                            </label>
                                         ))}
                                     </div>
-                                </details>
+                                </fieldset>
+                            ) : (
+                                <input type="hidden" name="variantId" value="" />
+                            )}
+
+                            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                                <QtyAndAdd available={product.inventory?.inStock ?? 0} />
+                                <div className="flex items-center gap-2">
+                                    <FavoriteButton productId={product.id} initiallyFavorited={initiallyFavorited} initialCount={favCount} showCount={true} />
+                                    <ProductLikeButton productId={product.id} initialLiked={initialLiked} initialCount={likeCount} showCount={true} />
+                                </div>
                             </div>
-                        )}
-                    </section>
-                )}
+                        </form>
+                    </BentoPanel>
 
-                {seeMoreProducts.length > 0 && (
-                    <section>
-                        <h3 className="font-display text-2xl mb-4">{dict.product?.sections?.seeMore ?? 'See more products'}</h3>
-                        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 items-stretch">
-                            {seeMoreProducts.map((p) => (
-                                <ProductCard
-                                    key={p.id}
-                                    slug={p.slug}
-                                    name={p.name}
-                                    priceCents={p.variants[0]?.priceCents ?? p.priceCents}
-                                    currency={p.currency}
-                                    imageSrc={(Array.isArray(p.images) && (p.images as { src: string }[])[0]?.src) || undefined}
-                                    inStock={p.inventory?.inStock ?? undefined}
-                                    lowStockAt={p.inventory?.lowStockAt ?? undefined}
-                                    productId={p.id}
-                                />
-                            ))}
-                        </div>
-                        <div className="mt-4 text-right">
-                            <a href={`/${lang}/products?brand=${encodeURIComponent(product.brand ?? '')}`} className="text-sm text-cyan-700 hover:underline">
-                                {dict.pages?.products?.learnMore ?? 'Learn more'} <Icon name="arrowRight" className="w-3 h-3 inline ml-1" />
-                            </a>
-                        </div>
-                    </section>
-                )}
+                    <BentoPanel className="min-h-0">
+                        <ProductDetailTabs
+                            labels={tabLabels}
+                            hasDescription={hasDescription}
+                            hasSummary={hasSummary}
+                            showRelatedTab={true}
+                            relatedPanel={relatedRecommendedPanel}
+                            descriptionPanel={
+                                <div className="text-sm leading-relaxed text-ui-secondary dark:text-ui-muted">
+                                    {hasDescription ? (
+                                        <p className="whitespace-pre-wrap">{product.description}</p>
+                                    ) : (
+                                        <p className="text-ui-faint">{dict.product?.noDescription ?? 'No detailed description for this product yet.'}</p>
+                                    )}
+                                </div>
+                            }
+                            summaryPanel={
+                                <div className="text-sm leading-relaxed text-ui-secondary dark:text-ui-muted">
+                                    {hasSummary ? (
+                                        <p className="whitespace-pre-wrap">{product.summary}</p>
+                                    ) : (
+                                        <p className="text-ui-faint">{dict.product?.noSummary ?? 'No summary available.'}</p>
+                                    )}
+                                </div>
+                            }
+                            reviewsPanel={
+                                <div className="space-y-6">
+                                    <ReviewForm productId={product.id} />
+                                    <ReviewsSection productId={product.id} className="mt-0" />
+                                </div>
+                            }
+                        />
+                    </BentoPanel>
 
-                {/* Recommendations Section */}
-                <RecommendedProducts
-                    context="product"
-                    currentProductId={product.id}
-                    initialLimit={5}
-                    showTitle={true}
-                />
+                    <BentoPanel>
+                        <ul className="space-y-3 text-sm text-ui-secondary dark:text-ui-muted">
+                            <li className="flex gap-3">
+                                <PackageIcon className="mt-0.5 shrink-0 text-cyan-600 dark:text-cyan-400" size={20} />
+                                <span>{dict.product?.stock?.shipping ?? 'Shipping: 2–4 business days (KR)'}</span>
+                            </li>
+                            <li className="flex gap-3">
+                                <Icon name="arrowRight" className="mt-0.5 shrink-0 rotate-180 text-cyan-600 dark:text-cyan-400" size={20} />
+                                <span>{dict.product?.stock?.returns ?? 'Returns: 14-day change-of-mind'}</span>
+                            </li>
+                            <li className="flex gap-3">
+                                <Icon name="success" className="mt-0.5 shrink-0 text-cyan-600 dark:text-cyan-400" size={20} />
+                                <span>{dict.product?.stock?.warranty ?? 'Warranty: 1 year limited warranty'}</span>
+                            </li>
+                        </ul>
+                    </BentoPanel>
+                </div>
             </div>
         </div>
     );
@@ -374,6 +494,3 @@ function PriceBlock({ priceCents, currency }: { priceCents: number; currency: st
         </div>
     );
 }
-
-
-// no client code below
