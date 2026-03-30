@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation';
 import { getDictionary, negotiateLocale } from '@/lib/i18n/i18n';
 import Link from 'next/link';
 import { BarChart3, ExternalLink } from 'lucide-react';
-import { AdminNav } from '@/components/admin/AdminNav';
 import { LookerStudioEmbed } from '@/components/admin/LookerStudioEmbed';
 
 export const runtime = 'nodejs';
@@ -44,8 +43,6 @@ export default async function AdminAnalyticsSeoPage() {
               </p>
             </div>
           </div>
-
-          <AdminNav lang={lang} dict={dict} activeSegment="analyticsSeo" />
         </div>
 
         {/* Compact GA + Looker info bar */}
