@@ -127,19 +127,20 @@ export function DashboardStatsCards({ stats, dict }: DashboardStatsCardsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6 lg:gap-4">
       {cards.map((card, index) => (
         <div
           key={index}
           className={`
-            group relative rounded-xl p-3 sm:p-4 
+            group relative rounded-2xl p-3 sm:p-4 
             glass-surface
             border border-ui-default dark:border-ui-subtle
-            hover:shadow-lg hover:shadow-slate-200/50 dark:hover:shadow-slate-900/50
+            hover:shadow-lg hover:shadow-cyan-500/10 dark:hover:shadow-cyan-900/20
             transition-shadow duration-200 ease-out
-            hover:border-ui-default dark:hover:border-ui-subtle
-            min-h-[100px] sm:min-h-[120px]
+            hover:border-cyan-500/25 dark:hover:border-cyan-500/20
+            min-h-[100px] sm:min-h-[118px]
             overflow-hidden
+            ${index === 0 ? 'sm:col-span-2 lg:col-span-2 lg:min-h-[140px]' : ''}
           `}
           style={{
             animationDelay: card.delay,

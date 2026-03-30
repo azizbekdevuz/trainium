@@ -4,7 +4,6 @@ import { getDictionary, negotiateLocale } from '@/lib/i18n/i18n';
 import { Icon } from '@/components/ui/media/Icon';
 import { prisma } from '@/lib/database/db';
 import Link from 'next/link';
-import { AdminNav } from '@/components/admin/AdminNav';
 import { DashboardStatsCards } from '@/components/admin/DashboardStatsCards';
 import { RecentOrdersPreview } from '@/components/admin/RecentOrdersPreview';
 import { RecentProductsPreview } from '@/components/admin/RecentProductsPreview';
@@ -124,57 +123,47 @@ export default async function AdminDashboardPage() {
   const data = await getDashboardData();
 
   return (
-    <div className="bg-ui-inset dark:bg-ui-base">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-10">
+    <div>
         {/* Header */}
         <div className="mb-6 sm:mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-2">
-              <h1 className="text-2xl sm:text-3xl font-bold text-ui-primary">
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-cyan-600/90 dark:text-cyan-400/80">
+                {dict.common?.adminPanel || 'Admin panel'}
+              </p>
+              <h1 className="font-display text-2xl font-extrabold tracking-tight text-ui-primary sm:text-3xl">
                 {dict.admin?.dashboard?.title || 'Admin Dashboard'}
               </h1>
-              <p className="text-ui-muted dark:text-ui-faint text-base sm:text-lg">
-                {dict.admin?.dashboard?.welcome || 'Welcome back'}, {session.user.name || 'Admin'}
-              </p>
-              <p className="text-ui-faint dark:text-ui-faint text-sm">
-                {dict.admin?.dashboard?.subtitle || 'Here\'s what\'s happening with your business today'}
+              <p className="max-w-xl text-sm leading-relaxed text-ui-muted dark:text-ui-faint sm:text-base">
+                {dict.admin?.dashboard?.subtitle || "Here's what's happening with your business today"}
               </p>
             </div>
-            <div className="flex items-center space-x-2 text-sm text-ui-faint dark:text-ui-faint">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span>{dict.common?.adminPanel || 'Admin Panel'}</span>
+            <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+              <span className="inline-flex items-center gap-2 rounded-full border border-ui-subtle bg-ui-elevated px-3 py-1.5 text-xs font-medium text-ui-secondary">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" aria-hidden />
+                {dict.admin?.dashboard?.welcome || 'Welcome back'}, {session.user.name || 'Admin'}
+              </span>
             </div>
           </div>
         </div>
 
-        {/* Admin Navigation */}
-        <div className="mb-6 sm:mb-8">
-          <AdminNav lang={lang} dict={dict} activeSegment="dashboard" />
-        </div>
-
-        {/* Stats Cards */}
         <DashboardStatsCards stats={data.stats} dict={dict} />
 
-        {/* Main Content Grid */}
-        <div className="mt-6 sm:mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-          {/* Recent Orders */}
-          <div className="lg:col-span-2">
+        <div className="mt-6 grid grid-cols-1 gap-5 lg:grid-cols-12 lg:gap-6">
+          <div className="lg:col-span-8">
             <RecentOrdersPreview orders={data.recent.orders} dict={dict} lang={lang} />
           </div>
-
-          {/* Quick Actions */}
-          <div>
+          <div className="lg:col-span-4">
             <QuickActionsPanel dict={dict} lang={lang} />
           </div>
         </div>
 
-        {/* Bottom Row */}
-        <div className="mt-6 sm:mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-          {/* Recent Products */}
-          <RecentProductsPreview products={data.recent.products} dict={dict} lang={lang} />
+        <div className="mt-6 grid grid-cols-1 gap-5 lg:grid-cols-12 lg:gap-6">
+          <div className="lg:col-span-5">
+            <RecentProductsPreview products={data.recent.products} dict={dict} lang={lang} />
+          </div>
 
-          {/* Recent Customers */}
-          <div className="glass-surface rounded-2xl shadow-sm border border-ui-default dark:border-ui-subtle p-4 sm:p-6 hover:shadow-lg transition-all duration-300">
+          <div className="glass-surface rounded-2xl border border-ui-default p-4 shadow-sm transition-all duration-300 hover:shadow-lg dark:border-ui-subtle sm:p-6 lg:col-span-7">
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <h3 className="text-lg sm:text-xl font-semibold text-ui-primary">
                 {dict.admin?.dashboard?.recent?.customers || 'New Customers'}
@@ -225,7 +214,6 @@ export default async function AdminDashboardPage() {
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 }
