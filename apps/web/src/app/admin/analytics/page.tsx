@@ -1,7 +1,5 @@
 import { auth } from '../../../auth';
 import { redirect } from 'next/navigation';
-import Link from 'next/link';
-import { AdminNav } from '../../../components/admin/AdminNav';
 import { prisma } from '../../../lib/database/db';
 import { formatCurrency } from '../../../lib/utils/format';
 import { AnalyticsClient } from '../../../components/admin/AnalyticsClient';
@@ -142,11 +140,6 @@ export default async function AdminAnalyticsPage({
             <h1 className="font-display text-2xl sm:text-3xl font-bold text-ui-primary">{dict.admin?.analytics?.title ?? 'Analytics'}</h1>
             <p className="text-ui-muted dark:text-ui-faint mt-1 text-sm sm:text-base">{dict.admin?.analytics?.subtitle ?? 'Key business metrics at a glance.'}</p>
           </div>
-        </div>
-
-        {/* Admin Navigation */}
-        <div className="mt-4 sm:mt-6">
-          <AdminNav lang={lang} dict={dict} activeSegment="analytics" />
         </div>
 
         {/* Controls */}
