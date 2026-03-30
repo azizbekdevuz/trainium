@@ -1,25 +1,50 @@
 'use client';
 
-import SmartImage from "../../components/ui/media/SmartImage";
-import Link from "next/link";
-import { useMemo, useState, Fragment } from "react";
-import dynamic from "next/dynamic";
-import { signOut } from "next-auth/react";
-import { Dialog, Transition } from "@headlessui/react";
-import { createPortal } from "react-dom";
-import { formatCurrency } from "../../lib/utils/format";
-import { getStatusConfig } from "../../lib/order/order-status";
-import { useI18n } from "../../components/providers/I18nProvider";
-import { LocalTime } from "../../components/ui/LocalTime";
-import { Icon } from "../../components/ui/media/Icon";
+import SmartImage from '../../components/ui/media/SmartImage';
+import Link from 'next/link';
+import { useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { formatCurrency } from '../../lib/utils/format';
+import { getStatusConfig } from '../../lib/order/order-status';
+import { useI18n } from '../../components/providers/I18nProvider';
+import { LocalTime } from '../../components/ui/LocalTime';
+import { Icon } from '../../components/ui/media/Icon';
+import { BentoPanel } from '../../components/product/BentoPanel';
+import { cn } from '@/lib/utils/format';
+import type { OrderStatus } from '@prisma/client';
 
-type OrderItemDTO = { id: string; name: string; sku: string | null; qty: number; priceCents: number; };
-type ShippingDTO = { fullName: string; phone: string; address1: string; address2: string | null; city: string; state: string | null; postalCode: string; country: string; status: string | null; carrier: string | null; trackingNo: string | null; };
-type OrderDTO = { id: string; status: string; createdAt: string; totalCents: number; currency: string; items: OrderItemDTO[]; shipping: ShippingDTO | null; };
-type CartItemDTO = { id: string; qty: number; priceCents: number; product: { id: string; name: string }; variant: { id: string | null; name: string } | null; };
+type OrderItemDTO = { id: string; name: string; sku: string | null; qty: number; priceCents: number };
+type ShippingDTO = {
+  fullName: string;
+  phone: string;
+  address1: string;
+  address2: string | null;
+  city: string;
+  state: string | null;
+  postalCode: string;
+  country: string;
+  status: string | null;
+  carrier: string | null;
+  trackingNo: string | null;
+};
+type OrderDTO = {
+  id: string;
+  status: string;
+  createdAt: string;
+  totalCents: number;
+  currency: string;
+  items: OrderItemDTO[];
+  shipping: ShippingDTO | null;
+};
+type CartItemDTO = {
+  id: string;
+  qty: number;
+  priceCents: number;
+  product: { id: string; name: string };
+  variant: { id: string | null; name: string } | null;
+};
 type CartDTO = { id: string; items: CartItemDTO[] };
 
-// ✅ allow nullable email/image
 type DataProps = {
   sessionUser: { name: string | null; email: string | null; image: string | null };
   orders: OrderDTO[];
@@ -27,310 +52,387 @@ type DataProps = {
 };
 
 const toHttps = (url?: string | null) =>
-  url?.startsWith("http://") ? url.replace(/^http:\/\//, "https://") : url ?? null;
+  url?.startsWith('http://') ? url.replace(/^http:\/\//, 'https://') : url ?? null;
+
+function orderLabelShort(id: string, t: (k: string, f: string) => string) {
+  const short = id.includes('_') ? id.slice(-6) : id.slice(0, 8);
+  return `${t('account.order', 'Order')} ${short.toUpperCase()}`;
+}
 
 export default function AccountClient({ data }: { data: DataProps }) {
   const { sessionUser, orders, activeCart } = data;
-  const [selectedOrder, setSelectedOrder] = useState<OrderDTO | null>(null);
   const [editorOpen, setEditorOpen] = useState(false);
-  const [localUser, setLocalUser] = useState<{ name: string | null; image: string | null }>({ name: sessionUser.name, image: sessionUser.image });
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleting, setDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [localUser, setLocalUser] = useState<{ name: string | null; image: string | null }>({
+    name: sessionUser.name,
+    image: sessionUser.image,
+  });
   const { t, lang } = useI18n();
-  const AccountProfileEditor = useMemo(() => dynamic(() => import('../../components/account/AccountProfileEditor'), { ssr: false }), []);
+  const AccountProfileEditor = useMemo(
+    () => dynamic(() => import('../../components/account/AccountProfileEditor'), { ssr: false }),
+    [],
+  );
 
   const activeCartTotal = useMemo(() => {
     if (!activeCart) return 0;
     return activeCart.items.reduce((sum, it) => sum + it.priceCents * it.qty, 0);
   }, [activeCart]);
 
-  // Check if there are any orders that need tracking
   const hasTrackableOrders = useMemo(() => {
     if (!orders.length) return false;
-    
     const trackableStatuses = ['PAID', 'FULFILLING', 'SHIPPED', 'DELIVERED'];
-    return orders.some(order => trackableStatuses.includes(order.status));
+    return orders.some((order) => trackableStatuses.includes(order.status));
   }, [orders]);
 
-  const avatar = toHttps(localUser.image ?? sessionUser.image) || "/images/default-avatar.png";
+  const totalSpent = useMemo(
+    () => orders.reduce((s, o) => s + o.totalCents, 0),
+    [orders],
+  );
+
+  const loyaltyPoints = useMemo(
+    () => Math.min(9999, orders.length * 60 + Math.floor(totalSpent / 500_000)),
+    [orders.length, totalSpent],
+  );
+
+  const recentActivity = useMemo(() => {
+    return orders.slice(0, 4).map((o, i) => {
+      const cfg = getStatusConfig(o.status as OrderStatus);
+      const isDelivered = o.status === 'DELIVERED';
+      return {
+        id: o.id,
+        icon: isDelivered ? ('check' as const) : i % 2 === 0 ? ('package' as const) : ('star' as const),
+        tone: isDelivered ? 'emerald' : i % 2 === 0 ? 'amber' : 'cyan',
+        text: `${orderLabelShort(o.id, t)} · ${cfg.label}`,
+        sub: <LocalTime date={o.createdAt} />,
+      };
+    });
+  }, [orders, t]);
+
+  const avatar = toHttps(localUser.image ?? sessionUser.image) || '/images/default-avatar.png';
 
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-6 sm:py-10 space-y-6 sm:space-y-8 animate-fade">
-      {/* header */}
-      <div className="flex flex-col gap-4 sm:gap-6 animate-fade-up">
-        <div className="flex items-center gap-3 sm:gap-4">
-          <SmartImage
-            src={avatar} // ✅ always https or local fallback
-            alt={sessionUser.name || t('account.userAvatar', 'User Avatar')}
-            width={60}
-            height={60}
-            className="rounded-full w-12 h-12 sm:w-15 sm:h-15"
-          />
-          <div>
-            <h1 className="font-display text-xl sm:text-2xl lg:text-3xl font-semibold">
-              {t('account.greeting', 'Hi, ')}{localUser.name || t('account.user', 'User')} <Icon name="smile" className="w-5 h-5 sm:w-6 sm:h-6 inline ml-1" />
-            </h1>
-            {/* ✅ tolerate missing email */}
-            <p className="text-ui-muted text-sm sm:text-base">{sessionUser.email ?? "—"}</p>
+    <div className="mx-auto max-w-7xl animate-fade px-4 py-6 sm:px-6 sm:py-10">
+      <header className="mb-8 animate-fade-up">
+        <div
+          className="mb-4 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.09em]"
+          style={{
+            background: 'var(--hero-bento-pill, color-mix(in srgb, var(--accent) 14%, var(--bg-elevated)))',
+            border: '1px solid color-mix(in srgb, var(--accent) 32%, var(--border-default))',
+            color: 'color-mix(in srgb, var(--accent) 78%, var(--text-primary))',
+          }}
+        >
+          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]" aria-hidden />
+          {t('account.sectionLabel', 'Your account')}
+        </div>
+      </header>
+
+      <BentoPanel className="mb-6 overflow-hidden p-0 sm:mb-8 lg:p-5">
+        <div className="flex flex-col gap-0 max-lg:gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+          {/* Identity: nested bento tile on mobile; flat row on lg+ */}
+          <div
+            className={cn(
+              'flex min-w-0 items-center gap-4 p-4 sm:p-5',
+              'max-lg:mx-3 max-lg:mt-3 max-lg:rounded-2xl max-lg:border max-lg:border-ui-subtle/80',
+              'max-lg:bg-gradient-to-br max-lg:from-ui-inset/90 max-lg:to-ui-elevated/50 max-lg:ring-1 max-lg:ring-inset max-lg:ring-ui-subtle/50',
+              'dark:max-lg:from-ui-inset/50 dark:max-lg:to-ui-elevated/30',
+              'lg:m-0 lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:ring-0 lg:from-transparent lg:to-transparent',
+            )}
+          >
+            <div className="relative shrink-0">
+              <SmartImage
+                src={avatar}
+                alt={sessionUser.name || t('account.userAvatar', 'User Avatar')}
+                width={72}
+                height={72}
+                className="relative z-10 h-[4.25rem] w-[4.25rem] rounded-full sm:h-[72px] sm:w-[72px] lg:h-[72px] lg:w-[72px]"
+              />
+              <div
+                className="pointer-events-none absolute inset-0 rounded-full"
+                style={{ boxShadow: '0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent)' }}
+                aria-hidden
+              />
+            </div>
+            <div className="min-w-0 flex-1">
+              <h1 className="font-display text-[1.35rem] font-extrabold leading-tight tracking-tight text-ui-primary sm:text-2xl">
+                {t('account.greeting', 'Hi, ')}
+                <span className="break-words">{localUser.name || t('account.user', 'User')}</span>
+              </h1>
+              <p className="mt-1 line-clamp-2 text-sm leading-snug text-ui-muted sm:text-base lg:truncate lg:line-clamp-none">
+                {sessionUser.email ?? '—'}
+              </p>
+            </div>
+          </div>
+
+          {/* Actions: stacked bento rows on mobile; inline wrap on lg+ */}
+          <div
+            className={cn(
+              'flex flex-col gap-2 p-4 pt-2 sm:gap-2.5 sm:p-5 sm:pt-3',
+              'lg:flex lg:flex-row lg:flex-wrap lg:items-center lg:justify-end lg:gap-2 lg:p-0 lg:pt-0',
+            )}
+          >
+            <div className="flex gap-2 lg:contents">
+              <button
+                type="button"
+                onClick={() => setEditorOpen(true)}
+                className="btn-ghost inline-flex h-11 min-h-[2.75rem] flex-1 items-center justify-center gap-2 rounded-xl px-3 text-sm font-medium sm:px-4 lg:h-10 lg:min-h-0 lg:flex-none"
+              >
+                <Icon name="user" className="h-4 w-4 shrink-0" />{' '}
+                <span className="truncate">{t('account.profile.edit', 'Edit profile')}</span>
+              </button>
+              <Link
+                href={`/${lang}/account/notifications`}
+                className="btn-ghost inline-flex h-11 min-h-[2.75rem] flex-1 items-center justify-center gap-2 rounded-xl px-3 text-sm font-medium sm:px-4 lg:h-10 lg:min-h-0 lg:flex-none"
+              >
+                <Icon name="bell" className="h-4 w-4 shrink-0" />{' '}
+                <span className="truncate">{t('account.notifications', 'Notifications')}</span>
+              </Link>
+            </div>
+            {hasTrackableOrders ? (
+              <Link
+                href={`/${lang}/track`}
+                className="btn-primary inline-flex h-11 w-full min-h-[2.75rem] items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold lg:h-10 lg:min-h-0 lg:w-auto"
+              >
+                <Icon name="package" className="h-4 w-4 shrink-0" />
+                <span className="truncate">{t('account.trackCta', 'Track Your Order')}</span>
+              </Link>
+            ) : null}
+            <Link
+              href={`/${lang}/favourites`}
+              className={cn(
+                'relative inline-flex h-11 w-full min-h-[2.75rem] items-center justify-center gap-2 overflow-hidden rounded-xl px-4 text-sm font-semibold shadow-sm transition lg:h-10 lg:min-h-0 lg:w-auto',
+                'border-2 border-pink-500/55 bg-gradient-to-br from-pink-500/20 via-rose-500/12 to-fuchsia-500/15',
+                'text-pink-800 ring-1 ring-pink-500/25 ring-offset-2 ring-offset-[var(--bg-elevated)]',
+                'hover:border-pink-500/70 hover:from-pink-500/28 hover:shadow-md',
+                'dark:border-pink-400/45 dark:from-pink-500/25 dark:via-rose-500/18 dark:to-fuchsia-500/20',
+                'dark:text-pink-100 dark:ring-pink-400/30 dark:ring-offset-[var(--bg-elevated)]',
+                'dark:hover:border-pink-300/55',
+              )}
+            >
+              <Icon name="star" className="h-4 w-4 shrink-0 text-pink-600 dark:text-pink-200" aria-hidden />
+              <span className="truncate">{t('favorites.title', 'Favorites')}</span>
+            </Link>
           </div>
         </div>
-        
-        {/* Action buttons - mobile optimized */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-          <button
-            onClick={() => setEditorOpen(true)}
-            className="inline-flex items-center glass-surface justify-center gap-2 px-4 py-2 border border-ui-default text-ui-secondary rounded-xl text-sm font-medium hover:bg-ui-inset transition dark:border-ui-subtle dark:text-slate-200 dark:hover:bg-ui-elevated"
-          >
-            <Icon name="user" className="w-4 h-4" /> {t('account.profile.edit', 'Edit profile')}
-          </button>
-          
-          {/* Track Your Order CTA - Only show if there are trackable orders */}
-          {hasTrackableOrders && (
-            <Link
-              href={`/${lang}/track`}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-            >
-              <Icon name="package" className="w-4 h-4 animate-pulse" />
-              <span className="text-sm animate-pulse">{t('account.trackCta', 'Track Your Order')}</span>
-            </Link>
-          )}
-          
-          {/* Notifications Link */}
-          <Link
-            href={`/${lang}/account/notifications`}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-ui-inset text-ui-secondary rounded-xl text-sm font-medium hover:bg-ui-inset transition dark:bg-ui-elevated dark:text-slate-200 dark:hover:bg-ui-inset"
-          >
-            <Icon name="bell" className="w-4 h-4" /> {t('account.notifications', 'Notifications')}
-          </Link>
-          
-          {/* Favourites Link */}
-          <Link
-            href={`/${lang}/favourites`}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-pink-50 text-pink-700 rounded-xl text-sm font-medium hover:bg-pink-100 transition dark:bg-pink-900/20 dark:text-pink-300 dark:hover:bg-pink-900/30"
-          >
-            <Icon name="star" className="w-4 h-4" /> {t('favorites.title', 'Favorites')}
-          </Link>
-        </div>
-      </div>
+      </BentoPanel>
 
-      <div className="grid gap-6 sm:gap-8 grid-cols-1 lg:grid-cols-2">
-        {/* orders */}
-        <section className="rounded-2xl border glass-surface p-4 sm:p-5">
-          <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">{t('account.orderHistory', 'Order History')}</h2>
-          {orders.length ? (
-            <ul className="divide-y">
-              {orders.map((o, i) => {
-                return (
-                  <li
-                    key={o.id}
-                    className="py-3 px-2 rounded-lg hover:bg-ui-inset transition animate-fade-up"
-                    style={{ animationDelay: `${i * 60}ms` }} // subtle stagger
-                  >
-                    <Link href={`/${lang}/account/orders/${o.id}`} className="flex w-full items-center justify-between">
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm sm:text-base text-ui-primary truncate dark:text-ui-primary">
-                          {(() => {
-                            const short = o.id.includes('_') ? o.id.slice(-6) : o.id.slice(0, 8);
-                            return `${t('account.order', 'Order')} ${short.toUpperCase()}`;
-                          })()}  
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-12 lg:gap-6">
+        <section className="lg:col-span-8">
+          <BentoPanel className="min-h-0 p-0 sm:p-0">
+            <div className="flex items-center justify-between border-b border-ui-subtle px-4 py-4 sm:px-5">
+              <h2 className="font-display text-lg font-bold text-ui-primary sm:text-xl">
+                {t('account.orderHistory', 'Order History')}
+              </h2>
+              {orders.length > 0 ? (
+                <Link
+                  href={`/${lang}/products?q=&category=&inStock=1&min=0&max=50000000&sort=new`}
+                  className="text-xs font-semibold text-cyan-600 hover:underline dark:text-cyan-400"
+                >
+                  {t('account.shopMore', 'Shop more →')}
+                </Link>
+              ) : null}
+            </div>
+            {orders.length ? (
+              <>
+                <div className="hidden overflow-x-auto md:block">
+                  <table className="w-full min-w-[520px] text-left text-sm">
+                    <thead>
+                      <tr className="border-b border-ui-subtle text-[10px] font-bold uppercase tracking-[0.12em] text-ui-faint">
+                        <th className="px-4 py-3 sm:px-5">{t('account.order', 'Order')}</th>
+                        <th className="px-4 py-3 sm:px-5">{t('account.table.status', 'Status')}</th>
+                        <th className="px-4 py-3 sm:px-5">{t('account.total', 'Total')}</th>
+                        <th className="px-4 py-3 sm:px-5">{t('account.table.date', 'Date')}</th>
+                        <th className="px-4 py-3 sm:px-5" />
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-ui-subtle/80">
+                      {orders.map((o) => {
+                        const st = getStatusConfig(o.status as OrderStatus);
+                        const ordersDict: unknown = t('admin.orders') as unknown;
+                        const label =
+                          (ordersDict as Record<string, string>)?.[o.status.toLowerCase()] ?? st.label;
+                        return (
+                          <tr key={o.id} className="transition hover:bg-ui-inset/60">
+                            <td className="px-4 py-3 font-mono text-xs font-semibold text-cyan-600 dark:text-cyan-400 sm:px-5">
+                              {orderLabelShort(o.id, t)}
+                            </td>
+                            <td className="px-4 py-3 sm:px-5">
+                              <span
+                                className={cn(
+                                  'inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold',
+                                  st.color,
+                                )}
+                              >
+                                {label}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-sm font-semibold text-ui-primary sm:px-5">
+                              {formatCurrency(o.totalCents, o.currency)}
+                            </td>
+                            <td className="px-4 py-3 text-xs text-ui-muted sm:px-5">
+                              <LocalTime date={o.createdAt} />
+                            </td>
+                            <td className="px-4 py-3 text-right sm:px-5">
+                              <Link
+                                href={`/${lang}/account/orders/${o.id}`}
+                                className="text-xs font-semibold text-cyan-600 hover:underline dark:text-cyan-400"
+                              >
+                                {t('account.manage', 'Manage')}
+                              </Link>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+                <ul className="divide-y divide-ui-subtle md:hidden">
+                  {orders.map((o, i) => (
+                    <li
+                      key={o.id}
+                      className="animate-fade-up px-4 py-3"
+                      style={{ animationDelay: `${i * 40}ms` }}
+                    >
+                      <Link
+                        href={`/${lang}/account/orders/${o.id}`}
+                        className="flex w-full items-center justify-between gap-3"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="truncate text-sm font-semibold text-ui-primary">
+                            {orderLabelShort(o.id, t)}
+                          </div>
+                          <div className="text-xs text-ui-muted">
+                            <LocalTime date={o.createdAt} />
+                          </div>
                         </div>
-                        <div className="text-xs sm:text-sm text-ui-primary dark:text-ui-primary"><LocalTime date={o.createdAt} /></div>
-                      </div>
-                      <div className="text-right ml-3">
-                        <div className="text-sm sm:text-base font-semibold text-ui-primary dark:text-ui-primary">
-                          {formatCurrency(o.totalCents, o.currency)}
+                        <div className="text-right">
+                          <div className="text-sm font-semibold text-ui-primary">
+                            {formatCurrency(o.totalCents, o.currency)}
+                          </div>
+                          <div
+                            className={cn(
+                              'mt-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold',
+                              getStatusConfig(o.status as OrderStatus).color,
+                            )}
+                          >
+                            {(t('admin.orders') as unknown as Record<string, string>)?.[o.status.toLowerCase()] ??
+                              getStatusConfig(o.status as OrderStatus).label}
+                          </div>
                         </div>
-                        <div className={`text-xs px-2 py-1 rounded-full ${getStatusConfig(o.status as any).color} dark:border dark:border-ui-subtle`}>
-                          {(() => {
-                            const key = o.status.toLowerCase();
-                            const ordersDict: unknown = t('admin.orders') as any;
-                            return ordersDict?.[key] ?? getStatusConfig(o.status as any).label;
-                          })()}
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          ) : (
-            <p className="text-sm sm:text-base text-ui-secondary dark:text-ui-muted">{t('account.noOrders', 'No orders yet.')}</p>
-          )}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <p className="px-4 py-8 text-center text-sm text-ui-muted sm:px-5">
+                {t('account.noOrders', 'No orders yet.')}
+              </p>
+            )}
+          </BentoPanel>
         </section>
 
-        {/* active cart */}
-        <section className="rounded-2xl border glass-surface p-4 sm:p-5">
-          <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">{t('account.activeCart', 'Active Cart')}</h2>
-          {activeCart ? (
-            <>
-              <ul className="space-y-2 text-sm sm:text-base">
-                {activeCart.items.map((it, i) => (
-                  <li
-                    key={it.id}
-                    className="flex justify-between items-start animate-fade-up"
-                    style={{ animationDelay: `${i * 40}ms` }}
-                  >
-                    <span className="text-ui-primary flex-1 min-w-0 pr-2">
-                      {it.product.name}{it.variant ? ` (${it.variant.name})` : ""}
-                    </span>
-                    <span className="text-ui-muted text-sm sm:text-base flex-shrink-0">x{it.qty}</span>
+        <div className="flex flex-col gap-5 lg:col-span-4">
+          <BentoPanel>
+            <h2 className="font-display text-base font-bold text-ui-primary sm:text-lg">
+              {t('account.activeCart', 'Active Cart')}
+            </h2>
+            {activeCart ? (
+              <>
+                <ul className="mt-4 space-y-3 text-sm">
+                  {activeCart.items.map((it) => (
+                    <li key={it.id} className="flex items-start justify-between gap-2 border-b border-ui-subtle/60 pb-3 last:border-0">
+                      <span className="min-w-0 flex-1 text-ui-primary">
+                        {it.product.name}
+                        {it.variant ? ` (${it.variant.name})` : ''}
+                      </span>
+                      <span className="shrink-0 font-medium text-cyan-600 dark:text-cyan-400">×{it.qty}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-4 flex items-baseline justify-between border-t border-ui-subtle pt-4">
+                  <span className="text-xs font-medium uppercase tracking-wide text-ui-faint">
+                    {t('account.total', 'Total')}
+                  </span>
+                  <span className="text-lg font-bold text-ui-primary">{formatCurrency(activeCartTotal)}</span>
+                </div>
+                <Link
+                  href={`/${lang}/cart`}
+                  className="btn-primary mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold"
+                >
+                  {t('account.checkoutCta', 'Checkout')}
+                  <Icon name="arrowRight" className="h-4 w-4" />
+                </Link>
+              </>
+            ) : (
+              <p className="mt-3 text-sm text-ui-faint">{t('account.emptyCart', 'Your cart is empty.')}</p>
+            )}
+          </BentoPanel>
+
+          <BentoPanel>
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-cyan-600/90 dark:text-cyan-400/90">
+              {t('account.statsTitle', 'Your stats')}
+            </p>
+            <dl className="mt-4 space-y-4">
+              <div className="flex items-center justify-between gap-3">
+                <dt className="text-sm text-ui-muted">{t('account.statsOrders', 'Orders placed')}</dt>
+                <dd className="text-lg font-bold text-cyan-600 tabular-nums dark:text-cyan-400">{orders.length}</dd>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <dt className="text-sm text-ui-muted">{t('account.statsSpent', 'Total spent')}</dt>
+                <dd className="text-lg font-bold text-cyan-600 tabular-nums dark:text-cyan-400">
+                  {formatCurrency(totalSpent)}
+                </dd>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <dt className="text-sm text-ui-muted">{t('account.statsLoyalty', 'Loyalty points')}</dt>
+                {/* <dd className="text-lg font-bold text-cyan-600 tabular-nums dark:text-cyan-400">{loyaltyPoints}</dd> */}
+                {/* TODO: Uncomment above and replace with real data after full implementation of loyalty points */}
+                <dd className="text-lg font-bold text-cyan-600 tabular-nums dark:text-cyan-400">{t('home.comingSoon.title', 'Coming Soon')}</dd>
+              </div>
+            </dl>
+          </BentoPanel>
+
+          <BentoPanel>
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-ui-faint">
+              {t('account.recentActivity', 'Recent')}
+            </p>
+            {recentActivity.length ? (
+              <ul className="mt-4 space-y-3">
+                {recentActivity.map((a) => (
+                  <li key={a.id} className="flex gap-3 rounded-xl border border-ui-subtle/50 bg-ui-inset/40 p-3 dark:bg-ui-elevated/30">
+                    <div
+                      className={cn(
+                        'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg',
+                        a.tone === 'emerald' && 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
+                        a.tone === 'amber' && 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
+                        a.tone === 'cyan' && 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400',
+                      )}
+                    >
+                      <Icon name={a.icon} className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-ui-primary">{a.text}</p>
+                      <p className="mt-0.5 text-xs text-ui-faint">{a.sub}</p>
+                    </div>
                   </li>
                 ))}
               </ul>
-              <div className="mt-3 sm:mt-4 text-right text-sm sm:text-base">
-                <span className="text-ui-faint">{t('account.total', 'Total')}: </span>
-                <span className="font-semibold">
-                  {formatCurrency(activeCartTotal)}
-                </span>
-              </div>
-              <Link
-                href={`/${lang}/cart`}
-                className="mt-4 inline-block w-full sm:w-auto text-center px-4 py-2 bg-cyan-600 text-white rounded-xl text-sm font-medium hover:bg-cyan-700 transition"
-              >
-                {t('account.goToCart', 'Go to cart')}
-              </Link>
-            </>
-          ) : (
-            <p className="text-sm sm:text-base text-ui-faint">{t('account.emptyCart', 'Your cart is empty.')}</p>
-          )}
-        </section>
+            ) : (
+              <p className="mt-3 text-sm text-ui-faint">{t('account.noActivity', 'No recent activity yet.')}</p>
+            )}
+          </BentoPanel>
+        </div>
       </div>
-
-      {/* modal with Headless UI transitions */}
-      {selectedOrder && createPortal(
-        <Transition show={!!selectedOrder} as={Fragment}>
-          <Dialog onClose={() => setSelectedOrder(null)} className="fixed inset-0 z-[80]">
-            {/* backdrop */}
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-200"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="ease-in duration-150"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <div className="fixed inset-0 bg-black/50" />
-            </Transition.Child>
-
-            <div className="fixed inset-0 flex items-center justify-center p-4">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-200"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-150"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <div className="relative modal-surface rounded-2xl max-w-lg w-full p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
-                  <Dialog.Title className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
-                    {t('account.order', 'Order')} {selectedOrder.id.slice(0, 8).toUpperCase()}
-                  </Dialog.Title>
-
-                  {/* Order Items */}
-                  <div className="mb-4 sm:mb-6">
-                    <h3 className="font-medium mb-2 text-sm sm:text-base">{t('account.modal.items', 'Items')}</h3>
-                    <div className="space-y-2 text-xs sm:text-sm text-ui-secondary">
-                      {selectedOrder.items.map((it) => (
-                        <div key={it.id} className="flex justify-between items-start">
-                          <span className="flex-1 min-w-0 pr-2">
-                            {it.name} {it.sku ? `(${it.sku})` : ""} × {it.qty}
-                          </span>
-                          <span className="flex-shrink-0">{formatCurrency(it.priceCents)}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Shipping Details */}
-                  {selectedOrder.shipping && (
-                    <div className="mb-4 sm:mb-6 p-3 bg-ui-inset dark:bg-ui-elevated rounded-lg">
-                      <h3 className="font-medium mb-2 text-sm sm:text-base">{t('account.modal.shippingDetails', 'Shipping Details')}</h3>
-                      <div className="text-xs sm:text-sm text-ui-secondary space-y-1">
-                        <div><span className="font-medium">{t('account.modal.name', 'Name')}:</span> {selectedOrder.shipping.fullName}</div>
-                        <div><span className="font-medium">{t('account.modal.phone', 'Phone')}:</span> {selectedOrder.shipping.phone}</div>
-                        <div><span className="font-medium">{t('account.modal.address', 'Address')}:</span> {selectedOrder.shipping.address1}</div>
-                        {selectedOrder.shipping.address2 && (
-                          <div className="ml-2 sm:ml-4">{selectedOrder.shipping.address2}</div>
-                        )}
-                        <div className="ml-2 sm:ml-4">{selectedOrder.shipping.city}, {selectedOrder.shipping.state} {selectedOrder.shipping.postalCode}</div>
-                        <div className="ml-2 sm:ml-4">{selectedOrder.shipping.country}</div>
-                        {selectedOrder.shipping.status && (
-                          <div className="mt-2"><span className="font-medium">{t('account.modal.status', 'Status')}:</span>
-                            <span className="ml-1 px-2 py-1 bg-cyan-100 dark:bg-cyan-900 text-cyan-700 dark:text-cyan-300 rounded text-xs">
-                              {selectedOrder.shipping.status}
-                            </span>
-                          </div>
-                        )}
-                        {selectedOrder.shipping.trackingNo && (
-                          <div><span className="font-medium">{t('account.modal.tracking', 'Tracking')}:</span>
-                            <span className="ml-1 font-mono text-xs break-all">{selectedOrder.shipping.trackingNo}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  <button
-                    onClick={() => setSelectedOrder(null)}
-                    className="w-full rounded-xl bg-cyan-600 text-white py-2 sm:py-3 text-sm sm:text-base hover:bg-cyan-700 transition"
-                  >
-                    {t('account.modal.close', 'Close')}
-                  </button>
-                </div>
-              </Transition.Child>
-            </div>
-          </Dialog>
-        </Transition>,
-        document.body
-      )}
 
       {editorOpen && (
         <AccountProfileEditor
           initialName={localUser.name}
           initialImage={localUser.image}
-          initialEmail={(data as any)?.sessionUser?.email ?? null}
+          initialEmail={(data as { sessionUser?: { email?: string | null } }).sessionUser?.email ?? null}
           onUpdated={(u) => setLocalUser(u)}
           onClose={() => setEditorOpen(false)}
         />
       )}
 
-      {deleteOpen && createPortal(
-        <Transition show={deleteOpen} as={Fragment}>
-          <Dialog onClose={() => !deleting && setDeleteOpen(false)} className="fixed inset-0 z-[80]">
-            <Transition.Child as={Fragment} enter="ease-out duration-200" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-150" leaveFrom="opacity-100" leaveTo="opacity-0">
-              <div className="fixed inset-0 bg-black/50" />
-            </Transition.Child>
-            <div className="fixed inset-0 flex items-center justify-center p-4">
-              <Transition.Child as={Fragment} enter="ease-out duration-200" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-150" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
-                <div className="relative modal-surface rounded-2xl max-w-md w-full p-4 sm:p-6">
-                  <Dialog.Title className="text-lg sm:text-xl font-semibold mb-2">{t('account.profile.deleteTitle', 'Delete account?')}</Dialog.Title>
-                  <p className="text-sm sm:text-base text-ui-muted dark:text-ui-faint">{t('account.profile.deleteBody', 'This will permanently remove your profile data. Orders and legal records remain for compliance. This action cannot be undone.')}</p>
-                  {deleteError && <div className="mt-3 text-sm text-red-600">{deleteError}</div>}
-                  <div className="mt-4 flex flex-col sm:flex-row justify-end gap-2">
-                    <button onClick={() => setDeleteOpen(false)} disabled={deleting} className="h-10 px-3 rounded-xl border hover:bg-ui-inset dark:hover:bg-ui-elevated text-sm sm:text-base">{t('common.cancel', 'Cancel')}</button>
-                    <button onClick={async () => {
-                      setDeleting(true); setDeleteError(null);
-                      try {
-                        const res = await fetch('/api/account/profile', { method: 'DELETE' });
-                        if (!res.ok) { setDeleteError(t('account.profile.deletedFailed', 'Failed to delete account')); setDeleting(false); return; }
-                        await signOut({ callbackUrl: `/${lang}` });
-                      } catch {
-                        setDeleteError(t('account.profile.deletedFailed', 'Failed to delete account'));
-                        setDeleting(false);
-                      }
-                    }} className="h-10 px-4 rounded-xl bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 text-sm sm:text-base">
-                      {deleting ? t('checkout.processing', 'Processing...') : t('account.profile.deleteConfirm', 'Delete')}
-                    </button>
-                  </div>
-                </div>
-              </Transition.Child>
-            </div>
-          </Dialog>
-        </Transition>,
-        document.body
-      )}
     </div>
   );
 }

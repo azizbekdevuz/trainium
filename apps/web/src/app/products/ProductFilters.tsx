@@ -23,19 +23,9 @@ export function ProductFilters({
 }: ProductFiltersProps) {
   return (
     <form className="glass rounded-2xl p-4 lg:!rounded-none lg:!border-0 lg:!bg-transparent lg:!p-0 lg:!shadow-none lg:!backdrop-blur-none dark:lg:!bg-transparent">
+      {/* Preserve query from header search when applying facet filters */}
+      <input type="hidden" name="q" defaultValue={params.q} />
       <div className="flex flex-col gap-4">
-        <label className="block">
-          <span className="mb-1 block text-xs font-medium text-ui-muted">{dict.pages.products.searchLabel ?? 'Search'}</span>
-          <input
-            aria-label={dict.pages.products.searchAria ?? 'Search products'}
-            name="q"
-            defaultValue={params.q}
-            placeholder={dict.pages.products.searchPh ?? 'e.g. dumbbell, bike'}
-            className="h-11 w-full rounded-xl border px-3"
-          />
-          <span className="mt-1 block text-[11px] text-ui-faint">{dict.pages.products.searchInEnglish ?? ''}</span>
-        </label>
-
         <div>
           <MultiSelect
             name="categories"
