@@ -58,30 +58,28 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
       
       {/* Mobile Menu */}
       <div
-        className="mobile-menu-container modal-surface fixed inset-x-0 bottom-0 top-[8vh] z-[90] flex max-h-[92dvh] flex-col rounded-t-[28px] sm:inset-x-3 sm:top-[10vh] sm:max-h-[90dvh] sm:rounded-t-[32px]"
+        className="mobile-menu-container modal-surface fixed inset-x-0 bottom-0 top-[max(2.5rem,env(safe-area-inset-top,0px),8vh)] z-[90] flex max-h-[92dvh] flex-col rounded-t-[28px] sm:inset-x-3 sm:top-[10vh] sm:max-h-[90dvh] sm:rounded-t-[32px]"
       >
         <div
           className="mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-[var(--border-strong)] opacity-60"
           aria-hidden
         />
         {/* Header with Close Button */}
-        <div
-          className="flex shrink-0 flex-row items-center justify-between border-b border-[var(--border-subtle)] p-4 sm:p-6"
-        >
-          <h2 className="font-display text-lg font-extrabold tracking-[-0.03em] text-ui-primary sm:text-xl">
+        <div className="flex shrink-0 flex-row items-center justify-between gap-3 border-b border-[var(--border-subtle)] px-4 py-3 sm:px-6 sm:py-4">
+          <h2 className="min-w-0 truncate font-display text-lg font-extrabold tracking-[-0.03em] text-ui-primary sm:text-xl">
             {dict.brand.name}
             <span className="text-brand-dot">.</span>
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full border border-[var(--border-default)] p-2 transition-all duration-200 hover:bg-[var(--bg-inset)] active:scale-95 sm:p-3"
-            aria-label="Close menu"
+            className="shrink-0 rounded-full border border-[var(--border-default)] p-2.5 transition-all duration-200 hover:bg-[var(--bg-inset)] active:scale-95"
+            aria-label={dict.nav?.closeMenu ?? 'Close menu'}
           >
-            <Icon name="cancel" className="h-5 w-5 text-[var(--text-secondary)] sm:h-6 sm:w-6" />
+            <Icon name="cancel" className="h-5 w-5 text-[var(--text-secondary)]" />
           </button>
         </div>
-        
+
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto mobile-menu-scrollable">
           {session?.user ? (

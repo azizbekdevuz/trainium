@@ -37,7 +37,21 @@
     "total": "합계",
     "trackCta": "주문 조회",
     "user": "사용자",
-    "userAvatar": "사용자 아바타"
+    "userAvatar": "사용자 아바타",
+    "sectionLabel": "내 계정",
+    "shopMore": "쇼핑 계속 →",
+    "manage": "관리",
+    "checkoutCta": "결제하기",
+    "statsTitle": "내 통계",
+    "statsOrders": "주문 횟수",
+    "statsSpent": "총 결제액",
+    "statsLoyalty": "적립 포인트",
+    "recentActivity": "최근",
+    "noActivity": "최근 활동이 없습니다.",
+    "table": {
+      "status": "상태",
+      "date": "날짜"
+    }
   },
   "admin": {
     "analytics": {
@@ -821,7 +835,12 @@
     "shop": "샵",
     "signOut": "로그아웃",
     "support": "고객 지원",
-    "theme": "테마"
+    "theme": "테마",
+    "openMenu": "메뉴 열기",
+    "closeMenu": "메뉴 닫기",
+    "searchProducts": "상품 검색",
+    "collapseSearch": "검색 접기",
+    "expandSearch": "샵 검색"
   },
   "notification": {
     "lowStock": "재고 부족 알림",

@@ -176,7 +176,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <I18nProvider lang={lang} dict={dict}>
               <ThemeProvider>
                 <InteractiveBackground />
-                <header className="site-header glass-nav inset-x-0 top-0 z-30 border-b border-transparent">
+                <header className="site-header glass-nav sticky inset-x-0 top-0 z-30 border-b border-transparent">
                   <ResponsiveNavigation lang={lang} dict={dict} />
                 </header>
 

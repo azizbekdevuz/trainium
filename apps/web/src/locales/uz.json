@@ -37,7 +37,21 @@
     "total": "Jami",
     "trackCta": "Buyurtmani kuzatish",
     "user": "Foydalanuvchi",
-    "userAvatar": "Foydalanuvchi avatari"
+    "userAvatar": "Foydalanuvchi avatari",
+    "sectionLabel": "Hisobingiz",
+    "shopMore": "Yana xarid qilish →",
+    "manage": "Boshqarish",
+    "checkoutCta": "To'lov",
+    "statsTitle": "Statistikangiz",
+    "statsOrders": "Buyurtmalar soni",
+    "statsSpent": "Jami sarflangan",
+    "statsLoyalty": "Sodiqlik ballari",
+    "recentActivity": "So'nggi",
+    "noActivity": "So'nggi faoliyat yo'q.",
+    "table": {
+      "status": "Holat",
+      "date": "Sana"
+    }
   },
   "admin": {
     "analytics": {
@@ -826,7 +840,12 @@
     "shop": "Do'kon",
     "signOut": "Chiqish",
     "support": "Yordam",
-    "theme": "Mavzu"
+    "theme": "Mavzu",
+    "openMenu": "Menyuni ochish",
+    "closeMenu": "Menyuni yopish",
+    "searchProducts": "Mahsulot qidirish",
+    "collapseSearch": "Qidiruvni yashirish",
+    "expandSearch": "Do'konda qidirish"
   },
   "notification": {
     "lowStock": "Kam zaxira ogohlantirishi",

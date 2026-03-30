@@ -37,7 +37,21 @@
     "total": "Total",
     "trackCta": "Track Your Order",
     "user": "User",
-    "userAvatar": "User Avatar"
+    "userAvatar": "User Avatar",
+    "sectionLabel": "Your account",
+    "shopMore": "Shop more →",
+    "manage": "Manage",
+    "checkoutCta": "Checkout",
+    "statsTitle": "Your stats",
+    "statsOrders": "Orders placed",
+    "statsSpent": "Total spent",
+    "statsLoyalty": "Loyalty points",
+    "recentActivity": "Recent",
+    "noActivity": "No recent activity yet.",
+    "table": {
+      "status": "Status",
+      "date": "Date"
+    }
   },
   "admin": {
     "analytics": {
@@ -812,7 +826,12 @@
     "shop": "Shop",
     "signOut": "Sign Out",
     "support": "Support",
-    "theme": "Theme"
+    "theme": "Theme",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "searchProducts": "Search products",
+    "collapseSearch": "Hide search",
+    "expandSearch": "Search shop"
   },
   "notification": {
     "lowStock": "Low Stock Alert",
