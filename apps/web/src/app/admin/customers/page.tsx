@@ -1,6 +1,5 @@
 import { auth } from '../../../auth';
 import { redirect } from 'next/navigation';
-import { AdminNav } from '../../../components/admin/AdminNav';
 import { prisma } from '../../../lib/database/db';
 import Link from 'next/link';
 import { getDictionary, negotiateLocale } from '../../../lib/i18n/i18n';
@@ -74,11 +73,6 @@ export default async function AdminCustomersPage({ searchParams }: { searchParam
             <h1 className="font-display text-2xl sm:text-3xl font-bold text-ui-primary">{dict.admin?.customers?.title ?? 'Customers'}</h1>
             <p className="text-sm sm:text-base text-ui-muted dark:text-ui-faint mt-1">{dict.admin?.customers?.subtitle ?? 'Manage customer accounts, roles, and history.'}</p>
           </div>
-        </div>
-
-        {/* Admin Navigation */}
-        <div className="mt-4 sm:mt-6">
-          <AdminNav lang={lang} dict={dict} activeSegment="customers" />
         </div>
 
         {/* Search */}
