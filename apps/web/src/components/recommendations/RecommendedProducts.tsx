@@ -27,6 +27,8 @@ interface RecommendedProductsProps {
   initialLimit?: number;
   showTitle?: boolean;
   className?: string;
+  /** Strip outer max-width/padding for use inside PDP tabs or narrow layouts */
+  embedded?: boolean;
 }
 
 export function RecommendedProducts({
@@ -34,7 +36,8 @@ export function RecommendedProducts({
   currentProductId,
   initialLimit = 5,
   showTitle = true,
-  className = ''
+  className = '',
+  embedded = false,
 }: RecommendedProductsProps) {
   const { t } = useI18n();
   const [recommendations, setRecommendations] = useState<RecommendedProduct[]>([]);
@@ -190,19 +193,29 @@ export function RecommendedProducts({
     }
   };
 
+  const shell = embedded
+    ? `w-full max-w-none mx-0 px-0 py-2 ${className}`
+    : `mx-auto max-w-7xl px-6 py-8 ${className}`;
+
+  const titleClass = embedded ? 'font-display text-lg font-semibold mb-4' : 'font-display text-2xl';
+
+  const gridClass = embedded
+    ? 'grid gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 items-stretch'
+    : 'grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 items-stretch';
+
   // Loading skeleton
   if (loading) {
     return (
-      <section className={`mx-auto max-w-7xl px-6 py-8 ${className}`}>
+      <section className={shell}>
         {showTitle && (
-          <div className="flex items-baseline justify-between mb-6">
+          <div className={`flex items-baseline justify-between ${embedded ? 'mb-4' : 'mb-6'}`}>
             <div className="flex items-center gap-3">
               <Skeleton className="h-8 w-8 rounded-full" />
-              <Skeleton className="h-8 w-48" />
+              <Skeleton className={embedded ? 'h-6 w-40' : 'h-8 w-48'} />
             </div>
           </div>
         )}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 items-stretch">
+        <div className={gridClass}>
           {Array.from({ length: initialLimit }).map((_, i) => (
             <div key={i} className="space-y-3">
               <Skeleton className="h-48 w-full rounded-2xl" />
@@ -218,12 +231,12 @@ export function RecommendedProducts({
   // Error state with fallback
   if (error && recommendations.length === 0) {
     return (
-      <section className={`mx-auto max-w-7xl px-6 py-8 ${className}`}>
+      <section className={shell}>
         {showTitle && (
-          <div className="flex items-baseline justify-between mb-6">
+          <div className={`flex items-baseline justify-between ${embedded ? 'mb-4' : 'mb-6'}`}>
             <div className="flex items-center gap-3">
               <FitnessCharacter size="md" expression="dissatisfied" className="text-amber-500" />
-              <h2 className="font-display text-2xl">{t('recommendations.comingSoon')}</h2>
+              <h2 className={titleClass}>{t('recommendations.comingSoon')}</h2>
             </div>
           </div>
         )}
@@ -239,12 +252,12 @@ export function RecommendedProducts({
   // Empty state
   if (recommendations.length === 0) {
     return (
-      <section className={`mx-auto max-w-7xl px-6 py-8 ${className}`}>
+      <section className={shell}>
         {showTitle && (
-          <div className="flex items-baseline justify-between mb-6">
+          <div className={`flex items-baseline justify-between ${embedded ? 'mb-4' : 'mb-6'}`}>
             <div className="flex items-center gap-3">
               <FitnessCharacter size="md" expression="thinking" className="text-amber-500" />
-              <h2 className="font-display text-2xl">{t('recommendations.title')}</h2>
+              <h2 className={titleClass}>{t('recommendations.title')}</h2>
             </div>
           </div>
         )}
@@ -258,14 +271,14 @@ export function RecommendedProducts({
   }
 
   return (
-    <section className={`mx-auto max-w-7xl px-6 py-8 ${className}`}>
+    <section className={shell}>
       {showTitle && (
-        <div className="flex items-baseline justify-between mb-6">
+        <div className={`flex items-baseline justify-between ${embedded ? 'mb-4' : 'mb-6'}`}>
           <div className="flex items-center gap-3">
             <div className={`${getSourceColor()}`}>
               {getSourceIcon()}
             </div>
-            <h2 className="font-display text-2xl">{getTitle()}</h2>
+            <h2 className={titleClass}>{getTitle()}</h2>
             {fallbackUsed && source === 'fallback' && (
               <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
                 {t('recommendations.basedOn')}
@@ -288,7 +301,7 @@ export function RecommendedProducts({
       )}
 
       {/* Products grid */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 items-stretch">
+      <div className={gridClass}>
         {recommendations.map((product, index) => (
           <ProductCard
             key={`${product.id}-${index}`}

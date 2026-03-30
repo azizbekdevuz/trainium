@@ -7,8 +7,7 @@ import { useReviews } from './reviews/hooks/useReviews';
 import { useUndo } from './reviews/hooks/useUndo';
 import { ReviewItem } from './reviews/ReviewItem';
 import type { ReviewItem as ReviewItemType } from './reviews/types';
-
-export function ReviewsSection({ productId }: { productId: string }) {
+export function ReviewsSection({ productId, className = 'mt-10' }: { productId: string; className?: string }) {
   const { t } = useI18n();
   const [collapsed, setCollapsed] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -71,7 +70,7 @@ export function ReviewsSection({ productId }: { productId: string }) {
   };
 
   return (
-    <section id="reviews" className="mt-10">
+    <section id="reviews" className={className}>
       <h3 className="font-display text-2xl mb-3">{t('reviews.title', 'Reviews')}</h3>
       {!loaded ? null : items.length === 0 ? (
         <div className="text-sm text-ui-muted">{t('reviews.beFirst', 'Be the first to tell others about this product')}</div>
