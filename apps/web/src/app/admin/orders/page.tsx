@@ -1,6 +1,5 @@
 import { auth } from '../../../auth';
 import { redirect } from 'next/navigation';
-import { AdminNav } from '../../../components/admin/AdminNav';
 import { prisma } from '../../../lib/database/db';
 import Link from 'next/link';
 import { OrderStatus } from '@prisma/client';
@@ -98,11 +97,6 @@ export default async function AdminOrdersPage({
           <div className="text-xs sm:text-sm text-ui-faint dark:text-ui-faint">
             {pagination.totalCount} {dict.admin?.orders?.total ?? 'total orders'}
           </div>
-        </div>
-
-        {/* Admin Navigation */}
-        <div className="mt-4 sm:mt-6">
-          <AdminNav lang={lang} dict={dict} activeSegment="orders" />
         </div>
 
         {/* Filters */}
