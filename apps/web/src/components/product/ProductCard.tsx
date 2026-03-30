@@ -27,6 +27,8 @@ type ProductCardProps = {
   actions?: React.ReactNode;
   /** Tighter layout for bento / dense grids */
   compact?: boolean;
+  /** Primary category line (small caps), e.g. from listing grid */
+  categoryLabel?: string;
 };
 
 export function ProductCard({
@@ -45,6 +47,7 @@ export function ProductCard({
   showSocialCounts = true,
   actions,
   compact = false,
+  categoryLabel,
 }: ProductCardProps) {
   const { t } = useI18n();
   const { isMobile } = useResponsive();
@@ -56,12 +59,19 @@ export function ProductCard({
     lowStockAt != null &&
     inStock <= lowStockAt;
 
-  const wellH = compact ? (isMobile ? 120 : 140) : isMobile ? 160 : 200;
-
   const accentBar = <div className="product-card-accent-line" />;
 
   const well = (
-    <div className="product-well" style={{ height: wellH }}>
+    <div
+      className={cn(
+        'product-well w-full',
+        compact
+          ? isMobile
+            ? 'h-[112px]'
+            : 'h-[132px]'
+          : 'aspect-[5/6] min-h-[152px] sm:min-h-[158px] lg:aspect-[4/5] lg:min-h-[188px]',
+      )}
+    >
       <div className="product-image-overlay" aria-hidden />
 
       <div className="atm-orb product-card-orb-fill h-[58%] w-[58%]" aria-hidden />
@@ -167,8 +177,13 @@ export function ProductCard({
 
   const titleBlock = (
     <>
+      {categoryLabel ? (
+        <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-cyan-600/90 dark:text-cyan-400/90">
+          {categoryLabel}
+        </p>
+      ) : null}
       <h3
-        className="font-display mb-2 line-clamp-2 text-[13px] font-semibold leading-snug text-ui-primary sm:text-[13.5px]"
+        className="font-display mb-1.5 line-clamp-2 text-[13px] font-semibold leading-snug text-ui-primary sm:text-[13.5px]"
         title={name}
       >
         {name}
@@ -207,9 +222,9 @@ export function ProductCard({
         >
           {accentBar}
           {well}
-          <div className="relative z-[1] px-3 pt-3 sm:px-4 sm:pt-3.5">{titleBlock}</div>
+          <div className="relative z-[1] px-3 pt-2.5 sm:px-4 sm:pt-3">{titleBlock}</div>
         </Link>
-        <div className="relative z-[1] px-3 pb-3 sm:px-4 sm:pb-3.5">
+        <div className="relative z-[1] px-3 pb-2.5 sm:px-4 sm:pb-3">
           <div className="mt-3 border-t border-ui-subtle pt-2.5">
             {actions}
           </div>
@@ -222,7 +237,7 @@ export function ProductCard({
     <Link href={`/products/${slug}`} className="product-card group block h-full">
       {accentBar}
       {well}
-      <div className="relative z-[1] px-3 py-3 sm:px-4 sm:py-3.5">{titleBlock}</div>
+      <div className="relative z-[1] px-3 py-2.5 sm:px-4 sm:py-3">{titleBlock}</div>
     </Link>
   );
 }
