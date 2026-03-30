@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { auth } from '../../../auth';
 import { redirect } from 'next/navigation';
-import { AdminNav } from '../../../components/admin/AdminNav';
 import { prisma } from '../../../lib/database/db';
 import { getDictionary, negotiateLocale } from '../../../lib/i18n/i18n';
 import ProductsTable from '../../../components/admin/ProductsTable';
@@ -48,11 +47,6 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
             <p className="text-sm sm:text-base text-ui-muted dark:text-ui-faint mt-1">{dict.admin?.products?.subtitle ?? 'Manage catalog, pricing, inventory and variants.'}</p>
           </div>
           <Link href={`/${lang}/admin/products/new`} className="rounded-2xl px-4 py-2 bg-cyan-600 text-white hover:opacity-90 transition text-sm sm:text-base font-medium">{dict.admin?.products?.new ?? 'New product'}</Link>
-        </div>
-
-        {/* Admin Navigation */}
-        <div className="mt-4 sm:mt-6">
-          <AdminNav lang={lang} dict={dict} activeSegment="products" />
         </div>
 
         <form className="mt-4 sm:mt-6">
