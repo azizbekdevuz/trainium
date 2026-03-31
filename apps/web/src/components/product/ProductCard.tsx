@@ -29,6 +29,8 @@ type ProductCardProps = {
   compact?: boolean;
   /** Primary category line (small caps), e.g. from listing grid */
   categoryLabel?: string;
+  /** Shop/catalog grid: shorter media well (5:4) + `sizes` tuned for 2–5 column layouts */
+  listing?: boolean;
 };
 
 export function ProductCard({
@@ -48,6 +50,7 @@ export function ProductCard({
   actions,
   compact = false,
   categoryLabel,
+  listing = false,
 }: ProductCardProps) {
   const { t } = useI18n();
   const { isMobile } = useResponsive();
@@ -69,7 +72,9 @@ export function ProductCard({
           ? isMobile
             ? 'h-[112px]'
             : 'h-[132px]'
-          : 'aspect-[5/6] min-h-[152px] sm:min-h-[158px] lg:aspect-[4/5] lg:min-h-[188px]',
+          : listing
+            ? 'aspect-[5/4] min-h-[118px] sm:min-h-[124px] lg:min-h-[128px]'
+            : 'aspect-[5/6] min-h-[152px] sm:min-h-[158px] lg:aspect-[4/5] lg:min-h-[188px]',
       )}
     >
       <div className="product-image-overlay" aria-hidden />
@@ -81,7 +86,11 @@ export function ProductCard({
           src={imageSrc}
           alt={name}
           fill
-          sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 25vw"
+          sizes={
+            listing
+              ? '(max-width:767px) 50vw, (max-width:1279px) 34vw, (max-width:1535px) 25vw, 20vw'
+              : '(max-width:640px) 50vw, (max-width:1024px) 33vw, 25vw'
+          }
           className="relative z-[1] object-cover"
           priority={false}
         />
@@ -157,20 +166,58 @@ export function ProductCard({
         )
       ) : null}
 
-      {(isOutOfStock || isLowStock) && (
-        <div className="absolute right-2 top-2 z-[4] sm:right-3 sm:top-3">
-          {isOutOfStock ? (
-            <span className="badge-red">{t("product.badges.outOfStock", "Out of Stock")}</span>
-          ) : (
-            <span className="badge-amber">
-              {t("product.badges.lowStock", "Low Stock (Only {{0}} left!)").replace("{{0}}", String(inStock))}
-            </span>
+      <div
+        className={cn(
+          'product-card-well-top pointer-events-none absolute z-[4] flex gap-1',
+          compact && isMobile
+            ? 'left-1.5 right-1.5 top-1.5 flex-row flex-wrap items-start justify-between gap-1'
+            : 'left-2 right-2 top-2 flex-col items-stretch sm:left-3 sm:right-3 sm:top-3 sm:flex-row sm:items-start sm:justify-between sm:gap-2',
+        )}
+      >
+        <div
+          className={cn(
+            'pointer-events-auto min-w-0 self-start',
+            compact && isMobile ? 'max-w-[52%]' : 'max-w-full sm:max-w-[min(100%,11rem)] md:max-w-[min(100%,13rem)]',
           )}
+        >
+          <div className="product-card-price-chip">
+            <div className="product-card-price-text">{formatCurrency(priceCents, currency)}</div>
+          </div>
         </div>
-      )}
-
-      <div className="product-card-price-chip">
-        <div className="product-card-price-text">{formatCurrency(priceCents, currency)}</div>
+        {(isOutOfStock || isLowStock) && (
+          <div
+            className={cn(
+              'pointer-events-auto min-w-0 self-start',
+              compact && isMobile
+                ? 'max-w-[46%] text-right'
+                : 'w-full max-w-full sm:w-auto sm:max-w-[min(100%,12rem)] md:max-w-[min(100%,14rem)] sm:text-right',
+            )}
+          >
+            {isOutOfStock ? (
+              <span
+                className={cn(
+                  'badge-red product-card-stock-badge sm:inline-flex sm:w-auto sm:whitespace-nowrap',
+                  compact && isMobile
+                    ? 'inline-block max-w-full truncate text-right text-[9px] leading-tight'
+                    : 'block w-full whitespace-normal break-words text-left leading-snug sm:inline-flex sm:w-auto sm:whitespace-nowrap',
+                )}
+              >
+                {t("product.badges.outOfStock", "Out of Stock")}
+              </span>
+            ) : (
+              <span
+                className={cn(
+                  'badge-amber product-card-stock-badge sm:inline-flex sm:w-auto sm:whitespace-nowrap',
+                  compact && isMobile
+                    ? 'inline-block max-w-full truncate text-right text-[9px] leading-tight'
+                    : 'block w-full whitespace-normal break-words text-left leading-snug sm:inline-flex sm:w-auto sm:whitespace-nowrap',
+                )}
+              >
+                {t("product.badges.lowStock", "Low Stock (Only {{0}} left!)").replace("{{0}}", String(inStock))}
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

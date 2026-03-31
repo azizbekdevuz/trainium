@@ -21,7 +21,7 @@ export function ProductGrid({
   dict,
 }: ProductGridProps) {
   return (
-    <div className="mt-4 grid grid-cols-2 gap-3 sm:mt-5 sm:gap-5 lg:grid-cols-3 items-stretch">
+    <div className="mt-4 grid grid-cols-2 items-stretch gap-2.5 sm:mt-5 sm:gap-3 md:grid-cols-3 md:gap-3 lg:gap-3.5 xl:grid-cols-4 xl:gap-3.5 2xl:grid-cols-5 [&>*]:min-w-0">
       {products.map((p: ProductWithRelations) => {
         const primaryCategory = p.categories[0];
         const categoryLabel = primaryCategory ? getCategoryDisplayName(primaryCategory, dict) : undefined;
@@ -41,6 +41,7 @@ export function ProductGrid({
           initiallyFavorited={userFavSet.has(p.id)}
           initialLiked={userLikeSet.has(p.id)}
           categoryLabel={categoryLabel}
+          listing
         />
         );
       })}
