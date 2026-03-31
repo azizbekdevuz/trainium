@@ -840,7 +840,9 @@
     "closeMenu": "메뉴 닫기",
     "searchProducts": "상품 검색",
     "collapseSearch": "검색 접기",
-    "expandSearch": "샵 검색"
+    "expandSearch": "샵 검색",
+    "openToolbar": "검색·테마·계정 표시",
+    "closeToolbar": "도구 숨기기"
   },
   "notification": {
     "lowStock": "재고 부족 알림",

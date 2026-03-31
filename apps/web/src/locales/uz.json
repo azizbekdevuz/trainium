@@ -845,7 +845,9 @@
     "closeMenu": "Menyuni yopish",
     "searchProducts": "Mahsulot qidirish",
     "collapseSearch": "Qidiruvni yashirish",
-    "expandSearch": "Do'konda qidirish"
+    "expandSearch": "Do'konda qidirish",
+    "openToolbar": "Qidiruv, mavzu va hisobni ko‘rsatish",
+    "closeToolbar": "Navigatsiya vositalarini yashirish"
   },
   "notification": {
     "lowStock": "Kam zaxira ogohlantirishi",

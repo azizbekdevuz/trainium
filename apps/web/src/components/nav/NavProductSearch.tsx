@@ -12,6 +12,8 @@ type NavProductSearchProps = {
   variant?: 'desktop' | 'mobile';
   /** Tighter padding when nested in the sticky header strip */
   compact?: boolean;
+  /** No outer padding — use inside nav “show more” utilities column */
+  embeddedInNav?: boolean;
   id?: string;
 };
 
@@ -24,6 +26,7 @@ export function NavProductSearch({
   ariaLabel,
   variant = 'desktop',
   compact = false,
+  embeddedInNav = false,
   id,
 }: NavProductSearchProps) {
   const pathname = usePathname();
@@ -39,9 +42,15 @@ export function NavProductSearch({
         action={`/${lang}/products`}
         method="get"
         role="search"
-        className={cn(compact ? 'px-3 pb-2 pt-1 sm:px-4' : 'px-4 pb-3 sm:px-6')}
+        className={cn(
+          embeddedInNav
+            ? 'w-full max-w-full p-0'
+            : compact
+              ? 'px-3 pb-2 pt-1 sm:px-4'
+              : 'px-4 pb-3 sm:px-6',
+        )}
       >
-        <div className="relative">
+        <div className="relative min-w-0">
           <Icon
             name="search"
             className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ui-faint"
@@ -56,7 +65,7 @@ export function NavProductSearch({
             autoComplete="off"
             enterKeyHint="search"
             className={cn(
-              'h-11 w-full rounded-xl border border-ui-subtle bg-ui-elevated py-2.5 pl-10 pr-3 text-[15px] text-ui-primary sm:h-10 sm:text-sm',
+              'h-11 w-full min-w-0 rounded-xl border border-ui-subtle bg-ui-elevated py-2.5 pl-10 pr-3 text-[15px] text-ui-primary sm:h-10 sm:text-sm',
               'placeholder:text-ui-faint focus:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/25',
             )}
           />

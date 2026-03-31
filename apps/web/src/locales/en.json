@@ -831,7 +831,9 @@
     "closeMenu": "Close menu",
     "searchProducts": "Search products",
     "collapseSearch": "Hide search",
-    "expandSearch": "Search shop"
+    "expandSearch": "Search shop",
+    "openToolbar": "Show search, theme, and account",
+    "closeToolbar": "Hide navigation tools"
   },
   "notification": {
     "lowStock": "Low Stock Alert",

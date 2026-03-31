@@ -8,8 +8,8 @@ import {
   Star, Brain, Lightbulb, Clock, Truck, X, 
   Check, ExternalLink, ShoppingCart, Wifi, WifiOff,
   Bell, Search, Filter, Plus, Loader2, ChevronLeft, 
-  ChevronRight, AlertCircle, Send, Loader, Menu, Globe,
-  Github, Linkedin, ShieldUser
+  ChevronRight, AlertCircle, Send, Loader,   Menu, Globe,
+  Github, Linkedin, ShieldUser, MoreHorizontal
 } from 'lucide-react';
 
 export const Icons = {
@@ -80,6 +80,8 @@ export const Icons = {
   send: Send,
   loading: Loader,
   menu: Menu,
+  /** Overflow / “more actions” in compact nav (conventional vs chevron-left as “back”). */
+  moreHorizontal: MoreHorizontal,
   globe: Globe,
   github: Github,
   linkedin: Linkedin,

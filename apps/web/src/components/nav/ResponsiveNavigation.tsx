@@ -24,6 +24,7 @@ export function ResponsiveNavigation({ lang, dict }: ResponsiveNavigationProps) 
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [utilitiesOpen, setUtilitiesOpen] = useState(false);
   const { data: session } = useSession();
 
   const linkBaseAdmin =
@@ -41,7 +42,27 @@ export function ResponsiveNavigation({ lang, dict }: ResponsiveNavigationProps) 
 
   useEffect(() => {
     setMobileSearchOpen(false);
+    setUtilitiesOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key !== "Escape") return;
+      if (!utilitiesOpen && !mobileSearchOpen) return;
+      setUtilitiesOpen(false);
+      setMobileSearchOpen(false);
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [utilitiesOpen, mobileSearchOpen]);
+
+  function toggleUtilities() {
+    setUtilitiesOpen((o) => {
+      const next = !o;
+      if (!next) setMobileSearchOpen(false);
+      return next;
+    });
+  }
 
   const desktopLinks = (
     <>
@@ -92,81 +113,103 @@ export function ResponsiveNavigation({ lang, dict }: ResponsiveNavigationProps) 
 
   return (
     <>
-      <nav className="mobile-nav mx-auto flex max-w-7xl items-center gap-2 px-3 py-2.5 sm:px-4 md:hidden">
-        <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-2.5">
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(true)}
-            className="glass-surface shrink-0 rounded-2xl p-2.5 transition-all duration-200 hover:brightness-105 active:scale-[0.98]"
-            aria-label={navLabels.openMenu ?? "Open menu"}
-            aria-expanded={mobileMenuOpen}
-          >
-            <Icon name="menu" className="h-5 w-5 text-[var(--text-secondary)]" />
-          </button>
-          <Link
-            href={`/${lang}`}
-            className="min-w-0 truncate font-display text-base font-extrabold tracking-[-0.04em] text-ui-primary sm:text-[17px]"
-          >
-            {brandName}
-            <span className="text-brand-dot">.</span>
-          </Link>
+      <nav className="mobile-nav mx-auto box-border flex max-w-7xl min-w-0 flex-col gap-2 overflow-x-hidden px-3 py-2.5 sm:px-4 md:hidden">
+        {/* Row 1: menu + brand stay clear; cart, bell, toolbar toggle never overflow into hamburger */}
+        <div className="relative z-10 flex w-full min-w-0 items-center gap-2 sm:gap-2.5">
+          <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-2.5">
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(true)}
+              className="glass-surface relative z-20 shrink-0 rounded-2xl p-2.5 transition-all duration-200 hover:brightness-105 active:scale-[0.98]"
+              aria-label={navLabels.openMenu ?? "Open menu"}
+              aria-expanded={mobileMenuOpen}
+            >
+              <Icon name="menu" className="h-5 w-5 text-[var(--text-secondary)]" />
+            </button>
+            <Link
+              href={`/${lang}`}
+              className="min-w-0 flex-1 truncate font-display text-base font-extrabold tracking-[-0.04em] text-ui-primary sm:text-[17px]"
+            >
+              {brandName}
+              <span className="text-brand-dot">.</span>
+            </Link>
+          </div>
+
+          <div className="flex shrink-0 items-center gap-1">
+            <MiniCart />
+            <NotificationBell />
+            <button
+              type="button"
+              onClick={toggleUtilities}
+              className={cn(
+                "shrink-0 rounded-2xl p-2.5 transition-all duration-200 active:scale-[0.98]",
+                utilitiesOpen
+                  ? "bg-cyan-500/15 text-cyan-600 ring-2 ring-cyan-500/30 dark:text-cyan-300"
+                  : "glass-surface text-[var(--text-secondary)] hover:brightness-105",
+              )}
+              aria-expanded={utilitiesOpen}
+              aria-controls="nav-utilities-mobile"
+              aria-label={
+                utilitiesOpen
+                  ? (navLabels.closeToolbar ?? "Hide navigation tools")
+                  : (navLabels.openToolbar ?? "Show search, theme, and account")
+              }
+            >
+              <Icon name={utilitiesOpen ? "cancel" : "moreHorizontal"} className="h-5 w-5" />
+            </button>
+          </div>
         </div>
 
-        <div className="flex shrink-0 items-center gap-1">
-          <button
-            type="button"
-            onClick={() => setMobileSearchOpen((o) => !o)}
-            className={cn(
-              "rounded-2xl p-2.5 transition-all duration-200 active:scale-[0.98]",
-              mobileSearchOpen
-                ? "bg-cyan-500/15 text-cyan-600 ring-2 ring-cyan-500/30 dark:text-cyan-300"
-                : "glass-surface text-[var(--text-secondary)] hover:brightness-105",
-            )}
-            aria-expanded={mobileSearchOpen}
-            aria-controls="mobile-nav-product-search"
-            aria-label={
-              mobileSearchOpen
-                ? (navLabels.collapseSearch ?? "Hide search")
-                : (navLabels.expandSearch ?? "Search shop")
-            }
+        {/* Row 2: full-width wrap — avoids single-row horizontal overflow and overlap with menu */}
+        {utilitiesOpen ? (
+          <div
+            id="nav-utilities-mobile"
+            className="flex w-full min-w-0 max-w-full flex-col gap-2 border-t border-ui-subtle/60 pt-2"
           >
-            <Icon name={mobileSearchOpen ? "cancel" : "search"} className="h-5 w-5" />
-          </button>
-          {session?.user ? (
-            <>
-              <MiniCart />
-              <NotificationBell />
-            </>
-          ) : (
-            <>
+            {mobileSearchOpen ? (
+              <Suspense
+                fallback={
+                  <div className="h-11 w-full animate-pulse rounded-xl bg-ui-inset" aria-hidden />
+                }
+              >
+                <NavProductSearch
+                  id="mobile-nav-product-search"
+                  lang={lang}
+                  placeholder={searchPlaceholder}
+                  ariaLabel={searchAria}
+                  variant="mobile"
+                  embeddedInNav
+                />
+              </Suspense>
+            ) : null}
+            <div className="flex w-full min-w-0 flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setMobileSearchOpen((o) => !o)}
+                className={cn(
+                  "shrink-0 rounded-2xl p-2.5 transition-all duration-200 active:scale-[0.98]",
+                  mobileSearchOpen
+                    ? "bg-cyan-500/15 text-cyan-600 ring-2 ring-cyan-500/30 dark:text-cyan-300"
+                    : "glass-surface text-[var(--text-secondary)] hover:brightness-105",
+                )}
+                aria-expanded={mobileSearchOpen}
+                aria-controls={mobileSearchOpen ? "mobile-nav-product-search" : undefined}
+                aria-label={
+                  mobileSearchOpen
+                    ? (navLabels.collapseSearch ?? "Hide search")
+                    : (navLabels.expandSearch ?? "Search shop")
+                }
+              >
+                <Icon name={mobileSearchOpen ? "cancel" : "search"} className="h-5 w-5" />
+              </button>
               <ThemeToggle />
-              <MiniCart />
-              <NotificationBell />
-              <AuthLinks compact />
-            </>
-          )}
-        </div>
+              <div className="flex min-w-0 max-w-full flex-1 basis-full flex-wrap items-center gap-2 sm:basis-auto sm:flex-initial">
+                <AuthLinks compact />
+              </div>
+            </div>
+          </div>
+        ) : null}
       </nav>
-
-      {mobileSearchOpen ? (
-        <div
-          id="mobile-nav-search-panel"
-          className="border-t border-ui-subtle/60 bg-ui-elevated/95 backdrop-blur-md md:hidden"
-        >
-          <Suspense
-            fallback={<div className="mx-3 mb-2 h-11 animate-pulse rounded-xl bg-ui-inset" aria-hidden />}
-          >
-            <NavProductSearch
-              id="mobile-nav-product-search"
-              lang={lang}
-              placeholder={searchPlaceholder}
-              ariaLabel={searchAria}
-              variant="mobile"
-              compact
-            />
-          </Suspense>
-        </div>
-      ) : null}
 
       <nav className="desktop-nav mx-auto hidden max-w-7xl items-center gap-4 px-6 py-3 md:flex">
         <Link
@@ -195,23 +238,48 @@ export function ResponsiveNavigation({ lang, dict }: ResponsiveNavigationProps) 
           />
         </Suspense>
 
-        <div className="ml-auto flex shrink-0 items-center gap-4 text-sm">
+        <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-2 lg:gap-4 text-sm">
           <div className="flex flex-wrap items-center gap-2 lg:hidden">{desktopLinks}</div>
-          {session?.user ? (
-            <>
+
+          <MiniCart />
+          <NotificationBell />
+
+          {utilitiesOpen ? (
+            <div
+              id="nav-utilities-desktop-md"
+              className="hidden items-center gap-2 md:flex lg:hidden"
+            >
               <AuthLinks />
               <ThemeToggle />
-              <MiniCart />
-              <NotificationBell />
-            </>
-          ) : (
-            <>
-              <ThemeToggle />
-              <MiniCart />
-              <NotificationBell />
-            </>
-          )}
-          <LanguageSwitcher locale={lang} />
+              <LanguageSwitcher locale={lang} />
+            </div>
+          ) : null}
+
+          <button
+            type="button"
+            onClick={toggleUtilities}
+            className={cn(
+              "hidden shrink-0 rounded-xl p-2.5 transition-all duration-200 active:scale-[0.98] md:inline-flex lg:hidden",
+              utilitiesOpen
+                ? "bg-cyan-500/15 text-cyan-600 ring-2 ring-cyan-500/30 dark:text-cyan-300"
+                : "glass-surface text-[var(--text-secondary)] hover:brightness-105",
+            )}
+            aria-expanded={utilitiesOpen}
+            aria-controls="nav-utilities-desktop-md"
+            aria-label={
+              utilitiesOpen
+                ? (navLabels.closeToolbar ?? "Hide navigation tools")
+                : (navLabels.openToolbar ?? "Show search, theme, and account")
+            }
+          >
+            <Icon name={utilitiesOpen ? "cancel" : "moreHorizontal"} className="h-5 w-5" />
+          </button>
+
+          <div className="hidden items-center gap-4 lg:flex">
+            <AuthLinks />
+            <ThemeToggle />
+            <LanguageSwitcher locale={lang} />
+          </div>
         </div>
       </nav>
 

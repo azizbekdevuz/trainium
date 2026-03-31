@@ -88,6 +88,7 @@ export default function AccountClient({ data }: { data: DataProps }) {
     [orders],
   );
 
+  /* eslint-disable-next-line */
   const loyaltyPoints = useMemo(
     () => Math.min(9999, orders.length * 60 + Math.floor(totalSpent / 500_000)),
     [orders.length, totalSpent],
