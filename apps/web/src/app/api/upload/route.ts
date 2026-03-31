@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '../../../auth'
-import { processUploadedImage } from '@/lib/image/image-processor'
 import {
   getPublicBlobStorage,
   contentTypeForFilename,
@@ -42,16 +41,14 @@ export async function POST(request: NextRequest) {
     const base = file.name.replace(/\.[^.]+$/, '')
     const unique = `${sanitizeFileName(base)}_${Date.now()}.` + (ext || 'bin')
 
-    const processed = await processUploadedImage(buffer, unique, async (name, data) => {
-      await storage.put(name, data, contentTypeForFilename(name))
-    })
+    await storage.put(unique, buffer, contentTypeForFilename(unique))
 
     const url = `/uploads/${unique}`
     const res = NextResponse.json({
       success: true,
       url,
       filename: unique,
-      variants: processed.variants,
+      variants: {} as Record<string, string>,
     })
     res.headers.set('Cache-Control', 'no-store, max-age=0')
     return res

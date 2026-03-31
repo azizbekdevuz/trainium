@@ -15,7 +15,7 @@ export function ImageUploadForm({ productId, dict, uploadImage }: ImageUploadFor
       </h2>
       <form action={uploadImage} className="space-y-4">
         <input type="hidden" name="id" value={productId} />
-        <FileUpload name="image" label={dict.admin?.products?.uploadImage ?? 'Upload image'} />
+        <FileUpload name="image" label={dict.admin?.products?.uploadImage ?? 'Upload image'} uploadTo="" />
         <div className="flex justify-end">
           <button className="px-6 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg transition-colors font-medium">
             {dict.common?.saveImage ?? 'Save Image'}

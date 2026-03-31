@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '../../../../auth'
 import { prisma } from '../../../../lib/database/db'
 import { verifyPassword, hashPassword } from '../../../../lib/auth/password'
+import { getPublicBlobStorage } from '@/lib/storage/blob-storage'
+import { deleteUploadKeyAndLegacyVariants } from '@/lib/storage/delete-public-upload'
+import { uploadKeyFromPublicUrl } from '@/lib/storage/upload-paths'
 
 export const runtime = 'nodejs'
 
@@ -32,6 +35,15 @@ export async function PATCH(req: NextRequest) {
       }
     }
 
+    let previousImage: string | null = null
+    if (image !== undefined) {
+      const row = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { image: true },
+      })
+      previousImage = row?.image ?? null
+    }
+
     const data: any = {
       ...(name !== undefined ? { name } : {}),
       ...(image !== undefined ? { image } : {}),
@@ -46,6 +58,15 @@ export async function PATCH(req: NextRequest) {
       data,
       select: { id: true, name: true, email: true, image: true },
     })
+
+    if (image !== undefined) {
+      const oldKey = uploadKeyFromPublicUrl(previousImage ?? '')
+      const newKey = uploadKeyFromPublicUrl(updated.image ?? '')
+      if (oldKey && oldKey !== newKey) {
+        await deleteUploadKeyAndLegacyVariants(getPublicBlobStorage(), oldKey)
+      }
+    }
+
     return NextResponse.json({ user: updated })
   } catch (e) {
     console.error('profile update failed', e)
@@ -57,9 +78,19 @@ export async function DELETE() {
   const session = await auth()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   try {
+    const row = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { image: true },
+    })
+    const oldKey = uploadKeyFromPublicUrl(row?.image ?? '')
+
     // Soft-delete approach: anonymize email, keep referential integrity
     const anon = `deleted_${session.user.id}@example.invalid`
     await prisma.user.update({ where: { id: session.user.id }, data: { email: anon, name: null, image: null, password: null } as any })
+
+    if (oldKey) {
+      await deleteUploadKeyAndLegacyVariants(getPublicBlobStorage(), oldKey)
+    }
     // Optionally: revoke sessions here if session store supports it
     return NextResponse.json({ ok: true })
   } catch (e) {

@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../../auth";
 import { requireAdminSession } from "../../../../../auth/require-admin";
 import { prisma } from "../../../../../lib/database/db";
+import { getPublicBlobStorage } from "@/lib/storage/blob-storage";
+import {
+  keysFromProductImagesJson,
+  deleteUploadKeyAndLegacyVariants,
+} from "@/lib/storage/delete-public-upload";
 
 export const runtime = "nodejs";
 
@@ -21,6 +26,17 @@ export async function POST(req: NextRequest) {
     const productIds = ids.filter((id: unknown): id is string => typeof id === 'string' && id.trim().length > 0);
     if (productIds.length === 0) {
       return NextResponse.json({ error: 'Invalid product ids' }, { status: 400 });
+    }
+
+    const products = await prisma.product.findMany({
+      where: { id: { in: productIds } },
+      select: { images: true },
+    });
+    const keysToDelete = new Set<string>();
+    for (const p of products) {
+      for (const k of keysFromProductImagesJson(p.images)) {
+        keysToDelete.add(k);
+      }
     }
 
     // Delete in a transaction to maintain referential integrity
@@ -49,6 +65,11 @@ export async function POST(req: NextRequest) {
       
       return productsDeleted;
     });
+
+    const storage = getPublicBlobStorage();
+    for (const key of keysToDelete) {
+      await deleteUploadKeyAndLegacyVariants(storage, key);
+    }
 
     return NextResponse.json({ success: true, count: result.count });
   } catch (error) {

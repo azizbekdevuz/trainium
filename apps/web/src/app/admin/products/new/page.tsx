@@ -10,6 +10,7 @@ import ToastOnQuery from '../../../../components/ui/feedback/ToastOnQuery';
 import { sortCategories } from '../../../../lib/product/category-utils';
 import { ProductFormClient } from '../../../../components/admin/ProductFormClient';
 import { getPublicBlobStorage, contentTypeForFilename } from '@/lib/storage/blob-storage';
+import { deleteUploadKeyAndLegacyVariants } from '@/lib/storage/delete-public-upload';
 
 function currencyMinorUnits(currency: string): number {
   switch (currency.toUpperCase()) {
@@ -46,43 +47,53 @@ async function createProduct(formData: FormData) {
 
   if (!name || !slug || !currency) return;
 
+  const storage = getPublicBlobStorage();
   let imageUrl = '';
+  let uploadedKey: string | null = null;
   if (imageFile && imageFile.size > 0) {
-    // Upload the file to app storage (served via /uploads/[filename])
     const buf = Buffer.from(await imageFile.arrayBuffer());
     const ext = (imageFile.name.split('.').pop() || 'jpg').toLowerCase();
     const filename = `product_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
-    await getPublicBlobStorage().put(filename, buf, contentTypeForFilename(filename));
+    uploadedKey = filename;
+    await storage.put(filename, buf, contentTypeForFilename(filename));
     imageUrl = `/uploads/${filename}`;
   }
 
+  let product;
   try {
-    const product = await prisma.product.create({
+    product = await prisma.product.create({
       data: {
-      name,
-      slug,
-      summary,
-      description,
-      brand: brand || undefined,
-      priceCents,
-      currency,
-      images: imageUrl ? [{ src: imageUrl }] : [],
-      active,
-      categories: {
-        connect: categoryIds.map(id => ({ id }))
-      },
-      inventory: { 
-        create: { 
-          inStock,
-          lowStockAt: lowStockAt || undefined
-        } 
-      },
+        name,
+        slug,
+        summary,
+        description,
+        brand: brand || undefined,
+        priceCents,
+        currency,
+        images: imageUrl ? [{ src: imageUrl }] : [],
+        active,
+        categories: {
+          connect: categoryIds.map((id) => ({ id })),
+        },
+        inventory: {
+          create: {
+            inStock,
+            lowStockAt: lowStockAt || undefined,
+          },
+        },
       },
     });
+  } catch {
+    if (uploadedKey) {
+      await deleteUploadKeyAndLegacyVariants(storage, uploadedKey);
+    }
+    throw new Error('Failed to create product');
+  }
+
+  try {
     await sendNewProductNotification(product.id);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (error: any) {
-    // ignore notification errors
+  } catch {
+    /* notification non-fatal */
   }
   revalidatePath('/products');
   revalidatePath('/admin/products');

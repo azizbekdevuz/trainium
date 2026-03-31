@@ -7,6 +7,10 @@ import { redirect } from 'next/navigation';
 import { negotiateLocale, getDictionary } from '../../../../../lib/i18n/i18n';
 import { priceToMinorUnits } from '../../../../../lib/product/product-utils';
 import { getPublicBlobStorage, contentTypeForFilename } from '@/lib/storage/blob-storage';
+import {
+  keysFromProductImagesJson,
+  deleteUploadKeyAndLegacyVariants,
+} from '@/lib/storage/delete-public-upload';
 
 async function requireAdmin() {
   const session = await auth();
@@ -83,26 +87,29 @@ export async function uploadImage(formData: FormData) {
   
   if (!file || !file.size) return;
 
+  const current = await prisma.product.findUnique({
+    where: { id },
+    select: { images: true },
+  });
+  const previousKeys = keysFromProductImagesJson(current?.images);
+
   const buf = Buffer.from(await file.arrayBuffer());
   const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
   const filename = `${id}-${Date.now()}.${ext}`;
-  await getPublicBlobStorage().put(filename, buf, contentTypeForFilename(filename));
+  const storage = getPublicBlobStorage();
+  await storage.put(filename, buf, contentTypeForFilename(filename));
   const publicUrl = `/uploads/${filename}`;
 
-  // Preserve existing images; set the new one as primary (first)
-  const current = await prisma.product.findUnique({ 
-    where: { id }, 
-    select: { images: true } 
+  await prisma.product.update({
+    where: { id },
+    data: { images: [{ src: publicUrl }] },
   });
-  const existingImages = (Array.isArray(current?.images) ? (current?.images as any[]) : []) as any[];
-  const remaining = existingImages.filter((img) => img && typeof img === 'object' && img.src);
-  const newImages = [{ src: publicUrl }, ...remaining];
 
-  await prisma.product.update({ 
-    where: { id }, 
-    data: { images: newImages } 
-  });
-  
+  for (const key of previousKeys) {
+    if (key === filename) continue;
+    await deleteUploadKeyAndLegacyVariants(storage, key);
+  }
+
   revalidatePath('/products');
   revalidatePath('/admin/products');
   const msg = encodeURIComponent(dict.admin?.products?.toast?.imageUpdated ?? 'Image updated');
