@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { resolve, relative, parse } from 'path'
-import { readFile } from 'fs/promises'
-import { existsSync } from 'fs'
+import { parse } from 'path'
 import { sanitizeFilename } from '@/lib/utils/path-safety'
-import { getUploadsRoot } from '@/lib/storage/upload-paths'
+import { getPublicBlobStorage, isStorageBackendError } from '@/lib/storage/blob-storage'
+import { storageLog } from '@/lib/storage/storage-log'
 
 export const runtime = 'nodejs'
+
+const VARIANT_WIDTHS = [256, 512, 768, 1024] as const
 
 function getContentType(ext: string): string {
   switch (ext) {
@@ -25,32 +26,29 @@ function getContentType(ext: string): string {
   }
 }
 
-function tryFindWebPVariant(
-  uploadsDir: string,
+async function tryFindWebPVariant(
+  storage: { exists: (k: string) => Promise<boolean> },
   filename: string,
   requestedWidth: number | null
-): string | null {
+): Promise<string | null> {
   const { name } = parse(filename)
-  
-  if (requestedWidth) {
-    const widths = [256, 512, 768, 1024]
-    for (const w of widths) {
-      if (w >= requestedWidth) {
-        const variantName = `${name}_${w}.webp`
-        const variantPath = resolve(uploadsDir, variantName)
-        if (existsSync(variantPath)) {
-          return variantName
-        }
+
+  if (requestedWidth !== null && requestedWidth > 0) {
+    const widths = VARIANT_WIDTHS.filter((w) => w >= requestedWidth)
+    if (widths.length) {
+      const keys = widths.map((w) => `${name}_${w}.webp`)
+      const flags = await Promise.all(keys.map((k) => storage.exists(k)))
+      for (let i = 0; i < keys.length; i++) {
+        if (flags[i]) return keys[i]!
       }
     }
   }
-  
+
   const webpName = `${name}.webp`
-  const webpPath = resolve(uploadsDir, webpName)
-  if (existsSync(webpPath)) {
+  if (await storage.exists(webpName)) {
     return webpName
   }
-  
+
   return null
 }
 
@@ -59,53 +57,64 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const safe = sanitizeFilename(filename)
   if (!safe) return NextResponse.json({ ok: false }, { status: 400 })
 
-  const uploadsDir = getUploadsRoot()
-  
+  const storage = getPublicBlobStorage()
+
   const acceptHeader = request.headers.get('accept') || ''
   const acceptsWebp = acceptHeader.includes('image/webp')
-  
+
   const widthParam = request.nextUrl.searchParams.get('w')
-  const requestedWidth = widthParam ? parseInt(widthParam, 10) : null
-  
+  const parsedW = widthParam ? parseInt(widthParam, 10) : NaN
+  const requestedWidth = Number.isFinite(parsedW) && parsedW > 0 ? parsedW : null
+
   let fileToServe = safe
-  
+
   const ext = safe.split('.').pop()?.toLowerCase()
   const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(ext || '')
-  
+
   if (isImage && acceptsWebp) {
-    const webpVariant = tryFindWebPVariant(uploadsDir, safe, requestedWidth)
+    const webpVariant = await tryFindWebPVariant(storage, safe, requestedWidth)
     if (webpVariant) {
       fileToServe = webpVariant
     }
   }
 
-  const filePath = resolve(uploadsDir, fileToServe)
-  const rel = relative(uploadsDir, filePath)
-  if (rel.startsWith('..')) return NextResponse.json({ ok: false }, { status: 400 })
-
+  let data: Buffer
   try {
-    const data = await readFile(filePath)
-    const servedExt = fileToServe.split('.').pop()?.toLowerCase() || ''
-    const type = getContentType(servedExt)
-
-    const view = new Uint8Array(data)
-    const arrayBuffer = view.buffer.slice(view.byteOffset, view.byteOffset + view.byteLength)
-    const blob = new Blob([arrayBuffer], { type })
-
-    const cacheControl = fileToServe !== safe 
-      ? 'public, max-age=31536000, immutable'
-      : 'no-store, max-age=0'
-
-    return new NextResponse(blob, {
-      headers: {
-        'Content-Type': type,
-        'Cache-Control': cacheControl,
-        'Vary': 'Accept',
-      },
-    })
-  } catch {
-    return NextResponse.json({ ok: false }, { status: 404 })
+    const bytes = await storage.getBytes(fileToServe)
+    if (!bytes) {
+      return NextResponse.json({ ok: false }, { status: 404 })
+    }
+    data = bytes
+  } catch (e) {
+    if (isStorageBackendError(e)) {
+      storageLog('error', 'upload_route_get_failed', {
+        key: fileToServe,
+        message: e.message,
+      })
+    } else {
+      storageLog('error', 'upload_route_get_failed', {
+        key: fileToServe,
+        message: e instanceof Error ? e.message : 'unknown',
+      })
+    }
+    return NextResponse.json({ ok: false }, { status: 503 })
   }
+
+  const servedExt = fileToServe.split('.').pop()?.toLowerCase() || ''
+  const type = getContentType(servedExt)
+
+  const view = new Uint8Array(data)
+  const arrayBuffer = view.buffer.slice(view.byteOffset, view.byteOffset + view.byteLength)
+  const blob = new Blob([arrayBuffer], { type })
+
+  const cacheControl =
+    fileToServe !== safe ? 'public, max-age=31536000, immutable' : 'no-store, max-age=0'
+
+  return new NextResponse(blob, {
+    headers: {
+      'Content-Type': type,
+      'Cache-Control': cacheControl,
+      Vary: 'Accept',
+    },
+  })
 }
-
-

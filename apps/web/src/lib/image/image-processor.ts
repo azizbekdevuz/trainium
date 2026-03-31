@@ -4,9 +4,9 @@
  * Falls back gracefully if sharp is not available
  */
 
-import { writeFile, unlink } from 'fs/promises';
-import { existsSync } from 'fs';
-import { join, parse } from 'path';
+import { parse } from 'path';
+
+export type UploadWriteFn = (filename: string, data: Buffer) => Promise<void>;
 
 export interface ImageVariant {
   width: number;
@@ -34,10 +34,9 @@ let sharpLoadAttempted = false;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function getSharp(): Promise<any> {
   if (sharpLoadAttempted) return sharpModule;
-  
+
   sharpLoadAttempted = true;
   try {
-    // Dynamic import - sharp is optional, will fail gracefully if not installed
     const moduleName = 'sharp';
     sharpModule = (await import(/* webpackIgnore: true */ moduleName)).default;
     return sharpModule;
@@ -60,23 +59,23 @@ function getVariantFilename(originalName: string, suffix: string, format: string
 export async function processUploadedImage(
   buffer: Buffer,
   originalFilename: string,
-  uploadsDir: string
+  writeOut: UploadWriteFn
 ): Promise<ProcessedImage> {
   const sharp = await getSharp();
   const { name, ext } = parse(originalFilename);
   const originalExt = ext.slice(1).toLowerCase();
-  
+
   const result: ProcessedImage = {
     original: originalFilename,
     variants: {},
   };
 
   if (!isImageFile(originalFilename)) {
-    await writeFile(join(uploadsDir, originalFilename), buffer);
+    await writeOut(originalFilename, buffer);
     return result;
   }
 
-  await writeFile(join(uploadsDir, originalFilename), buffer);
+  await writeOut(originalFilename, buffer);
 
   if (!sharp) {
     return result;
@@ -91,17 +90,17 @@ export async function processUploadedImage(
       if (variant.width >= originalWidth) continue;
 
       const webpFilename = getVariantFilename(originalFilename, variant.suffix, 'webp');
-      const webpPath = join(uploadsDir, webpFilename);
 
       try {
-        await sharp(buffer)
+        const webpBuffer = await sharp(buffer)
           .resize(variant.width, null, {
             withoutEnlargement: true,
             fit: 'inside',
           })
           .webp({ quality: 80 })
-          .toFile(webpPath);
+          .toBuffer();
 
+        await writeOut(webpFilename, webpBuffer);
         result.variants[`${variant.width}w`] = webpFilename;
       } catch (err) {
         console.warn(`[ImageProcessor] Failed to create variant ${variant.width}w:`, err);
@@ -110,19 +109,15 @@ export async function processUploadedImage(
 
     if (originalExt !== 'webp') {
       const webpOriginalFilename = `${name}.webp`;
-      const webpOriginalPath = join(uploadsDir, webpOriginalFilename);
-      
+
       try {
-        await sharp(buffer)
-          .webp({ quality: 85 })
-          .toFile(webpOriginalPath);
-        
+        const webpBuf = await sharp(buffer).webp({ quality: 85 }).toBuffer();
+        await writeOut(webpOriginalFilename, webpBuf);
         result.variants['webp'] = webpOriginalFilename;
       } catch (err) {
         console.warn('[ImageProcessor] Failed to create WebP version:', err);
       }
     }
-
   } catch (err) {
     console.error('[ImageProcessor] Error processing image:', err);
   }
@@ -141,8 +136,8 @@ export function selectBestVariant(
 
   if (acceptsWebp && variants['webp']) {
     const sortedWidths = Object.keys(variants)
-      .filter(k => k.endsWith('w'))
-      .map(k => parseInt(k))
+      .filter((k) => k.endsWith('w'))
+      .map((k) => parseInt(k, 10))
       .sort((a, b) => a - b);
 
     for (const width of sortedWidths) {
@@ -157,31 +152,25 @@ export function selectBestVariant(
   return null;
 }
 
+/** Remove generated WebP variants for an original key (does not remove the original file). */
 export async function cleanupVariants(
   originalFilename: string,
-  uploadsDir: string
+  del: (key: string) => Promise<void>
 ): Promise<void> {
   const { name } = parse(originalFilename);
-  
+
   for (const variant of VARIANT_SIZES) {
     const webpFilename = getVariantFilename(originalFilename, variant.suffix, 'webp');
-    const webpPath = join(uploadsDir, webpFilename);
-    
     try {
-      if (existsSync(webpPath)) {
-        await unlink(webpPath);
-      }
+      await del(webpFilename);
     } catch {
-      // Ignore cleanup errors
+      /* ignore */
     }
   }
 
-  const webpOriginalPath = join(uploadsDir, `${name}.webp`);
   try {
-    if (existsSync(webpOriginalPath)) {
-      await unlink(webpOriginalPath);
-    }
+    await del(`${name}.webp`);
   } catch {
-    // Ignore cleanup errors
+    /* ignore */
   }
 }

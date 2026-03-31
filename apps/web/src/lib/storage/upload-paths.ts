@@ -1,11 +1,26 @@
-import { resolve, relative } from 'path';
+import { resolve, relative, isAbsolute, basename } from 'path';
 import { sanitizeFilename } from '@/lib/utils/path-safety';
 
 const UPLOADS_PUBLIC_PREFIX = '/uploads/';
 
-/** Absolute path to `storage/uploads` for the Next app (uses `process.cwd()` by default). */
+/**
+ * Absolute directory for local disk uploads.
+ * Set `UPLOADS_DIR` in production (e.g. Docker: `/data/uploads`) so paths never depend on `cwd`.
+ * Falls back to `<cwd>/storage/uploads` for local dev.
+ */
 export function getUploadsRoot(cwd: string = process.cwd()): string {
+  const fromEnv = process.env.UPLOADS_DIR?.trim();
+  if (fromEnv && isAbsolute(fromEnv)) {
+    return resolve(fromEnv);
+  }
   return resolve(cwd, 'storage', 'uploads');
+}
+
+/** Safe object key for `/uploads/…` URLs (flat basename), or null if not a local upload URL. */
+export function uploadKeyFromPublicUrl(publicUrl: string): string | null {
+  const fsPath = resolveLocalUploadFilePath(publicUrl, process.cwd());
+  if (!fsPath) return null;
+  return basename(fsPath);
 }
 
 /**

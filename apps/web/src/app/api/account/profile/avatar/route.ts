@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '../../../../../auth'
 import { prisma } from '../../../../../lib/database/db'
-import { writeFile, mkdir, unlink } from 'fs/promises'
-import { join } from 'path'
-import { existsSync } from 'fs'
-import { getUploadsRoot, resolveLocalUploadFilePath } from '@/lib/storage/upload-paths'
+import {
+  getPublicBlobStorage,
+  contentTypeForFilename,
+  isStorageBackendError,
+} from '@/lib/storage/blob-storage'
+import { storageLog } from '@/lib/storage/storage-log'
+import { uploadKeyFromPublicUrl } from '@/lib/storage/upload-paths'
 
 export const runtime = 'nodejs'
 
@@ -19,14 +22,12 @@ export async function POST(request: NextRequest) {
 
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
-    const uploadsDir = getUploadsRoot()
-    if (!existsSync(uploadsDir)) await mkdir(uploadsDir, { recursive: true })
+    const storage = getPublicBlobStorage()
 
-    const ext = file.name.includes('.') ? file.name.split('.').pop() : ''
-    const base = file.name.replace(/\.[^.]+$/, '')
-    const unique = `${base}_${Date.now()}.${ext || 'bin'}`
-    const filePath = join(uploadsDir, unique)
-    await writeFile(filePath, buffer)
+    const rawExt = file.name.includes('.') ? (file.name.split('.').pop() || 'jpg') : 'jpg'
+    const ext = rawExt.toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg'
+    const unique = `avatar_${Date.now()}_${Math.random().toString(36).slice(2, 10)}.${ext}`
+    await storage.put(unique, buffer, contentTypeForFilename(unique))
     const url = `/uploads/${unique}`
 
     const updated = await prisma.user.update({
@@ -39,7 +40,13 @@ export async function POST(request: NextRequest) {
     res.headers.set('Cache-Control', 'no-store, max-age=0')
     return res
   } catch (err) {
-    console.error('Avatar upload failed', err)
+    if (isStorageBackendError(err)) {
+      storageLog('error', 'api_avatar_storage_failed', { message: err.message })
+      return NextResponse.json({ success: false, error: 'Failed to upload avatar' }, { status: 503 })
+    }
+    storageLog('error', 'api_avatar_failed', {
+      message: err instanceof Error ? err.message : 'unknown',
+    })
     return NextResponse.json({ success: false, error: 'Failed to upload avatar' }, { status: 500 })
   }
 }
@@ -51,13 +58,9 @@ export async function DELETE() {
   try {
     const user = await prisma.user.findUnique({ where: { id: session.user.id }, select: { image: true } })
     const current = user?.image || ''
-    const filePath = resolveLocalUploadFilePath(current)
-    if (filePath) {
-      try {
-        await unlink(filePath).catch(() => {})
-      } catch (e) {
-        console.error('Avatar delete failed', e)
-      }
+    const key = uploadKeyFromPublicUrl(current)
+    if (key) {
+      await getPublicBlobStorage().delete(key)
     }
     const updated = await prisma.user.update({
       where: { id: session.user.id },

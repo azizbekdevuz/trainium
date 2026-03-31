@@ -1,13 +1,22 @@
-import { describe, it, expect } from 'vitest';
-import { relative } from 'path';
-import { getUploadsRoot, resolveLocalUploadFilePath } from './upload-paths';
+import { describe, it, expect, afterEach } from 'vitest';
+import { relative, resolve } from 'path';
+import { getUploadsRoot, resolveLocalUploadFilePath, uploadKeyFromPublicUrl } from './upload-paths';
 
 describe('upload-paths', () => {
   const cwd = '/tmp/fake-next-app';
 
+  afterEach(() => {
+    delete process.env.UPLOADS_DIR;
+  });
+
   it('getUploadsRoot joins storage/uploads under cwd', () => {
     const root = getUploadsRoot(cwd);
     expect(relative(cwd, root)).toMatch(/storage[/\\]uploads$/);
+  });
+
+  it('getUploadsRoot uses UPLOADS_DIR when absolute', () => {
+    process.env.UPLOADS_DIR = '/data/uploads';
+    expect(getUploadsRoot(cwd)).toBe(resolve('/data/uploads'));
   });
 
   it('resolveLocalUploadFilePath maps /uploads/name under storage/uploads', () => {
@@ -28,5 +37,9 @@ describe('upload-paths', () => {
 
   it('returns null for non-local URLs', () => {
     expect(resolveLocalUploadFilePath('https://cdn.example/x.jpg', cwd)).toBeNull();
+  });
+
+  it('uploadKeyFromPublicUrl returns basename for local /uploads URL', () => {
+    expect(uploadKeyFromPublicUrl('/uploads/foo_123.jpg')).toBe('foo_123.jpg');
   });
 });

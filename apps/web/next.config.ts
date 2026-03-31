@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
   },
   compress: true,
   poweredByHeader: false,
-  serverExternalPackages: ['bcrypt', 'sharp'],
+  serverExternalPackages: ['bcrypt', 'sharp', '@aws-sdk/client-s3'],
   async headers() {
     return [
       {

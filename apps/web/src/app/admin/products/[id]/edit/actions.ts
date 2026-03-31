@@ -6,9 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { negotiateLocale, getDictionary } from '../../../../../lib/i18n/i18n';
 import { priceToMinorUnits } from '../../../../../lib/product/product-utils';
-import fs from 'fs/promises';
-import path from 'path';
-import { getUploadsRoot } from '@/lib/storage/upload-paths';
+import { getPublicBlobStorage, contentTypeForFilename } from '@/lib/storage/blob-storage';
 
 async function requireAdmin() {
   const session = await auth();
@@ -87,11 +85,8 @@ export async function uploadImage(formData: FormData) {
 
   const buf = Buffer.from(await file.arrayBuffer());
   const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
-  const uploadsDir = getUploadsRoot();
-  await fs.mkdir(uploadsDir, { recursive: true });
   const filename = `${id}-${Date.now()}.${ext}`;
-  const filePath = path.join(uploadsDir, filename);
-  await fs.writeFile(filePath, buf);
+  await getPublicBlobStorage().put(filename, buf, contentTypeForFilename(filename));
   const publicUrl = `/uploads/${filename}`;
 
   // Preserve existing images; set the new one as primary (first)

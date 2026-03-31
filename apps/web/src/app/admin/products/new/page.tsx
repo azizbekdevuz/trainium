@@ -9,9 +9,7 @@ import { negotiateLocale, getDictionary } from '../../../../lib/i18n/i18n';
 import ToastOnQuery from '../../../../components/ui/feedback/ToastOnQuery';
 import { sortCategories } from '../../../../lib/product/category-utils';
 import { ProductFormClient } from '../../../../components/admin/ProductFormClient';
-import fs from 'fs/promises';
-import path from 'path';
-import { getUploadsRoot } from '@/lib/storage/upload-paths';
+import { getPublicBlobStorage, contentTypeForFilename } from '@/lib/storage/blob-storage';
 
 function currencyMinorUnits(currency: string): number {
   switch (currency.toUpperCase()) {
@@ -53,11 +51,8 @@ async function createProduct(formData: FormData) {
     // Upload the file to app storage (served via /uploads/[filename])
     const buf = Buffer.from(await imageFile.arrayBuffer());
     const ext = (imageFile.name.split('.').pop() || 'jpg').toLowerCase();
-    const uploadsDir = getUploadsRoot();
-    await fs.mkdir(uploadsDir, { recursive: true });
     const filename = `product_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
-    const filePath = path.join(uploadsDir, filename);
-    await fs.writeFile(filePath, buf);
+    await getPublicBlobStorage().put(filename, buf, contentTypeForFilename(filename));
     imageUrl = `/uploads/${filename}`;
   }
 
