@@ -73,6 +73,12 @@ export async function middleware(req: NextRequest) {
       res = NextResponse.rewrite(rewriteURL, {
         request: { headers: requestHeaders },
       });
+      // Keep cookie aligned with URL so client-only reads and server agree after direct navigation
+      res.cookies.set(LOCALE_COOKIE, first as string, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 30 * 6, // ~6 months, matches LanguageSwitcher
+        sameSite: "lax",
+      });
     }
   }
 

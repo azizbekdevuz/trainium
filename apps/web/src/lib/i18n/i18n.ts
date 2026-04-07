@@ -44,15 +44,16 @@ class LocaleCache {
 const localeCache = new LocaleCache();
 
 export async function negotiateLocale(): Promise<AppLocale> {
-  // 1) Cookie
+  const hdrs = await headers()
+
+  // 1) URL locale from middleware (must win over cookie so direct visits like /ko match the UI)
+  const fromHeader = (hdrs.get('x-locale') as AppLocale | null) || null
+  if (fromHeader && SUPPORTED_LOCALES.includes(fromHeader)) return fromHeader
+
+  // 2) Cookie (persists choice when path has no locale segment, e.g. after redirects)
   const cookieStore = await cookies()
   const fromCookie = cookieStore.get(LOCALE_COOKIE)?.value as AppLocale | undefined
   if (fromCookie && SUPPORTED_LOCALES.includes(fromCookie)) return fromCookie
-
-  // 2) Middleware-provided header
-  const hdrs = await headers()
-  const fromHeader = (hdrs.get('x-locale') as AppLocale | null) || null
-  if (fromHeader && SUPPORTED_LOCALES.includes(fromHeader)) return fromHeader
 
   // 3) Accept-Language
   const accept = hdrs.get('accept-language') || ''
