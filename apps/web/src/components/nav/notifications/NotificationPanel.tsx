@@ -1,9 +1,11 @@
+import type { CSSProperties } from 'react';
 import { X, Wifi, WifiOff } from 'lucide-react';
 import Link from 'next/link';
 import { LocalTime } from '../../ui/LocalTime';
 import { translateNotification, getNotificationActions } from './utils';
 import type { Notification } from '@/lib/notifications/types';
 import type { Dictionary } from '../../../lib/i18n/i18n';
+import { cn } from '@/lib/utils/format';
 
 interface NotificationPanelProps {
   notifications: Notification[];
@@ -15,6 +17,8 @@ interface NotificationPanelProps {
   onMarkAsRead: (ids: string[]) => void;
   onMarkAllAsRead: () => void;
   onClose: () => void;
+  /** When set, panel is `position:fixed` with this style (e.g. portaled to `document.body` above the nav). */
+  fixedPanelStyle?: CSSProperties;
 }
 
 export function NotificationPanel({
@@ -27,19 +31,30 @@ export function NotificationPanel({
   onMarkAsRead,
   onMarkAllAsRead,
   onClose,
+  fixedPanelStyle,
 }: NotificationPanelProps) {
   const tr = (raw: string) => translateNotification(raw, dict);
+  const portaled = Boolean(fixedPanelStyle);
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Backdrop — higher z when portaled so panels sit above mobile nav utilities + header */}
       <div
-        className="fixed inset-0 z-[80] bg-black/5 dark:bg-black/20"
+        className={cn(
+          'fixed inset-0 bg-black/5 dark:bg-black/20',
+          portaled ? 'z-[199]' : 'z-[80]',
+        )}
         onClick={onClose}
       />
 
       {/* Notification Panel */}
-      <div className="absolute right-0 top-full mt-2 w-80 frosted-panel rounded-xl z-[90] max-h-96 overflow-hidden">
+      <div
+        className={cn(
+          'w-80 frosted-panel rounded-xl max-h-96 overflow-hidden shadow-lg',
+          portaled ? 'fixed z-[200]' : 'absolute right-0 top-full z-[90] mt-2',
+        )}
+        style={fixedPanelStyle}
+      >
         <div className="p-4 border-b flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h3 className="font-semibold text-ui-primary">{dict.notifications?.bellTitle ?? 'Notifications'}</h3>

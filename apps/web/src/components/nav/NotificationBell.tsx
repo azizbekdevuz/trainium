@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import type { CSSProperties } from 'react';
+import { useState, useMemo, useEffect, useRef, useLayoutEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useSession } from 'next-auth/react';
 import { Bell, Wifi, WifiOff } from 'lucide-react';
 import { useSocketNotifications } from '../providers/SocketNotificationsProvider';
@@ -13,6 +15,19 @@ export function NotificationBell() {
   const { data: session } = useSession();
   const { dict, lang } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const [panelStyle, setPanelStyle] = useState<CSSProperties>(() => ({
+    position: 'fixed',
+    top: 72,
+    right: 12,
+    width: 320,
+    maxHeight: 'min(70dvh, 24rem)',
+  }));
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const {
     isConnected,
@@ -28,7 +43,6 @@ export function NotificationBell() {
     fetchDbNotifications,
   } = useDbNotifications({ userId: session?.user?.id });
 
-  // Refresh DB notifications when socket reconnects
   useEffect(() => {
     if (isConnected) {
       fetchDbNotifications();
@@ -36,17 +50,14 @@ export function NotificationBell() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected]);
 
-  // Combined notification management
   const handleMarkAsRead = (notificationIds: string[]) => {
-    notificationIds.forEach(id => {
-      if (socketNotifications.some(n => n.id === id)) {
+    notificationIds.forEach((id) => {
+      if (socketNotifications.some((n) => n.id === id)) {
         markNotificationAsRead(id);
       }
     });
 
-    const dbIds = notificationIds.filter(id =>
-      dbNotifications.some(n => n.id === id)
-    );
+    const dbIds = notificationIds.filter((id) => dbNotifications.some((n) => n.id === id));
     if (dbIds.length > 0) {
       markDbAsRead(dbIds);
     }
@@ -57,26 +68,83 @@ export function NotificationBell() {
     markAllDbAsRead();
   };
 
-  // Combine Socket.IO and database notifications with deduplication
-  const allNotifications = useMemo(() => {
-    return deduplicateNotifications(socketNotifications, dbNotifications);
-  }, [socketNotifications, dbNotifications]);
-
-  // Derive unread count from deduplicated list so badge matches visible notifications
-  const totalUnreadCount = useMemo(
-    () => allNotifications.filter(n => !n.read).length,
-    [allNotifications]
+  const allNotifications = useMemo(
+    () => deduplicateNotifications(socketNotifications, dbNotifications),
+    [socketNotifications, dbNotifications],
   );
+
+  const totalUnreadCount = useMemo(
+    () => allNotifications.filter((n) => !n.read).length,
+    [allNotifications],
+  );
+
+  useLayoutEffect(() => {
+    if (!isOpen || !triggerRef.current) {
+      return undefined;
+    }
+    const place = () => {
+      const el = triggerRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const margin = 12;
+      const vw = window.innerWidth;
+      const rightAligned = Math.min(320, Math.max(0, rect.right - margin));
+      if (rightAligned >= 220) {
+        setPanelStyle({
+          position: 'fixed',
+          top: rect.bottom + 8,
+          right: vw - rect.right,
+          width: rightAligned,
+          maxHeight: 'min(70dvh, 24rem)',
+        });
+      } else {
+        setPanelStyle({
+          position: 'fixed',
+          top: rect.bottom + 8,
+          left: margin,
+          right: margin,
+          width: 'auto',
+          maxHeight: 'min(70dvh, 24rem)',
+        });
+      }
+    };
+    place();
+    window.addEventListener('resize', place);
+    window.addEventListener('scroll', place, true);
+    return () => {
+      window.removeEventListener('resize', place);
+      window.removeEventListener('scroll', place, true);
+    };
+  }, [isOpen, allNotifications.length, totalUnreadCount]);
 
   if (!session?.user?.id) {
     return null;
   }
 
+  const panel = (
+    <NotificationPanel
+      notifications={allNotifications}
+      isConnected={isConnected}
+      totalUnreadCount={totalUnreadCount}
+      lang={lang}
+      dict={dict}
+      userEmail={session.user.email}
+      onMarkAsRead={handleMarkAsRead}
+      onMarkAllAsRead={handleMarkAllAsRead}
+      onClose={() => setIsOpen(false)}
+      fixedPanelStyle={panelStyle}
+    />
+  );
+
   return (
     <div className="relative">
       <button
+        ref={triggerRef}
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 text-ui-muted hover:text-ui-primary transition-colors"
+        aria-expanded={isOpen}
+        aria-label={dict.notifications?.bellTitle ?? 'Notifications'}
       >
         <Bell className="h-5 w-5" />
         {totalUnreadCount > 0 && (
@@ -84,7 +152,6 @@ export function NotificationBell() {
             {totalUnreadCount > 9 ? '9+' : totalUnreadCount}
           </span>
         )}
-        {/* Connection status indicator */}
         <div className="absolute -bottom-1 -right-1">
           {isConnected ? (
             <Wifi className="h-3 w-3 text-green-500" />
@@ -94,19 +161,7 @@ export function NotificationBell() {
         </div>
       </button>
 
-      {isOpen && (
-        <NotificationPanel
-          notifications={allNotifications}
-          isConnected={isConnected}
-          totalUnreadCount={totalUnreadCount}
-          lang={lang}
-          dict={dict}
-          userEmail={session?.user?.email}
-          onMarkAsRead={handleMarkAsRead}
-          onMarkAllAsRead={handleMarkAllAsRead}
-          onClose={() => setIsOpen(false)}
-        />
-      )}
+      {isOpen && mounted ? createPortal(panel, document.body) : null}
     </div>
   );
 }
