@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../../auth";
 import { prisma } from "../../../../../lib/database/db";
+import { getRequestLogger } from "../../../../../lib/logging/request-logger";
 
 export const runtime = "nodejs";
 
@@ -46,7 +47,8 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Toss payment completion error:', error);
+    const log = await getRequestLogger();
+    log.error({ err: error, event: 'toss_payment_complete_error' }, 'Toss payment completion error');
     return NextResponse.json(
       { error: "Payment completion failed" }, 
       { status: 500 }

@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-// import { prisma } from '../../../lib/database/db';
 import { Resend } from 'resend';
+import { z } from 'zod';
+import { buildContactMailtoHrefs } from '@/lib/email/mailto-url';
+import { serverLogger } from '@/lib/logging/server-logger';
 
 export const runtime = 'nodejs';
+
+const contactBodySchema = z.object({
+  name: z.string().trim().min(1).max(200),
+  email: z.string().trim().email().max(320),
+  reason: z.string().trim().min(1).max(200),
+  message: z.string().trim().min(1).max(10_000),
+});
 
 function getResend() {
   const key = process.env.RESEND_API_KEY;
@@ -14,19 +23,18 @@ function getResend() {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const name = String(body?.name || '').trim();
-    const email = String(body?.email || '').trim();
-    const reason = String(body?.reason || '').trim();
-    const message = String(body?.message || '').trim();
-
-    if (!name || !email || !reason || !message) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    const json = await req.json();
+    const parsed = contactBodySchema.safeParse(json);
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
     }
 
-    // pick a random active admin (disabled for free Resend plan)
-    // const admins = await prisma.user.findMany({ where: { role: 'ADMIN' }, select: { email: true }, take: 20 });
-    // const recipient = admins.length > 0 ? admins[Math.floor(Math.random() * admins.length)].email : process.env.SUPPORT_EMAIL;
+    const { name, email, reason, message } = parsed.data;
+
+    const mailto = buildContactMailtoHrefs({ email, reasonForSubject: reason });
+    if (!mailto) {
+      return NextResponse.json({ error: 'Invalid email' }, { status: 400 });
+    }
 
     // Temporary: always send to verified testing address
     const recipient = 'azizbek.dev.ac@gmail.com';
@@ -41,20 +49,20 @@ export async function POST(req: NextRequest) {
         email,
         reason,
         message,
+        mailtoHref: mailto.mailtoHref,
+        replyMailtoHref: mailto.replyMailtoHref,
       }),
-      reply_to: email,
-    } as any);
+      replyTo: email,
+    });
 
     if (error) {
-      console.error('Contact email error:', error);
+      serverLogger.error({ err: error, event: 'contact_email_failed' }, 'Contact form email failed');
       return NextResponse.json({ error: 'Failed to send message' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (e) {
-    console.error('Contact API error:', e);
+    serverLogger.error({ err: e, event: 'contact_api_error' }, 'Contact API error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
-
-

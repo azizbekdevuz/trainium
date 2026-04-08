@@ -4,6 +4,7 @@ import { requireAdminSession } from "../../../../../auth/require-admin";
 import { prisma } from "../../../../../lib/database/db";
 import { getCleanupService } from "../../../../../lib/notification-cleanup";
 import { removeDuplicateNotifications } from "../../../../../lib/notifications";
+import { getRequestLogger } from "../../../../../lib/logging/request-logger";
 
 export const runtime = "nodejs";
 
@@ -42,7 +43,8 @@ export async function POST(request: NextRequest) {
       skipped: false
     });
   } catch (error) {
-    console.error('Failed to cleanup notifications:', error);
+    const log = await getRequestLogger();
+    log.error({ err: error, event: 'admin_notifications_cleanup_post_failed' }, 'Failed to cleanup notifications');
     return NextResponse.json({ 
       error: 'Failed to cleanup notifications' 
     }, { status: 500 });
@@ -65,7 +67,8 @@ export async function GET() {
       stats
     });
   } catch (error) {
-    console.error('Failed to get cleanup stats:', error);
+    const log = await getRequestLogger();
+    log.error({ err: error, event: 'admin_notifications_cleanup_stats_failed' }, 'Failed to get cleanup stats');
     return NextResponse.json({ 
       error: 'Failed to get cleanup stats' 
     }, { status: 500 });

@@ -6,6 +6,7 @@ import { generateTrackingNumber, generateCarrier } from "../../../../../lib/orde
 import { createUserNotification, NotificationTemplates, NotificationData } from "../../../../../lib/notifications";
 import { sendSocketOrderUpdate } from "../../../../../lib/socket/socket-server";
 import { checkAndNotifyLowStockForProduct } from "../../../../../lib/product/product-notifications";
+import { getRequestLogger } from "../../../../../lib/logging/request-logger";
 
 export const runtime = "nodejs";
 
@@ -15,6 +16,8 @@ export async function POST(req: NextRequest) {
   if (!session?.user?.email) {
     return NextResponse.redirect(new URL('/auth/signin', req.url));
   }
+
+  const log = await getRequestLogger();
 
   try {
     const formData = await req.formData();
@@ -27,9 +30,19 @@ export async function POST(req: NextRequest) {
     const customerName = formData.get('customerName') as string;
     const customerEmail = formData.get('customerEmail') as string;
 
-    console.log('Toss Payments POST redirect received:', {
-      cartId, method, orderId, amount, orderName, customerName, customerEmail
-    });
+    log.info(
+      {
+        event: 'toss_redirect_post_received',
+        cartId,
+        method,
+        orderId,
+        amount,
+        orderName,
+        customerName,
+        customerEmail,
+      },
+      'Toss Payments POST redirect received'
+    );
 
     if (!cartId || !addressParam || !method || !orderId) {
       return NextResponse.redirect(new URL('/checkout?error=missing_params', req.url));
@@ -44,12 +57,15 @@ export async function POST(req: NextRequest) {
     });
 
     if (!existingOrder) {
-      console.error('Order not found:', orderId);
+      log.error({ event: 'toss_redirect_order_not_found', orderId }, 'Order not found');
       return NextResponse.redirect(new URL('/checkout?error=order_not_found', req.url));
     }
 
     if (existingOrder.status !== 'PENDING') {
-      console.error('Order not in pending status:', existingOrder.status);
+      log.error(
+        { event: 'toss_redirect_order_not_pending', orderId, status: existingOrder.status },
+        'Order not in pending status'
+      );
       return NextResponse.redirect(new URL('/checkout?error=order_already_processed', req.url));
     }
 
@@ -106,7 +122,7 @@ export async function POST(req: NextRequest) {
         },
       });
     } catch (error) {
-      console.error('Failed to record TOSS payment row:', error);
+      log.error({ err: error, event: 'toss_redirect_payment_row_failed', orderId }, 'Failed to record TOSS payment row');
     }
 
     // Decrement inventory
@@ -124,15 +140,22 @@ export async function POST(req: NextRequest) {
         await checkAndNotifyLowStockForProduct(it.productId);
       }
     } catch (error) {
-      console.error('Failed to check low stock for ordered products:', error);
+      log.error(
+        { err: error, event: 'toss_redirect_low_stock_check_failed', orderId },
+        'Failed to check low stock for ordered products'
+      );
     }
     
-    console.log('Updated order status to PAID:', {
-      orderId: order.id,
-      status: order.status,
-      paymentRef: order.paymentRef,
-      method
-    });
+    log.info(
+      {
+        event: 'toss_redirect_order_paid',
+        orderId: order.id,
+        status: order.status,
+        paymentRef: order.paymentRef,
+        method,
+      },
+      'Updated order status to PAID'
+    );
 
     // Clear the cart
     await prisma.cartItem.deleteMany({ where: { cartId } });
@@ -172,7 +195,10 @@ export async function POST(req: NextRequest) {
         carrier: order.shipping?.carrier || undefined,
       });
     } catch (error) {
-      console.error('Failed to send order confirmation email:', error);
+      log.error(
+        { err: error, event: 'toss_redirect_confirmation_email_failed', orderId: order.id },
+        'Failed to send order confirmation email'
+      );
       // Don't fail the order creation if email fails
     }
 
@@ -199,11 +225,17 @@ export async function POST(req: NextRequest) {
           }
         );
         if (!socketResult.ok) {
-          console.warn('[checkout] Socket order update failed:', socketResult.error);
+          log.warn(
+            { event: 'toss_redirect_socket_order_update_failed', error: socketResult.error },
+            'Socket order update failed'
+          );
         }
       }
     } catch (error) {
-      console.error('Failed to create/send order notification:', error);
+      log.error(
+        { err: error, event: 'toss_redirect_order_notification_failed', orderId: order.id },
+        'Failed to create/send order notification'
+      );
     }
 
     // In test mode, directly redirect to success page
@@ -217,7 +249,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.redirect(successUrl);
 
   } catch (error) {
-    console.error('Toss payment POST error:', error);
+    log.error({ err: error, event: 'toss_redirect_post_error' }, 'Toss payment POST error');
     return NextResponse.redirect(new URL('/checkout?error=payment_failed', req.url));
   }
 }
@@ -227,6 +259,8 @@ export async function GET(req: NextRequest) {
   if (!session?.user?.email) {
     return NextResponse.redirect(new URL('/auth/signin', req.url));
   }
+
+  const log = await getRequestLogger();
 
   const { searchParams } = new URL(req.url);
   const cartId = searchParams.get('cartId');
@@ -335,7 +369,10 @@ export async function GET(req: NextRequest) {
         carrier: order.shipping?.carrier || undefined,
       });
     } catch (error) {
-      console.error('Failed to send order confirmation email:', error);
+      log.error(
+        { err: error, event: 'toss_redirect_get_confirmation_email_failed', orderId: order.id },
+        'Failed to send order confirmation email'
+      );
       // Don't fail the order creation if email fails
     }
 
@@ -351,7 +388,10 @@ export async function GET(req: NextRequest) {
         notificationTemplate.data as NotificationData
       );
     } catch (error) {
-      console.error('Failed to send order confirmation notification:', error);
+      log.error(
+        { err: error, event: 'toss_redirect_get_confirmation_notification_failed', orderId: order.id },
+        'Failed to send order confirmation notification'
+      );
       // Don't fail the order creation if notification fails
     }
 
@@ -363,7 +403,7 @@ export async function GET(req: NextRequest) {
     }
 
   } catch (error) {
-    console.error('Toss payment error:', error);
+    log.error({ err: error, event: 'toss_redirect_get_error' }, 'Toss payment error');
     return NextResponse.redirect(new URL('/checkout?error=payment_failed', req.url));
   }
 }

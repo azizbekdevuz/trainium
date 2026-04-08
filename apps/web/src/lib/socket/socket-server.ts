@@ -1,3 +1,5 @@
+import { serverLogger } from '@/lib/logging/server-logger';
+
 /**
  * Server-side Socket.IO utilities for sending notifications via external socket service.
  *
@@ -58,8 +60,9 @@ export function validateSocketConfig(): void {
   if (process.env.NODE_ENV === 'production') {
     throw new Error(`${SOCKET_SERVER_URL_KEY} is required in production`);
   }
-  console.warn(
-    `[socket] ${SOCKET_SERVER_URL_KEY} not set. Using NEXT_PUBLIC_SOCKET_URL or localhost:4000 for server-side calls.`
+  serverLogger.warn(
+    { event: 'socket_config_dev_fallback', envKey: SOCKET_SERVER_URL_KEY },
+    'Socket server URL not set; using NEXT_PUBLIC_SOCKET_URL or localhost for server-side calls'
   );
 }
 
@@ -82,9 +85,12 @@ async function post(path: string, body: unknown): Promise<unknown> {
   return res.json();
 }
 
-function toResult(error: unknown, context: string): SocketSendResult {
+function toResult(error: unknown, meta: Record<string, unknown>): SocketSendResult {
   const msg = error instanceof Error ? error.message : String(error);
-  console.error(`[socket] ${context}:`, msg);
+  serverLogger.warn(
+    { err: error, event: 'socket_server_http_failed', ...meta },
+    'Socket HTTP request failed'
+  );
   return { ok: false, error: msg };
 }
 
@@ -93,7 +99,7 @@ export async function sendSocketNotificationToUser(userId: string, notification:
     await post('/admin/notify-user', { userId, notification });
     return { ok: true };
   } catch (e) {
-    return toResult(e, `notify-user userId=${userId} title=${notification.title}`);
+    return toResult(e, { op: 'notify-user', userId, notificationTitle: notification.title });
   }
 }
 
@@ -102,7 +108,7 @@ export async function sendSocketSystemNotification(notification: SocketNotificat
     await post('/admin/system-notify', { notification });
     return { ok: true };
   } catch (e) {
-    return toResult(e, `system-notify title=${notification.title}`);
+    return toResult(e, { op: 'system-notify', notificationTitle: notification.title });
   }
 }
 
@@ -111,7 +117,7 @@ export async function sendSocketOrderUpdate(userId: string, orderId: string, upd
     await post('/admin/order-update', { userId, orderId, update });
     return { ok: true };
   } catch (e) {
-    return toResult(e, `order-update userId=${userId} orderId=${orderId} status=${update.status}`);
+    return toResult(e, { op: 'order-update', userId, orderId, orderStatus: update.status });
   }
 }
 
@@ -120,7 +126,7 @@ export async function sendSocketProductAlert(userId: string, productId: string, 
     await post('/admin/product-alert', { userId, productId, alert });
     return { ok: true };
   } catch (e) {
-    return toResult(e, `product-alert userId=${userId} productId=${productId} type=${alert.alertType}`);
+    return toResult(e, { op: 'product-alert', userId, productId, alertType: alert.alertType });
   }
 }
 
@@ -129,7 +135,7 @@ export async function sendSocketProductAlertToAll(productId: string, alert: Prod
     await post('/admin/product-alert-all', { productId, alert });
     return { ok: true };
   } catch (e) {
-    return toResult(e, `product-alert-all productId=${productId} type=${alert.alertType}`);
+    return toResult(e, { op: 'product-alert-all', productId, alertType: alert.alertType });
   }
 }
 

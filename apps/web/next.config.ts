@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  transpilePackages: ['@repo/logging'],
   ...(process.env.VERCEL ? {} : { output: 'standalone' }),
   images: {
     formats: ['image/avif', 'image/webp'],

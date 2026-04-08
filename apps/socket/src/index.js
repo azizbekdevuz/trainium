@@ -3,6 +3,7 @@ import express from "express";
 import http from "http";
 import cors from "cors";
 import { Server as SocketIOServer } from "socket.io";
+import { logger } from "./logger.js";
 
 // ---- ENV ----
 const DEV = process.env.NODE_ENV !== "production";
@@ -35,7 +36,7 @@ const getOrigins = () => {
 };
 
 const ORIGINS = getOrigins();
-console.log("Socket.IO CORS origins:", ORIGINS);
+logger.info({ event: "socket_cors_origins", origins: ORIGINS }, "Socket.IO CORS origins configured");
 
 const prodPath = process.env.NEXTAUTH_URL || "https://trainium.shop";
 
@@ -46,6 +47,21 @@ const SOCKET_PATH = process.env.SOCKET_PATH || "/api/socketio/";
 const app = express();
 app.use(cors({ origin: ORIGINS, credentials: true }));
 app.use(express.json());
+
+app.use((req, res, next) => {
+  if (!req.path.startsWith("/admin")) return next();
+  const start = Date.now();
+  res.on("finish", () => {
+    logger.info({
+      event: "admin_http_request",
+      method: req.method,
+      path: req.path,
+      statusCode: res.statusCode,
+      durationMs: Date.now() - start,
+    });
+  });
+  next();
+});
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
@@ -73,7 +89,10 @@ const Api = {
       read: false
     };
     io.to(`user:${userId}`).emit("notification", payload);
-    console.log(`Notification → user:${userId}`, payload.title);
+    logger.info(
+      { event: "notify_user", userId, title: payload.title },
+      "notification emitted to user room"
+    );
   },
 
   sendSystemNotification(notification) {
@@ -84,28 +103,31 @@ const Api = {
       read: false
     };
     io.emit("system_notification", payload);
-    console.log(`System notification`, payload.title);
+    logger.info({ event: "system_notification", title: payload.title }, "system notification emitted");
   },
 
   sendOrderUpdate(userId, orderId, update) {
     const payload = { orderId, ...update, timestamp: new Date().toISOString() };
     io.to(`user:${userId}`).emit("order_update", payload);
     // Do NOT emit to order:orderId - user is already in user:userId, would receive duplicate
-    console.log(`Order update → user:${userId}`);
+    logger.info({ event: "order_update", userId, orderId }, "order update emitted");
   },
 
   sendProductAlert(userId, productId, alert) {
     const payload = { productId, ...alert, timestamp: new Date().toISOString() };
     io.to(`user:${userId}`).emit("product_alert", payload);
     io.to(`product:${productId}`).emit("product_alert", payload);
-    console.log(`Product alert → product:${productId}, user:${userId}`);
+    logger.info(
+      { event: "product_alert", productId, userId },
+      "product alert emitted to user and product rooms"
+    );
   },
 
   sendProductAlertToAll(productId, alert) {
     const payload = { productId, ...alert, timestamp: new Date().toISOString() };
     io.emit("product_alert", payload);
     io.to(`product:${productId}`).emit("product_alert", payload);
-    console.log(`Product alert to ALL → product:${productId}`);
+    logger.info({ event: "product_alert_all", productId }, "product alert broadcast");
   },
 
   getConnectionStats() {
@@ -118,7 +140,7 @@ const Api = {
 
 // ---- SOCKET HANDLERS (ported from your file) ----
 io.on("connection", (socket) => {
-  console.log(`Socket connected: ${socket.id}`);
+  logger.info({ event: "socket_connected", socketId: socket.id }, "socket connected");
 
   // attach metadata (not typed in JS)
   socket.userId = null;
@@ -141,10 +163,13 @@ io.on("connection", (socket) => {
         socket.join("admin:all");
       }
 
-      console.log(`User ${userId} (${socket.userRole}) authenticated & joined rooms`);
+      logger.info(
+        { event: "socket_authenticated", userId, userRole: socket.userRole, socketId: socket.id },
+        "socket authenticated and joined rooms"
+      );
       socket.emit("authenticated", { userId, userRole: socket.userRole });
     } catch (err) {
-      console.error("Authentication error:", err);
+      logger.error({ err, event: "socket_auth_error", socketId: socket.id }, "socket authentication error");
       socket.emit("auth_error", { message: "Authentication failed" });
     }
   });
@@ -152,23 +177,35 @@ io.on("connection", (socket) => {
   socket.on("join:order", (orderId) => {
     if (!socket.userId) return socket.emit("error", { message: "Must authenticate first" });
     socket.join(`order:${orderId}`);
-    console.log(`User ${socket.userId} joined order:${orderId}`);
+    logger.info(
+      { event: "socket_join_order", userId: socket.userId, orderId, socketId: socket.id },
+      "socket joined order room"
+    );
   });
 
   socket.on("leave:order", (orderId) => {
     socket.leave(`order:${orderId}`);
-    console.log(`User ${socket.userId} left order:${orderId}`);
+    logger.info(
+      { event: "socket_leave_order", userId: socket.userId, orderId, socketId: socket.id },
+      "socket left order room"
+    );
   });
 
   socket.on("join:product", (productId) => {
     if (!socket.userId) return socket.emit("error", { message: "Must authenticate first" });
     socket.join(`product:${productId}`);
-    console.log(`User ${socket.userId} joined product:${productId}`);
+    logger.info(
+      { event: "socket_join_product", userId: socket.userId, productId, socketId: socket.id },
+      "socket joined product room"
+    );
   });
 
   socket.on("leave:product", (productId) => {
     socket.leave(`product:${productId}`);
-    console.log(`User ${socket.userId} left product:${productId}`);
+    logger.info(
+      { event: "socket_leave_product", userId: socket.userId, productId, socketId: socket.id },
+      "socket left product room"
+    );
   });
 
   socket.on("ping", () => {
@@ -176,7 +213,15 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", (reason) => {
-    console.log(`Socket disconnected: ${socket.id} (User: ${socket.userId}, Reason: ${reason})`);
+    logger.info(
+      {
+        event: "socket_disconnected",
+        socketId: socket.id,
+        userId: socket.userId,
+        reason,
+      },
+      "socket disconnected"
+    );
   });
 
   // Ensure rooms are restored when client reconnects and re-authenticates
@@ -188,7 +233,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("error", (err) => {
-    console.error(`Socket error for ${socket.id} (User: ${socket.userId}):`, err);
+    logger.error(
+      { err, event: "socket_channel_error", socketId: socket.id, userId: socket.userId },
+      "socket error event"
+    );
   });
 });
 
@@ -199,7 +247,7 @@ function requireAdminSecret(req, res, next) {
   if (!isProd) return next();
   const expected = process.env.SOCKET_ADMIN_SECRET;
   if (!expected) {
-    console.error("SOCKET_ADMIN_SECRET not set in production");
+    logger.error({ event: "socket_admin_secret_missing" }, "SOCKET_ADMIN_SECRET not set in production");
     return res.status(500).json({ ok: false });
   }
   const provided = req.header("X-Admin-Secret");
@@ -254,13 +302,16 @@ server.listen(PORT, () => {
   const httpBase = DEV ? `http://localhost:${PORT}` : `http://127.0.0.1:${PORT}`;
   const adminSecretSet = Boolean(process.env.SOCKET_ADMIN_SECRET);
 
-  console.log([
-    'Socket server ready',
-    `- env: ${process.env.NODE_ENV}`,
-    `- ws endpoint: ${wsBase}`,
-    `- http base:   ${httpBase}`,
-    `- path:        ${SOCKET_PATH}`,
-    `- cors:        ${ORIGINS.join(', ')}`,
-    `- admin secret:${adminSecretSet ? ' set' : ' MISSING'}`
-  ].join('\n'));
+  logger.info(
+    {
+      event: "socket_server_ready",
+      nodeEnv: process.env.NODE_ENV,
+      wsEndpoint: wsBase,
+      httpBase,
+      socketPath: SOCKET_PATH,
+      corsOrigins: ORIGINS,
+      adminSecretSet,
+    },
+    "Socket server ready"
+  );
 });

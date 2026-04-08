@@ -3,6 +3,7 @@ import { auth } from "../../../../../auth";
 import { requireAdminSession } from "../../../../../auth/require-admin";
 import { createSystemNotification } from "../../../../../lib/notifications";
 import { sendSocketSystemNotification } from "../../../../../lib/socket/socket-server";
+import { getRequestLogger } from "../../../../../lib/logging/request-logger";
 
 export const runtime = "nodejs";
 
@@ -46,7 +47,8 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error sending system notification:', error);
+    const log = await getRequestLogger();
+    log.error({ err: error, event: 'admin_notification_send_failed' }, 'Error sending system notification');
     return NextResponse.json({ 
       error: "Failed to send system notification" 
     }, { status: 500 });

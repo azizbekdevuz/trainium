@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { createUserNotification, NotificationTemplates } from "../../../../../../lib/notifications";
 import { sendSocketOrderUpdate } from "../../../../../../lib/socket/socket-server";
 import { sendOrderStatusUpdateEmail } from "../../../../../../lib/email/email";
+import { getRequestLogger } from "../../../../../../lib/logging/request-logger";
 
 export const runtime = "nodejs";
 
@@ -24,6 +25,8 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   if (!status || !Object.values(ORDER_STATUS).includes(status)) {
     return NextResponse.json({ error: "Invalid status" }, { status: 400 });
   }
+
+  const log = await getRequestLogger();
 
   try {
     // Update the order status
@@ -101,7 +104,10 @@ export async function PATCH(req: NextRequest, { params }: Params) {
           }
         );
         if (!socketResult.ok) {
-          console.warn('[order-status] Socket notification failed:', socketResult.error);
+          log.warn(
+            { event: 'admin_order_status_socket_failed', error: socketResult.error, orderId: id },
+            'Socket notification failed'
+          );
         }
 
         // Send email notification to customer
@@ -116,12 +122,15 @@ export async function PATCH(req: NextRequest, { params }: Params) {
               'en' // TODO: Get user's locale preference from user settings
             );
           } catch (emailError) {
-            console.error('Failed to send order status update email:', emailError);
+            log.error(
+              { err: emailError, event: 'admin_order_status_email_failed', orderId: id },
+              'Failed to send order status update email'
+            );
             // Don't fail the order update if email fails
           }
         }
       } catch (error) {
-        console.error('Failed to send notification:', error);
+        log.error({ err: error, event: 'admin_order_status_notification_failed', orderId: id }, 'Failed to send notification');
         // Don't fail the order update if notification fails
       }
     }
@@ -136,7 +145,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     });
 
   } catch (error) {
-    console.error('Error updating order status:', error);
+    log.error({ err: error, event: 'admin_order_status_patch_failed', orderId: id }, 'Error updating order status');
     return NextResponse.json({ error: "Failed to update order status" }, { status: 500 });
   }
 }

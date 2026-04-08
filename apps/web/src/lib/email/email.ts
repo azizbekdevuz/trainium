@@ -1,6 +1,7 @@
 import { Resend } from 'resend';
 import { getDictionary } from '../i18n/i18n';
 import type { AppLocale } from '../i18n/i18n-config';
+import { serverLogger } from '@/lib/logging/server-logger';
 
 function getResend() {
   const key = process.env.RESEND_API_KEY;
@@ -79,15 +80,18 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
       : 'azizbek.dev.ac@gmail.com'; //Resend free plan only allows sending to verified email addresses. 
       // you can replace with actual customer email if you have a paid plan
     
-    console.log('📧 Sending order confirmation email:', {
-      originalRecipient: data.customerEmail,
-      actualRecipient: recipientEmail,
-      orderId: data.orderId,
-      environment: process.env.NODE_ENV,
-      currency: data.currency,
-      totalCents: data.totalCents,
-      subtotalCents: data.subtotalCents
-    });
+    serverLogger.info(
+      {
+        event: 'order_confirmation_send',
+        originalRecipient: data.customerEmail,
+        actualRecipient: recipientEmail,
+        orderId: data.orderId,
+        currency: data.currency,
+        totalCents: data.totalCents,
+        subtotalCents: data.subtotalCents,
+      },
+      'Sending order confirmation email'
+    );
     
     const subjectRaw = `i18n.email.orderConfirmation|${data.orderId}`;
     const subject = await translateEmailString(subjectRaw, data.locale ?? 'en');
@@ -100,14 +104,14 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
     });
 
     if (error) {
-      console.error('Failed to send order confirmation email:', error);
+      serverLogger.error({ err: error, event: 'order_confirmation_failed', orderId: data.orderId }, 'Order confirmation email failed');
       return { success: false, error };
     }
 
-    console.log('Order confirmation email sent successfully:', emailData);
+    serverLogger.info({ event: 'order_confirmation_sent', orderId: data.orderId, resendId: emailData?.id }, 'Order confirmation email sent');
     return { success: true, data: emailData };
   } catch (error) {
-    console.error('Error sending order confirmation email:', error);
+    serverLogger.error({ err: error, event: 'order_confirmation_exception', orderId: data.orderId }, 'Order confirmation email threw');
     return { success: false, error };
   }
 }
@@ -144,14 +148,14 @@ export async function sendOrderStatusUpdateEmail(
     });
 
     if (error) {
-      console.error('Failed to send order status update email:', error);
+      serverLogger.error({ err: error, event: 'order_status_email_failed', orderId }, 'Order status update email failed');
       return { success: false, error };
     }
 
-    console.log('Order status update email sent successfully:', emailData);
+    serverLogger.info({ event: 'order_status_email_sent', orderId, resendId: emailData?.id }, 'Order status update email sent');
     return { success: true, data: emailData };
   } catch (error) {
-    console.error('Error sending order status update email:', error);
+    serverLogger.error({ err: error, event: 'order_status_email_exception', orderId }, 'Order status update email threw');
     return { success: false, error };
   }
 }

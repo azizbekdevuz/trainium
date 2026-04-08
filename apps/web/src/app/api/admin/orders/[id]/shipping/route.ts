@@ -5,6 +5,7 @@ import { prisma } from "../../../../../../lib/database/db";
 import { revalidatePath } from "next/cache";
 import { sendSocketOrderUpdate } from "../../../../../../lib/socket/socket-server";
 import { NotificationTemplates, createUserNotification } from "../../../../../../lib/notifications";
+import { getRequestLogger } from "../../../../../../lib/logging/request-logger";
 
 export const runtime = "nodejs";
 
@@ -35,6 +36,8 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   if (Object.keys(validUpdates).length === 0) {
     return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
   }
+
+  const log = await getRequestLogger();
 
   try {
     // Check if order exists and has shipping
@@ -120,10 +123,16 @@ export async function PATCH(req: NextRequest, { params }: Params) {
           }
         );
         if (!socketResult.ok) {
-          console.warn('[order-shipping] Socket notification failed:', socketResult.error);
+          log.warn(
+            { event: 'admin_order_shipping_socket_failed', error: socketResult.error, orderId: id },
+            'Socket notification failed'
+          );
         }
       } catch (error) {
-        console.error('Failed to send shipping update notification:', error);
+        log.error(
+          { err: error, event: 'admin_order_shipping_notification_failed', orderId: id },
+          'Failed to send shipping update notification'
+        );
         // Don't fail the shipping update if notification fails
       }
     }
@@ -134,7 +143,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     });
 
   } catch (error) {
-    console.error('Error updating shipping information:', error);
+    log.error({ err: error, event: 'admin_order_shipping_patch_failed', orderId: id }, 'Error updating shipping information');
     return NextResponse.json({ error: "Failed to update shipping information" }, { status: 500 });
   }
 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from "../../../../../../auth";
 import { requireAdminSession } from "../../../../../../auth/require-admin";
 import { prisma } from '../../../../../../lib/database/db';
+import { getRequestLogger } from '../../../../../../lib/logging/request-logger';
 
 export const runtime = 'nodejs';
 
@@ -54,7 +55,8 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     const updated = await prisma.user.update({ where: { id }, data: { role: role as 'ADMIN' | 'STAFF' | 'CUSTOMER' } });
     return NextResponse.json({ success: true, user: { id: updated.id, role: updated.role } });
   } catch (e) {
-    console.error('Failed to update role', e);
+    const log = await getRequestLogger();
+    log.error({ err: e, event: 'admin_customer_role_update_failed', targetUserId: id }, 'Failed to update role');
     return NextResponse.json({ error: 'Failed to update role' }, { status: 500 });
   }
 }

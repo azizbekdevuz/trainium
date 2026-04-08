@@ -1,4 +1,5 @@
 import { prisma } from '../database/db';
+import { serverLogger } from '../logging/server-logger';
 import { sendOrderConfirmationEmail } from '../email/email';
 import { generateTrackingNumber, generateCarrier } from '../order/tracking-generator';
 import { createUserNotification, NotificationTemplates, NotificationData } from '..//notifications';
@@ -124,7 +125,10 @@ export async function finalizeOrderFromCart(params: {
       await checkAndNotifyLowStockForProduct(it.productId);
     }
   } catch (error) {
-    console.error('Failed to check low stock for ordered products:', error);
+    serverLogger.error(
+      { err: error, event: 'order_finalize_low_stock_check_failed' },
+      'Failed to check low stock for ordered products'
+    );
   }
 
   // Clear cart items
@@ -171,7 +175,10 @@ export async function finalizeOrderFromCart(params: {
       carrier: orderWithShipping?.shipping?.carrier || undefined,
     });
   } catch (error) {
-    console.error('Failed to send order confirmation email:', error);
+    serverLogger.error(
+      { err: error, event: 'order_finalize_confirmation_email_failed', orderId: order.id },
+      'Failed to send order confirmation email'
+    );
     // Don't fail the order creation if email fails
   }
 
@@ -187,7 +194,10 @@ export async function finalizeOrderFromCart(params: {
       notificationTemplate.data as NotificationData
     );
   } catch (error) {
-    console.error('Failed to send order confirmation notification:', error);
+    serverLogger.error(
+      { err: error, event: 'order_finalize_confirmation_notification_failed', orderId: order.id },
+      'Failed to send order confirmation notification'
+    );
     // Don't fail the order creation if notification fails
   }
 
@@ -195,7 +205,10 @@ export async function finalizeOrderFromCart(params: {
   try {
     await RecommendationCacheInvalidation.onPurchase(user.id);
   } catch (error) {
-    console.error('Failed to invalidate recommendation cache:', error);
+    serverLogger.error(
+      { err: error, event: 'order_finalize_recommendation_cache_failed', userId: user.id },
+      'Failed to invalidate recommendation cache'
+    );
     // Don't fail the order creation if cache invalidation fails
   }
 

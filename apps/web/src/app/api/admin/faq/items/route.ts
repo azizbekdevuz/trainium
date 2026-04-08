@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { requireAdminSession } from '@/auth/require-admin';
 import { createFaq } from '@/lib/services/faq';
+import { getRequestLogger } from '@/lib/logging/request-logger';
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,7 +40,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ faq }, { status: 201 });
 
   } catch (error) {
-    console.error('Error creating FAQ:', error);
+    const log = await getRequestLogger();
+    log.error({ err: error, event: 'admin_faq_item_create_failed' }, 'Error creating FAQ');
     return NextResponse.json(
       { error: 'Failed to create FAQ' },
       { status: 500 }

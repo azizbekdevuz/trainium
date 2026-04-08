@@ -95,6 +95,21 @@ export default [
       files: ["apps/web/**/*.{ts,tsx,js,mjs}"],
     })),
   {
+    files: ["apps/web/src/**/*.{ts,tsx}"],
+    rules: {
+      "no-console": "warn",
+    },
+  },
+  {
+    files: [
+      "apps/web/src/lib/logging/**/*.ts",
+      "apps/web/src/lib/storage/storage-log.ts",
+    ],
+    rules: {
+      "no-console": "off",
+    },
+  },
+  {
     files: ["apps/web/**/*.{ts,tsx,js,mjs}"],
     settings: { react: { version: "detect" } },
     rules: {
@@ -111,6 +126,18 @@ export default [
       "@typescript-eslint/no-empty-object-type": "off",
       "@typescript-eslint/triple-slash-reference": "off",
       "@typescript-eslint/no-unsafe-function-type": "off",
+    },
+  },
+
+  // 5b) Workspace logging package (Node ESM)
+  {
+    files: ["packages/logging/**/*.js"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: {
+        process: "readonly",
+      },
     },
   },
 
@@ -142,12 +169,18 @@ export default [
       },
     },
     rules: {
-      "no-console": "off",
+      "no-console": "warn",
       "no-debugger": "error",
       "prefer-const": "error",
       "no-var": "error",
       "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
       "no-empty": "warn",
+    },
+  },
+  {
+    files: ["apps/socket/src/logger.js"],
+    rules: {
+      "no-console": "off",
     },
   },
 ];

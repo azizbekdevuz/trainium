@@ -6,6 +6,7 @@ import { sendOrderConfirmationEmail } from "../../../../../lib/email/email";
 import { generateTrackingNumber, generateCarrier } from "../../../../../lib/order/tracking-generator";
 import { createUserNotification, NotificationTemplates, NotificationData } from "../../../../../lib/notifications";
 import { checkLowStockProducts } from "../../../../../lib/product/product-notifications";
+import { getRequestLogger } from "../../../../../lib/logging/request-logger";
 
 export const runtime = "nodejs";
 
@@ -14,6 +15,8 @@ export async function GET(req: NextRequest) {
   if (!session?.user?.email) {
     return NextResponse.redirect(new URL('/auth/signin', req.url));
   }
+
+  const log = await getRequestLogger();
 
   const { searchParams } = new URL(req.url);
   const paymentKey = searchParams.get('paymentKey');
@@ -50,7 +53,10 @@ export async function GET(req: NextRequest) {
     const fxRate = order.currency.toUpperCase() === 'USD' ? 1300 : 1; // placeholder FX
     const expectedAmount = Math.round((order.totalCents / Math.pow(10, minorDigits(order.currency))) * fxRate);
     if (parseInt(amount) !== expectedAmount) {
-      console.error('Amount mismatch:', { received: amount, expected: expectedAmount });
+      log.error(
+        { event: 'toss_success_amount_mismatch', received: amount, expected: expectedAmount },
+        'Amount mismatch'
+      );
       return NextResponse.redirect(new URL('/checkout?error=amount_mismatch', req.url));
     }
 
@@ -75,7 +81,10 @@ export async function GET(req: NextRequest) {
 
     if (!authResponse.ok) {
       const errorData = await authResponse.json().catch(() => ({}));
-      console.error('Toss Payments authorization failed:', errorData);
+      log.error(
+        { err: errorData, event: 'toss_success_authorization_failed' },
+        'Toss Payments authorization failed'
+      );
       return NextResponse.redirect(new URL('/checkout?error=authorization_failed', req.url));
     }
 
@@ -83,7 +92,10 @@ export async function GET(req: NextRequest) {
     
     // Verify payment method and status as per docs
     if (paymentData.status !== 'DONE') {
-      console.error('Payment not completed:', paymentData);
+      log.error(
+        { event: 'toss_success_payment_incomplete', status: paymentData.status },
+        'Payment not completed'
+      );
       return NextResponse.redirect(new URL('/checkout?error=payment_incomplete', req.url));
     }
 
@@ -132,7 +144,7 @@ export async function GET(req: NextRequest) {
     try {
       await checkLowStockProducts();
     } catch (error) {
-      console.error('Failed to check low stock notifications:', error);
+      log.error({ err: error, event: 'toss_success_low_stock_check_failed' }, 'Failed to check low stock notifications');
       // Don't fail the order if low stock check fails
     }
 
@@ -171,7 +183,7 @@ export async function GET(req: NextRequest) {
         carrier: order.shipping?.carrier || undefined,
       });
     } catch (error) {
-      console.error('Failed to send order confirmation email:', error);
+      log.error({ err: error, event: 'toss_success_confirmation_email_failed' }, 'Failed to send order confirmation email');
       // Don't fail the order creation if email fails
     }
 
@@ -189,7 +201,10 @@ export async function GET(req: NextRequest) {
         );
       }
     } catch (error) {
-      console.error('Failed to send order confirmation notification:', error);
+      log.error(
+        { err: error, event: 'toss_success_confirmation_notification_failed' },
+        'Failed to send order confirmation notification'
+      );
       // Don't fail the order creation if notification fails
     }
 
@@ -200,7 +215,7 @@ export async function GET(req: NextRequest) {
     }
 
   } catch (error) {
-    console.error('Toss Payments success handler error:', error);
+    log.error({ err: error, event: 'toss_success_handler_error' }, 'Toss Payments success handler error');
     return NextResponse.redirect(new URL('/checkout?error=server_error', req.url));
   }
 }

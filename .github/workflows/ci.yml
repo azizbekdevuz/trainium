@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [main]
 
+# Least privilege for GITHUB_TOKEN (GitHub: use workflows with limited permissions)
+# https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/controlling-permissions-for-github_token
+permissions:
+  contents: read
+
 jobs:
   checks:
     name: Lint, typecheck, test

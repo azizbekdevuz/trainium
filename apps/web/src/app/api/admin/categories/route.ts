@@ -6,6 +6,7 @@ import { addCategoryTranslation } from "../../../../lib/product/category-transla
 import { validateCategoryRequest } from "../../../../lib/utils/validation";
 import { ERROR_MESSAGES } from "../../../../types/api";
 import type { CreateCategoryRequest, CreateCategoryResponse, GetCategoriesResponse, ApiErrorResponse } from "../../../../types/api";
+import { getRequestLogger } from "../../../../lib/logging/request-logger";
 
 export const runtime = "nodejs";
 
@@ -42,7 +43,8 @@ export async function GET(_request: NextRequest): Promise<NextResponse<GetCatego
 
     return NextResponse.json({ categories });
   } catch (error) {
-    console.error('Failed to fetch categories:', error);
+    const log = await getRequestLogger();
+    log.error({ err: error, event: 'admin_categories_get_failed' }, 'Failed to fetch categories');
     return NextResponse.json(
       { error: ERROR_MESSAGES.DATABASE_ERROR }, 
       { status: 500 }
@@ -64,6 +66,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<CreateCat
         { status: 401 }
       );
     }
+
+    const log = await getRequestLogger();
 
     const requestData: CreateCategoryRequest = await request.json();
     
@@ -123,7 +127,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<CreateCat
       });
 
       if (!translationSuccess) {
-        console.warn('Category created but translations failed to update');
+        log.warn({ event: 'admin_category_translations_failed' }, 'Category created but translations failed to update');
         // Note: We don't rollback the transaction here as the category creation is more critical
         // The translation can be fixed later via admin interface
       }
@@ -133,8 +137,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<CreateCat
 
     return NextResponse.json({ category: result });
   } catch (error) {
-    console.error('Failed to create category:', error);
-    
+    const log = await getRequestLogger();
+    log.error({ err: error, event: 'admin_categories_post_failed' }, 'Failed to create category');
+
     // Handle specific Prisma errors
     if (error instanceof Error) {
       if (error.message.includes('Unique constraint')) {

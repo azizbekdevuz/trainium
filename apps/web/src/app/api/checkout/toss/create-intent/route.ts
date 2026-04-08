@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../../auth";
 import { prisma } from "../../../../../lib/database/db";
+import { getRequestLogger } from "../../../../../lib/logging/request-logger";
 
 export const runtime = "nodejs";
 
@@ -43,13 +44,18 @@ export async function POST(req: NextRequest) {
   // Convert to KRW major amount (integer) using a placeholder FX rate for USD; adjust as needed in production
   const fxRate = productCurrency === 'USD' ? 1300 : 1; // TODO: replace with live FX
   const totalKRW = Math.round(majorAmount * fxRate);
-  
-  console.log('Price calculation:', {
-    totalMinor,
-    productCurrency,
-    totalKRW,
-    calculation: productCurrency === 'KRW' ? 'KRW cents → KRW' : `${productCurrency} → KRW`
-  });
+
+  const log = await getRequestLogger();
+  log.debug(
+    {
+      event: 'toss_create_intent_price_calculation',
+      totalMinor,
+      productCurrency,
+      totalKRW,
+      calculation: productCurrency === 'KRW' ? 'KRW cents → KRW' : `${productCurrency} → KRW`,
+    },
+    'Price calculation'
+  );
 
   // Create order name in Korean
   const firstProduct = cart.items[0];

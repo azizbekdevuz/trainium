@@ -6,6 +6,7 @@ import {
   updateFaq, 
   deleteFaq 
 } from '@/lib/services/faq';
+import { getRequestLogger } from '@/lib/logging/request-logger';
 
 export async function GET(
   _request: NextRequest,
@@ -27,7 +28,8 @@ export async function GET(
     return NextResponse.json({ faq });
 
   } catch (error) {
-    console.error('Error fetching FAQ:', error);
+    const log = await getRequestLogger();
+    log.error({ err: error, event: 'admin_faq_item_get_failed' }, 'Error fetching FAQ');
     return NextResponse.json(
       { error: 'Failed to fetch FAQ' },
       { status: 500 }
@@ -71,7 +73,8 @@ export async function PUT(
     return NextResponse.json({ faq });
 
   } catch (error) {
-    console.error('Error updating FAQ:', error);
+    const log = await getRequestLogger();
+    log.error({ err: error, event: 'admin_faq_item_update_failed' }, 'Error updating FAQ');
     return NextResponse.json(
       { error: 'Failed to update FAQ' },
       { status: 500 }
@@ -95,7 +98,8 @@ export async function DELETE(
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.error('Error deleting FAQ:', error);
+    const log = await getRequestLogger();
+    log.error({ err: error, event: 'admin_faq_item_delete_failed' }, 'Error deleting FAQ');
     return NextResponse.json(
       { error: 'Failed to delete FAQ' },
       { status: 500 }

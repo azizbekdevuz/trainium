@@ -7,6 +7,10 @@ interface ContactFormEmailProps {
   email: string;
   reason: string;
   message: string;
+  /** Server-validated mailto URL (see lib/email/mailto-url.ts). */
+  mailtoHref: string;
+  /** Server-built reply link with encoded subject (RFC 6068). */
+  replyMailtoHref: string;
 }
 
 export const ContactFormEmail = ({
@@ -14,6 +18,8 @@ export const ContactFormEmail = ({
   email,
   reason,
   message,
+  mailtoHref,
+  replyMailtoHref,
 }: ContactFormEmailProps) => {
   return (
     <html>
@@ -74,7 +80,9 @@ export const ContactFormEmail = ({
                               <td width="50%" style={infoCell}>
                                 <p style={infoLabel}>Email</p>
                                 <p style={infoValue}>
-                                  <a href={`mailto:${email}`} style={linkStyle}>{email}</a>
+                                  <a href={mailtoHref} style={linkStyle}>
+                                    {email}
+                                  </a>
                                 </p>
                               </td>
                             </tr>
@@ -114,7 +122,7 @@ export const ContactFormEmail = ({
                           <table role="presentation" cellSpacing="0" cellPadding="0" border={0}>
                             <tr>
                               <td align="center" style={buttonCell}>
-                                <a href={`mailto:${email}?subject=Re: ${encodeURIComponent(reason)}`} style={primaryButtonStyle}>
+                                <a href={replyMailtoHref} style={primaryButtonStyle}>
                                   Reply to {name}
                                 </a>
                               </td>

@@ -6,6 +6,7 @@ import {
   updateFaqCategory, 
   deleteFaqCategory 
 } from '@/lib/services/faq';
+import { getRequestLogger } from '@/lib/logging/request-logger';
 
 export async function GET(
   _request: NextRequest,
@@ -27,7 +28,8 @@ export async function GET(
     return NextResponse.json({ category });
 
   } catch (error) {
-    console.error('Error fetching FAQ category:', error);
+    const log = await getRequestLogger();
+    log.error({ err: error, event: 'admin_faq_category_get_failed' }, 'Error fetching FAQ category');
     return NextResponse.json(
       { error: 'Failed to fetch FAQ category' },
       { status: 500 }
@@ -60,7 +62,8 @@ export async function PUT(
     return NextResponse.json({ category });
 
   } catch (error) {
-    console.error('Error updating FAQ category:', error);
+    const log = await getRequestLogger();
+    log.error({ err: error, event: 'admin_faq_category_update_failed' }, 'Error updating FAQ category');
     return NextResponse.json(
       { error: 'Failed to update FAQ category' },
       { status: 500 }
@@ -84,7 +87,8 @@ export async function DELETE(
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.error('Error deleting FAQ category:', error);
+    const log = await getRequestLogger();
+    log.error({ err: error, event: 'admin_faq_category_delete_failed' }, 'Error deleting FAQ category');
     return NextResponse.json(
       { error: 'Failed to delete FAQ category' },
       { status: 500 }
