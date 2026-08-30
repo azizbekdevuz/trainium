@@ -1,45 +1,14 @@
 'use client'
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useMemo, useTransition } from 'react'
+import { SUPPORTED_LOCALES, type AppLocale } from '@/lib/i18n/i18n-config'
+import { replaceLocalePrefix } from '@/lib/i18n/locale-path'
 
-const LOCALE_COOKIE = 'NEXT_LOCALE'
-const SUPPORTED = ['en', 'ko', 'uz'] as const
-type L = typeof SUPPORTED[number]
-
-function setLocaleCookie(locale: L) {
-  const sixMonths = 60 * 60 * 24 * 30 * 6
-  document.cookie = `${LOCALE_COOKIE}=${locale}; path=/; max-age=${sixMonths}`
-}
-
-export default function LanguageSwitcher({ locale }: { locale: L }) {
-  const pathname = usePathname()
-  const router = useRouter()
-  const search = useSearchParams()
-  const [isPending, startTransition] = useTransition()
-
-  const current = useMemo<L>(() => {
-    const seg = pathname.split('/').filter(Boolean)[0]
-    if (seg && (SUPPORTED as readonly string[]).includes(seg)) return seg as L
-    return locale
-  }, [pathname, locale])
-
-  const qs = search.toString()
-
-  function onChange(next: L) {
-    if (next === current) return
-    setLocaleCookie(next)
-    const segments = pathname.split('/').filter(Boolean)
-    if (segments[0] && (SUPPORTED as readonly string[]).includes(segments[0] as string)) {
-      segments[0] = next
-    } else {
-      segments.unshift(next)
-    }
-    const nextPath = '/' + segments.join('/') + (qs ? `?${qs}` : '')
-    startTransition(() => {
-      router.push(nextPath)
-      router.refresh()
-    })
+export default function LanguageSwitcher({ locale }: { locale: AppLocale }) {
+  function onChange(next: AppLocale) {
+    if (next === locale) return
+    const url = new URL(window.location.href)
+    url.pathname = replaceLocalePrefix(url.pathname, next)
+    window.location.assign(url.href)
   }
 
   return (
@@ -47,16 +16,15 @@ export default function LanguageSwitcher({ locale }: { locale: L }) {
       <select
         aria-label="Language"
         className="glass-surface h-9 rounded-xl border border-[var(--border-default)] px-3 py-1 text-sm shadow-sm transition hover:brightness-[1.03] focus:outline-none focus:ring-2 focus:ring-[color-mix(in_srgb,var(--accent)_45%,transparent)] disabled:opacity-60"
-        value={current}
-        onChange={(e) => onChange(e.target.value as L)}
-        disabled={isPending}
+        value={locale}
+        onChange={(e) => onChange(e.target.value as AppLocale)}
       >
-        <option value="en">EN</option>
-        <option value="ko">KO</option>
-        <option value="uz">UZ</option>
+        {SUPPORTED_LOCALES.map((code) => (
+          <option key={code} value={code}>
+            {code.toUpperCase()}
+          </option>
+        ))}
       </select>
     </div>
   )
 }
-
-
