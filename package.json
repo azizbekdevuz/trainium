@@ -5,10 +5,14 @@
   "packageManager": "pnpm@9.0.6",
   "pnpm": {
     "overrides": {
-      "tar": "^7.5.11",
-      "socket.io-parser": "^4.2.6",
+      "tar": "^7.5.21",
+      "socket.io>engine.io": "6.6.9",
+      "socket.io-client>engine.io-client": "6.6.6",
+      "socket.io>socket.io-adapter": "2.5.8",
+      "socket.io-parser": "4.2.7",
+      "body-parser": "^2.3.0",
       "effect": "^3.20.0",
-      "qs": "^6.14.2",
+      "qs": "^6.15.2",
       "minimatch@^3.0.0": "3.1.5",
       "minimatch@^9.0.0": "9.0.7",
       "picomatch@^2.0.0": "2.3.2",
@@ -41,7 +45,7 @@
     "@typescript-eslint/eslint-plugin": "^8.57.2",
     "@typescript-eslint/parser": "^8.57.2",
     "eslint": "^9.39.4",
-    "eslint-config-next": "15.5.14",
+    "eslint-config-next": "15.5.24",
     "prisma": "6.19.2",
     "turbo": "^2.5.8",
     "typescript-eslint": "^8.57.2"
