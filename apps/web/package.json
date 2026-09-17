@@ -45,7 +45,7 @@
     "zod": "^4.1.1"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.5",
+    "@eslint/eslintrc": "^3.3.7",
     "@tailwindcss/postcss": "^4",
     "@types/bcrypt": "^6.0.0",
     "@types/node": "^20",
@@ -59,6 +59,6 @@
     "tsx": "^4.20.5",
     "typescript": "^5",
     "vite": "^8.0.16",
-    "vitest": "^4.1.0"
+    "vitest": "^4.1.11"
   }
 }
