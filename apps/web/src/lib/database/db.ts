@@ -13,25 +13,30 @@ const globalForPrisma = globalThis as unknown as {
 const prismaLogConfig =
   process.env.NODE_ENV === 'development'
     ? [
-        { emit: 'event' as const, level: 'error' as const },
-        { emit: 'event' as const, level: 'warn' as const },
-      ]
+      { emit: 'event' as const, level: 'error' as const },
+      { emit: 'event' as const, level: 'warn' as const },
+    ]
     : [{ emit: 'event' as const, level: 'error' as const }];
 
 function connectionTimeoutMillis(connectionString: string): number {
-  // pg exposes one timeout for both TCP/TLS connect and pool acquire.
-  // Prisma 6 set those independently (connect_timeout and pool_timeout).
-  // When the URL sets pool_timeout, use it so a busy pool keeps the
-  // configured acquire budget. Otherwise use connect_timeout, then 5s.
   try {
     const params = new URL(connectionString).searchParams;
-    const poolTimeout = Number(params.get('pool_timeout'));
-    if (Number.isFinite(poolTimeout) && poolTimeout > 0) return poolTimeout * 1000;
-    const connectTimeout = Number(params.get('connect_timeout'));
-    if (Number.isFinite(connectTimeout) && connectTimeout > 0) return connectTimeout * 1000;
+
+    const poolTimeoutRaw = params.get('pool_timeout');
+    if (poolTimeoutRaw !== null) {
+      const seconds = Number(poolTimeoutRaw);
+      if (Number.isFinite(seconds) && seconds >= 0) return seconds * 1000;
+    }
+
+    const connectTimeoutRaw = params.get('connect_timeout');
+    if (connectTimeoutRaw !== null) {
+      const seconds = Number(connectTimeoutRaw);
+      if (Number.isFinite(seconds) && seconds >= 0) return seconds * 1000;
+    }
   } catch {
-    // Non-URL connection strings keep the Prisma 6 connect default.
+    // Keep the Prisma 6 connection-timeout fallback.
   }
+
   return 5_000;
 }
 
@@ -94,7 +99,7 @@ if (process.env.NODE_ENV !== 'production') {
   // light keepalive reduces that without affecting production.
   if (!globalForPrisma.prismaDevKeepalive) {
     globalForPrisma.prismaDevKeepalive = setInterval(() => {
-      prisma.$queryRaw`SELECT 1`.catch(() => {});
+      prisma.$queryRaw`SELECT 1`.catch(() => { });
     }, 45_000);
   }
 }
