@@ -11,7 +11,7 @@ import { LocalTime } from '../../components/ui/LocalTime';
 import { Icon } from '../../components/ui/media/Icon';
 import { BentoPanel } from '../../components/product/BentoPanel';
 import { cn } from '@/lib/utils/format';
-import type { OrderStatus } from '@prisma/client';
+import type { OrderStatus } from '@/generated/prisma/enums';
 
 type OrderItemDTO = { id: string; name: string; sku: string | null; qty: number; priceCents: number };
 type ShippingDTO = {

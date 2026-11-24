@@ -1,6 +1,6 @@
 'use client';
 
-import { OrderStatus } from '@prisma/client';
+import type { OrderStatus } from '@/generated/prisma/enums';
 import { getTimelineEventsForStatus } from '../../lib/order/order-status';
 import { useI18n } from '../providers/I18nProvider';
 import { LocalTime } from '../ui/LocalTime';

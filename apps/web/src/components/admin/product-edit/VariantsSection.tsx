@@ -1,5 +1,5 @@
 import type { Dictionary } from '../../../lib/i18n/i18n';
-import type { ProductVariant, Product } from '@prisma/client';
+import type { ProductVariant, Product } from '@/generated/prisma/browser';
 
 interface VariantsSectionProps {
   product: Product & { variants: ProductVariant[] };

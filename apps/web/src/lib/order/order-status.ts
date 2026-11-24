@@ -1,4 +1,4 @@
-import { OrderStatus } from '@prisma/client';
+import type { OrderStatus } from '@/generated/prisma/enums';
 
 // Unified order status system - single source of truth
 export const ORDER_STATUS = {

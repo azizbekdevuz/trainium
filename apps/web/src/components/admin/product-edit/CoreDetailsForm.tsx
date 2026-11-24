@@ -1,6 +1,6 @@
 import { ProductEditClient } from '../ProductEditClient';
 import type { Dictionary } from '../../../lib/i18n/i18n';
-import type { Product, Category } from '@prisma/client';
+import type { Product, Category } from '@/generated/prisma/browser';
 import { priceToMajorUnits } from '../../../lib/product/product-utils';
 
 interface CoreDetailsFormProps {

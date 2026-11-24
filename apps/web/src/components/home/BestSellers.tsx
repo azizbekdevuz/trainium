@@ -4,7 +4,7 @@ import { ProductCard } from "../product/ProductCard";
 import { ProductWithRelations } from "../../types/prisma";
 import { getDictionary, negotiateLocale } from "../../lib/i18n/i18n";
 import { auth } from "../../auth";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/generated/prisma/client";
 
 export type BestSellersVariant = "default" | "heroPanel" | "rail";
 
