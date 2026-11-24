@@ -28,7 +28,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     { href: `/${lang}/contact`, label: dict.nav.support },
   ];
 
-  const isAdminUser = isAdmin((session?.user as { role?: string })?.role);
+  const isAdminUser = isAdmin(session?.user?.role);
 
   useEffect(() => {
     setMounted(true);

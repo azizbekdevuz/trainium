@@ -30,7 +30,7 @@ export function ResponsiveNavigation({ lang, dict }: ResponsiveNavigationProps) 
   const linkBaseAdmin =
     "btn-primary relative inline-flex items-center rounded-xl px-3 py-2 text-sm font-medium";
 
-  const isAdminUser = isAdmin((session?.user as { role?: string })?.role);
+  const isAdminUser = isAdmin(session?.user?.role);
 
   const brandName = (dict as { brand?: { name?: string } }).brand?.name ?? "Trainium";
 

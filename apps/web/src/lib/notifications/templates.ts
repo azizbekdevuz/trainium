@@ -1,4 +1,4 @@
-import { NotificationType } from '@prisma/client';
+import type { NotificationType } from '@/generated/prisma/enums';
 import { getFirstProductSlugFromOrder, getUserEmail } from './helpers';
 import type { NotificationData } from './types';
 

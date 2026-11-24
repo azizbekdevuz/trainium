@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 
-FROM node:20-bullseye-slim AS base
+FROM node:24.22.3-bookworm-slim AS base
 ENV NODE_ENV=development
 WORKDIR /repo
 RUN corepack enable
@@ -35,7 +35,7 @@ ENV DATABASE_URL=${DATABASE_URL}
 
 # syntax=docker/dockerfile:1.7
 
-FROM node:20-bullseye-slim AS base
+FROM node:24.22.3-bookworm-slim AS base
 ENV NODE_ENV=development
 WORKDIR /repo
 RUN corepack enable
@@ -85,7 +85,7 @@ RUN pnpm --filter @apps/web prisma:generate
 RUN NODE_ENV=production pnpm --filter @apps/web build
 
 # ------------------ runtime ------------------
-FROM node:20-bullseye-slim AS runner
+FROM node:24.22.3-bookworm-slim AS runner
 ENV NODE_ENV=production
 WORKDIR /app
 

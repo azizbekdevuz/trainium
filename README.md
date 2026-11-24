@@ -74,7 +74,7 @@ trainium/
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 24 LTS (see `.nvmrc`)
 - pnpm 9.0.6+
 - PostgreSQL database
 - Docker (optional, for containerized deployment)

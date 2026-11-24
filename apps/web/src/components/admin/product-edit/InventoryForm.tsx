@@ -1,5 +1,5 @@
 import type { Dictionary } from '../../../lib/i18n/i18n';
-import type { Inventory } from '@prisma/client';
+import type { Inventory } from '@/generated/prisma/browser';
 
 interface InventoryFormProps {
   productId: string;

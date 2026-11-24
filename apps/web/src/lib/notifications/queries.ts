@@ -1,5 +1,5 @@
 import { prisma } from '../database/db';
-import { NotificationType } from '@prisma/client';
+import type { NotificationType } from '@/generated/prisma/enums';
 
 /**
  * Build where clause for user notifications

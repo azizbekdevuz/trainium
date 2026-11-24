@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 
-FROM node:20-bullseye-slim AS base
+FROM node:24.22.3-bookworm-slim AS base
 ENV NODE_ENV=production
 WORKDIR /app
 RUN corepack enable

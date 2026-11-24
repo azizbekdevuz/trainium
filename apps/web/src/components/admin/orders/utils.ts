@@ -1,5 +1,5 @@
 import { ORDER_STATUS } from '../../../lib/order/order-status';
-import type { OrderStatus } from '@prisma/client';
+import type { OrderStatus } from '@/generated/prisma/enums';
 import type { StatusOption } from './types';
 
 export function getStatusOptions(

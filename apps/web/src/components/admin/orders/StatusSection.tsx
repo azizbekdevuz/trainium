@@ -1,4 +1,4 @@
-import type { OrderStatus } from '@prisma/client';
+import type { OrderStatus } from '@/generated/prisma/enums';
 import type { StatusOption } from './types';
 import type { Dictionary } from '../../../lib/i18n/i18n';
 import { LocalTime } from '../../ui/LocalTime';

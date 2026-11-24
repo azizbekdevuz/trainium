@@ -1,4 +1,4 @@
-import { Product, Category, ProductVariant, Inventory } from '@prisma/client';
+import type { Product, Category, ProductVariant, Inventory } from '@/generated/prisma/browser';
 
 // Updated to include inventory for low stock badges
 export type ProductWithRelations = Product & {
