@@ -20,7 +20,7 @@ This project adheres to the [Contributor Covenant Code of Conduct](CODE_OF_CONDU
 
 ### Prerequisites
 
-- **Node.js** 18+ (20 recommended; see `.nvmrc`)
+- **Node.js** 24 LTS (see `.nvmrc`)
 - **pnpm** 9.0.6+
 - **PostgreSQL** database
 - **Docker** (optional, for containerized development)

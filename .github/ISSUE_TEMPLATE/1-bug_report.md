@@ -32,7 +32,7 @@ assignees: []
 ## Environment
 
 - **OS**: (e.g., Windows 11, macOS 14, Ubuntu 22.04)
-- **Node.js version**: (e.g., 20.10.0)
+- **Node.js version**: (e.g., 24.22.3; see `.nvmrc`)
 - **Browser**: (e.g., Chrome 120, Firefox 121)
 - **Trainium version**: (e.g., 0.1.0 or commit hash)
 
